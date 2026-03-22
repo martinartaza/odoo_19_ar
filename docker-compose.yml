@@ -1,0 +1,39 @@
+services:
+  odoo:
+    build: .
+    container_name: odoo19
+    depends_on:
+      - db
+    env_file:
+      - .env
+    volumes:
+      - ./custom_addons:/opt/odoo/custom_addons
+    networks:
+      - traefik
+      - internal
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.odoo.rule=Host(`odoo.sebastianartaza.com`)"
+      - "traefik.http.routers.odoo.entrypoints=web"
+
+  db:
+    image: postgres:15
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - odoo-db-data:/var/lib/postgresql/data
+    networks:
+      - internal
+
+volumes:
+  odoo-db-data:
+
+networks:
+  traefik:
+    external: true
+  internal:
+    driver: bridge
