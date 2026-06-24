@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_cms_block_list" model="ir.ui.view">
+        <field name="name">artaza.magento.cms.block.list</field>
+        <field name="model">artaza.magento.cms.block</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="identifier"/>
+                <field name="magento_id"/>
+                <field name="sync_state" widget="badge"
+                       decoration-success="sync_state == 'synced'"
+                       decoration-warning="sync_state == 'pending'"
+                       decoration-danger="sync_state == 'error'"/>
+                <field name="last_sync"/>
+                <field name="active" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_cms_block_form" model="ir.ui.view">
+        <field name="name">artaza.magento.cms.block.form</field>
+        <field name="model">artaza.magento.cms.block</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_sync_now" type="object" string="Sincronizar ahora"
+                            class="btn-primary" icon="fa-refresh"/>
+                    <field name="sync_state" widget="statusbar"
+                           statusbar_visible="pending,synced,error"/>
+                </header>
+                <sheet>
+                    <widget name="web_ribbon" title="Archivado" bg_color="text-bg-danger"
+                            invisible="active"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Título del bloque"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="identifier" placeholder="identifier-del-bloque"/>
+                            <field name="active"/>
+                            <field name="store_ids"/>
+                        </group>
+                        <group>
+                            <field name="magento_id"/>
+                            <field name="last_sync"/>
+                            <field name="sync_error" invisible="sync_state != 'error'"/>
+                        </group>
+                    </group>
+                    <field name="content" widget="html"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_cms_block" model="ir.actions.act_window">
+        <field name="name">Bloques CMS</field>
+        <field name="res_model">artaza.magento.cms.block</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

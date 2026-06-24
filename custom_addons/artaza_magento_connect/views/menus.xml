@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_magento_root" name="Magento" sequence="90"/>
+
+    <menuitem id="menu_magento_cms" name="CMS"
+              parent="menu_magento_root" sequence="10"/>
+
+    <menuitem id="menu_cms_page" name="Páginas CMS"
+              parent="menu_magento_cms" action="action_cms_page" sequence="10"/>
+
+    <menuitem id="menu_cms_block" name="Bloques CMS"
+              parent="menu_magento_cms" action="action_cms_block" sequence="20"/>
+
+    <menuitem id="menu_magento_config" name="Configuración"
+              parent="menu_magento_root" sequence="90"
+              groups="group_magento_manager"/>
+
+    <menuitem id="menu_magento_settings" name="Ajustes"
+              parent="menu_magento_config" action="action_magento_config_settings"
+              sequence="10"/>
+</odoo>
