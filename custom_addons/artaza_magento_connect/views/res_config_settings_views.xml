@@ -9,23 +9,18 @@
                 <app data-string="Magento Connect" string="Magento Connect" name="artaza_magento_connect">
                     <block title="Middleware (FastAPI)" name="magento_middleware">
                         <setting string="Conexión al middleware"
-                                 help="Credenciales OAuth2/JWT para enviar contenido CMS a Magento vía FastAPI.">
+                                 help="API key para enviar contenido CMS a Magento vía el middleware FastAPI.">
                             <div class="content-group">
                                 <div class="row mt16">
                                     <label string="URL del middleware" for="magento_middleware_base_url"
                                            class="col-lg-4 o_light_label"/>
                                     <field name="magento_middleware_base_url"
-                                           placeholder="https://www.sebastianartaza.com/api/v1"/>
+                                           placeholder="https://www.artaza.net/api/v1"/>
                                 </div>
                                 <div class="row">
-                                    <label string="Client ID" for="magento_client_id"
+                                    <label string="API key" for="magento_api_key"
                                            class="col-lg-4 o_light_label"/>
-                                    <field name="magento_client_id" placeholder="odoo-cms"/>
-                                </div>
-                                <div class="row">
-                                    <label string="Client Secret" for="magento_client_secret"
-                                           class="col-lg-4 o_light_label"/>
-                                    <field name="magento_client_secret" password="True"/>
+                                    <field name="magento_api_key" password="True"/>
                                 </div>
                                 <div class="row mt16">
                                     <button name="action_magento_test_connection" type="object"

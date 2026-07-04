@@ -1,9 +1,8 @@
 from odoo import fields, models
 
 from .magento_connector import (
+    PARAM_API_KEY,
     PARAM_BASE_URL,
-    PARAM_CLIENT_ID,
-    PARAM_CLIENT_SECRET,
 )
 
 
@@ -14,28 +13,26 @@ class ResConfigSettings(models.TransientModel):
         string="URL del middleware",
         config_parameter=PARAM_BASE_URL,
         help="Base URL de la API del middleware FastAPI, "
-             "p.ej. https://www.sebastianartaza.com/api/v1",
+             "p.ej. https://www.artaza.net/api/v1",
     )
-    magento_client_id = fields.Char(
-        string="Client ID",
-        config_parameter=PARAM_CLIENT_ID,
-    )
-    magento_client_secret = fields.Char(
-        string="Client Secret",
-        config_parameter=PARAM_CLIENT_SECRET,
+    magento_api_key = fields.Char(
+        string="API key",
+        config_parameter=PARAM_API_KEY,
+        help="API key generada en el panel del middleware. "
+             "Se envía como 'Authorization: Bearer <key>'.",
     )
 
     def action_magento_test_connection(self):
-        """Fuerza la obtención de un token JWT para validar las credenciales."""
+        """Valida la API key + conexión contra /ping del middleware."""
         self.ensure_one()
-        self.env['artaza.magento.connector']._get_token(force=True)
+        self.env['artaza.magento.connector'].test_connection()
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
                 'type': 'success',
                 'title': self.env._("Conexión correcta"),
-                'message': self.env._("Se obtuvo un token JWT del middleware."),
+                'message': self.env._("El middleware respondió correctamente."),
                 'sticky': False,
             },
         }
