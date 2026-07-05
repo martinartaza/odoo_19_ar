@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y \
     node-less \
     npm \
     curl \
+    postgresql-client \
     libldap2-dev \
     libsasl2-dev \
     && rm -rf /var/lib/apt/lists/*
