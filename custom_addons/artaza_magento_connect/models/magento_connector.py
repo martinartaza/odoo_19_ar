@@ -82,6 +82,23 @@ class MagentoConnector(models.AbstractModel):
         """Valida la API key + conexión contra el endpoint /ping del middleware."""
         return self.call('GET', 'ping')
 
+    @api.model
+    def sync_warehouses(self):
+        """Registra las bodegas de Odoo en el middleware.
+
+        Manda `[{code, name, is_default}]` (la principal = la primera por id)
+        y devuelve el status `{received, mapped, pending, pending_warehouses}`.
+        """
+        Warehouse = self.env['stock.warehouse']
+        warehouses = Warehouse.search([])
+        default_wh = Warehouse.search([], order='id', limit=1)
+        payload = [{
+            'code': wh.code,
+            'name': wh.name,
+            'is_default': wh.id == default_wh.id,
+        } for wh in warehouses]
+        return self.call('POST', 'warehouses/sync', payload)
+
     @staticmethod
     def _extract_error(response):
         if response is None:

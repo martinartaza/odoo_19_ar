@@ -29,6 +29,16 @@
                                 </div>
                             </div>
                         </setting>
+                        <setting string="Sincronización de bodegas"
+                                 help="Registra tus almacenes de Odoo en el middleware. Después relacionás cada bodega con un source de Magento en el panel del middleware.">
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <button name="action_magento_sync_warehouses" type="object"
+                                            string="Sincronizar bodegas con Magento" class="btn-secondary"
+                                            icon="fa-cubes"/>
+                                </div>
+                            </div>
+                        </setting>
                     </block>
                 </app>
             </xpath>

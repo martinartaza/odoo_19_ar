@@ -36,3 +36,28 @@ class ResConfigSettings(models.TransientModel):
                 'sticky': False,
             },
         }
+
+    def action_magento_sync_warehouses(self):
+        """Registra las bodegas de Odoo en el middleware y muestra el estado."""
+        self.ensure_one()
+        result = self.env['artaza.magento.connector'].sync_warehouses()
+        pending = result.get('pending_warehouses') or []
+        if pending:
+            kind = 'warning'
+            message = self.env._(
+                "Bodegas registradas. Faltan relacionar en el middleware: %s",
+                ", ".join(pending),
+            )
+        else:
+            kind = 'success'
+            message = self.env._("Tus bodegas ya están sincronizadas con Magento.")
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'type': kind,
+                'title': self.env._("Sincronización de bodegas"),
+                'message': message,
+                'sticky': bool(pending),
+            },
+        }
