@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="artaza_magento_connect.StockMatrix">
+        <div class="o_magento_stock_matrix p-3">
+            <h4 class="mb-3">Productos — Stock hacia Magento</h4>
+
+            <div class="d-flex align-items-center mb-3" style="gap: .5rem; max-width: 640px;">
+                <i class="fa fa-search text-muted"/>
+                <input type="text" class="form-control"
+                       placeholder="Buscar por nombre o código (SKU)"
+                       t-model="state.search"
+                       t-on-keydown="(ev) => ev.key === 'Enter' ? this.load() : null"/>
+                <button class="btn btn-primary" t-on-click="() => this.load()">Buscar</button>
+            </div>
+
+            <div t-if="state.loading" class="text-muted">Cargando…</div>
+
+            <table t-if="!state.loading" class="table table-sm table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>SKU</th>
+                        <th t-foreach="state.warehouses" t-as="wh" t-key="wh.code" class="text-end">
+                            <t t-esc="wh.name"/>
+                        </th>
+                        <th class="text-end">Total</th>
+                        <th class="text-end">Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr t-foreach="state.rows" t-as="row" t-key="row.id">
+                        <td><t t-esc="row.sku"/></td>
+                        <td t-foreach="state.warehouses" t-as="wh" t-key="wh.code" class="text-end">
+                            <t t-esc="row.qtys[wh.code]"/>
+                        </td>
+                        <td class="text-end fw-bold"><t t-esc="row.total"/></td>
+                        <td class="text-end">
+                            <button class="btn btn-sm btn-outline-primary"
+                                    t-on-click="() => this.syncRow(row)">
+                                Sincronizar
+                            </button>
+                        </td>
+                    </tr>
+                    <tr t-if="!state.rows.length">
+                        <td colspan="99" class="text-center text-muted">Sin productos.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </t>
+</templates>

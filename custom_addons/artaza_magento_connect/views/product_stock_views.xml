@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_magento_stock_matrix" model="ir.actions.client">
+        <field name="name">Productos — Stock Magento</field>
+        <field name="tag">artaza_magento_stock_matrix</field>
+    </record>
+
+    <menuitem id="menu_magento_products" name="Productos"
+              parent="menu_magento_root" action="action_magento_stock_matrix"
+              sequence="50"/>
+</odoo>
