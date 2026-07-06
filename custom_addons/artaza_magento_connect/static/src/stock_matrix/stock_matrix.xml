@@ -4,13 +4,27 @@
         <div class="o_magento_stock_matrix p-3">
             <h4 class="mb-3">Productos — Stock hacia Magento</h4>
 
-            <div class="d-flex align-items-center mb-3" style="gap: .5rem; max-width: 640px;">
-                <i class="fa fa-search text-muted"/>
-                <input type="text" class="form-control"
-                       placeholder="Buscar por nombre o código (SKU)"
-                       t-model="state.search"
-                       t-on-keydown="(ev) => ev.key === 'Enter' ? this.load() : null"/>
-                <button class="btn btn-primary" t-on-click="() => this.load()">Buscar</button>
+            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap: .5rem;">
+                <div class="d-flex align-items-center" style="gap: .5rem; max-width: 640px; flex: 1;">
+                    <i class="fa fa-search text-muted"/>
+                    <input type="text" class="form-control"
+                           placeholder="Buscar por nombre o código (SKU)"
+                           t-model="state.search"
+                           t-on-keydown="(ev) => ev.key === 'Enter' ? this.doSearch() : null"/>
+                    <button class="btn btn-primary" t-on-click="() => this.doSearch()">Buscar</button>
+                </div>
+
+                <div class="d-flex align-items-center" style="gap: .75rem;">
+                    <small class="text-muted">
+                        <t t-esc="rangeStart"/>–<t t-esc="rangeEnd"/> de <t t-esc="state.total"/>
+                    </small>
+                    <div class="btn-group">
+                        <button class="btn btn-sm btn-secondary" t-att-disabled="!canPrev"
+                                t-on-click="() => this.prevPage()">‹ Anterior</button>
+                        <button class="btn btn-sm btn-secondary" t-att-disabled="!canNext"
+                                t-on-click="() => this.nextPage()">Siguiente ›</button>
+                    </div>
+                </div>
             </div>
 
             <div t-if="state.loading" class="text-muted">Cargando…</div>

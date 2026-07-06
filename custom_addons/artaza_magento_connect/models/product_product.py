@@ -5,18 +5,20 @@ class ProductProduct(models.Model):
     _inherit = 'product.product'
 
     @api.model
-    def magento_stock_matrix(self, search=None):
-        """Matriz de stock por bodega para la pantalla de sync unitario.
+    def magento_stock_matrix(self, search=None, offset=0, limit=50):
+        """Matriz de stock por bodega (paginada) para el sync unitario.
 
-        Devuelve `{warehouses: [{code, name}], rows: [{id, sku, name, qtys, total}]}`
-        con una columna por bodega (dinámico según cuántas haya).
+        Devuelve `{warehouses, rows, total, offset, limit}` con una columna por
+        bodega (dinámico). `total` es el conteo completo para paginar en el front.
         """
         warehouses = self.env['stock.warehouse'].search([], order='id')
 
         domain = [('is_storable', '=', True), ('default_code', '!=', False)]
         if search:
             domain += ['|', ('name', 'ilike', search), ('default_code', 'ilike', search)]
-        products = self.search(domain, order='default_code', limit=200)
+
+        total = self.search_count(domain)
+        products = self.search(domain, order='default_code', offset=offset, limit=limit)
 
         # qty on-hand por bodega (una lectura batch por bodega)
         qty_by_wh = {}
@@ -38,6 +40,9 @@ class ProductProduct(models.Model):
         return {
             'warehouses': [{'code': wh.code, 'name': wh.name} for wh in warehouses],
             'rows': rows,
+            'total': total,
+            'offset': offset,
+            'limit': limit,
         }
 
     def magento_sync_stock(self):
