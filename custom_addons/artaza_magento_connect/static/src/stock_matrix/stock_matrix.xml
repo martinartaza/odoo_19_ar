@@ -41,7 +41,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr t-foreach="state.rows" t-as="row" t-key="row.id">
+                    <tr t-foreach="state.rows" t-as="row" t-key="row.id"
+                        style="cursor: pointer;"
+                        t-on-click="() => this.openProduct(row)">
                         <td><t t-esc="row.sku"/></td>
                         <td t-foreach="state.warehouses" t-as="wh" t-key="wh.code" class="text-end">
                             <t t-esc="row.qtys[wh.code]"/>
@@ -49,7 +51,7 @@
                         <td class="text-end fw-bold"><t t-esc="row.total"/></td>
                         <td class="text-end">
                             <button class="btn btn-sm btn-outline-primary"
-                                    t-on-click="() => this.syncRow(row)">
+                                    t-on-click.stop="() => this.syncRow(row)">
                                 Sincronizar
                             </button>
                         </td>

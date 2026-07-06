@@ -12,6 +12,7 @@ export class MagentoStockMatrix extends Component {
 
     setup() {
         this.orm = useService("orm");
+        this.action = useService("action");
         this.notification = useService("notification");
         this.pageSize = PAGE_SIZE;
         this.state = useState({
@@ -71,6 +72,16 @@ export class MagentoStockMatrix extends Component {
     }
     get canNext() {
         return this.state.offset + this.pageSize < this.state.total;
+    }
+
+    openProduct(row) {
+        this.action.doAction({
+            type: "ir.actions.act_window",
+            res_model: "product.product",
+            res_id: row.id,
+            views: [[false, "form"]],
+            target: "current",
+        });
     }
 
     async syncRow(row) {

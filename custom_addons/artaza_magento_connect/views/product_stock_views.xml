@@ -5,7 +5,8 @@
         <field name="tag">artaza_magento_stock_matrix</field>
     </record>
 
+    <!-- sequence 1 → la app Magento aterriza en Productos (es el primer sub-menú) -->
     <menuitem id="menu_magento_products" name="Productos"
               parent="menu_magento_root" action="action_magento_stock_matrix"
-              sequence="50"/>
+              sequence="1"/>
 </odoo>
