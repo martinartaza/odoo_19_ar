@@ -1,8 +1,18 @@
-from odoo import api, models
+import logging
+
+from odoo import api, fields, models
+
+_logger = logging.getLogger(__name__)
 
 
 class ProductProduct(models.Model):
     _inherit = 'product.product'
+
+    magento_stock_dirty = fields.Boolean(
+        string="Stock pendiente de sync a Magento",
+        default=False, index=True, copy=False,
+        help="Se marca cuando cambia el stock; el cron lo empuja y lo limpia.",
+    )
 
     @api.model
     def _magento_qty_by_warehouse(self, products, warehouses):
@@ -96,4 +106,57 @@ class ProductProduct(models.Model):
             'warehouse_code': wh.code,
             'qty': qty_by_wh.get(wh.code, 0.0),
         } for wh in warehouses]
-        return self.env['artaza.magento.connector'].call('POST', 'stock', payload)
+        result = self.env['artaza.magento.connector'].call('POST', 'stock', payload)
+        self.sudo().magento_stock_dirty = False
+        return result
+
+    @api.model
+    def magento_mark_all_dirty(self):
+        """Marca todos los productos sincronizables como pendientes (re-sync full)."""
+        products = self.search([('is_storable', '=', True), ('default_code', '!=', False)])
+        products.write({'magento_stock_dirty': True})
+        return len(products)
+
+    @api.model
+    def _cron_magento_sync_stock(self):
+        """Cron: empuja el stock de los productos 'sucios' en lotes al middleware.
+
+        Tamaño de lote configurable (ir.config_parameter). Procesa todos los
+        pendientes en varios envíos; ante un error corta y los deja para el
+        próximo tick (el push es idempotente: cantidad absoluta por SKU/source).
+        """
+        icp = self.env['ir.config_parameter'].sudo()
+        batch_size = int(icp.get_param('artaza_magento_connect.stock_batch_size') or 50)
+        warehouses = self.env['stock.warehouse'].search([], order='id')
+        if not warehouses:
+            return
+        connector = self.env['artaza.magento.connector']
+
+        sent = 0
+        for _batch in range(10000):  # guarda contra loop infinito
+            products = self.search([
+                ('magento_stock_dirty', '=', True),
+                ('is_storable', '=', True),
+                ('default_code', '!=', False),
+            ], limit=batch_size)
+            if not products:
+                break
+
+            qty_by_wh = self._magento_qty_by_warehouse(products, warehouses)
+            payload = [{
+                'sku': product.default_code,
+                'warehouse_code': wh.code,
+                'qty': qty_by_wh[product.id].get(wh.code, 0.0),
+            } for product in products for wh in warehouses]
+
+            try:
+                connector.call('POST', 'stock', payload)
+            except Exception as exc:  # noqa: BLE001 - dejar pendientes para el próximo tick
+                _logger.warning("Cron stock Magento: lote falló, se reintenta luego: %s", exc)
+                break
+
+            products.write({'magento_stock_dirty': False})
+            sent += len(products)
+
+        if sent:
+            _logger.info("Cron stock Magento: %s producto(s) sincronizado(s).", sent)

@@ -39,6 +39,31 @@
                                 </div>
                             </div>
                         </setting>
+                        <setting string="Sincronización automática de stock (cron)"
+                                 help="El cron interno de Odoo empuja el stock a Magento según esta frecuencia. No requiere crontab del sistema.">
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <field name="magento_cron_active"/>
+                                    <label for="magento_cron_active" string="Activar sync automática de stock"/>
+                                </div>
+                                <div class="row">
+                                    <label string="Frecuencia" for="magento_cron_interval_number"
+                                           class="col-lg-4 o_light_label"/>
+                                    <field name="magento_cron_interval_number" class="oe_inline"/>
+                                    <field name="magento_cron_interval_type" class="oe_inline"/>
+                                </div>
+                                <div class="row">
+                                    <label string="Productos por lote" for="magento_stock_batch_size"
+                                           class="col-lg-4 o_light_label"/>
+                                    <field name="magento_stock_batch_size" class="oe_inline"/>
+                                </div>
+                                <div class="row mt16">
+                                    <button name="action_magento_resync_all_stock" type="object"
+                                            string="Marcar todo para sincronizar" class="btn-secondary"
+                                            icon="fa-refresh"/>
+                                </div>
+                            </div>
+                        </setting>
                     </block>
                 </app>
             </xpath>
