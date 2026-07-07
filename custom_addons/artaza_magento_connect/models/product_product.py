@@ -13,7 +13,13 @@ class ProductProduct(models.Model):
         default=False, index=True, copy=False,
         help="Se marca cuando cambia el stock; el cron lo empuja y lo limpia.",
     )
+    magento_price_dirty = fields.Boolean(
+        string="Precio pendiente de sync a Magento",
+        default=False, index=True, copy=False,
+        help="Se marca cuando cambia el precio de venta; el cron lo empuja.",
+    )
 
+    # ── Cálculo de stock por bodega ────────────────────────────
     @api.model
     def _magento_qty_by_warehouse(self, products, warehouses):
         """{product_id: {warehouse_code: on_hand}} leyendo stock.quant.
@@ -33,7 +39,6 @@ class ProductProduct(models.Model):
 
         all_location_ids = set().union(*wh_location_ids.values()) if wh_location_ids else set()
 
-        # qty por (producto, ubicación)
         qty_per_loc = {}
         if products and all_location_ids:
             groups = self.env['stock.quant'].read_group(
@@ -59,13 +64,10 @@ class ProductProduct(models.Model):
             }
         return result
 
+    # ── Grilla del módulo ──────────────────────────────────────
     @api.model
     def magento_stock_matrix(self, search=None, offset=0, limit=50):
-        """Matriz de stock por bodega (paginada) para el sync unitario.
-
-        Devuelve `{warehouses, rows, total, offset, limit}` con una columna por
-        bodega (dinámico). `total` es el conteo completo para paginar en el front.
-        """
+        """Matriz de stock por bodega (paginada) para el sync unitario."""
         warehouses = self.env['stock.warehouse'].search([], order='id')
 
         domain = [('is_storable', '=', True), ('default_code', '!=', False)]
@@ -96,67 +98,82 @@ class ProductProduct(models.Model):
             'limit': limit,
         }
 
-    def magento_sync_stock(self):
-        """Empuja el stock de este producto (por bodega) al middleware /stock."""
-        self.ensure_one()
+    # ── Push helpers (usados por el botón y el cron) ───────────
+    @api.model
+    def _magento_push_stock(self, products):
+        """Empuja el stock (por bodega) de `products` al middleware."""
         warehouses = self.env['stock.warehouse'].search([], order='id')
-        qty_by_wh = self._magento_qty_by_warehouse(self, warehouses)[self.id]
+        qty_by_wh = self._magento_qty_by_warehouse(products, warehouses)
         payload = [{
-            'sku': self.default_code,
+            'sku': product.default_code,
             'warehouse_code': wh.code,
-            'qty': qty_by_wh.get(wh.code, 0.0),
-        } for wh in warehouses]
-        result = self.env['artaza.magento.connector'].call('POST', 'stock', payload)
-        self.sudo().magento_stock_dirty = False
-        return result
+            'qty': qty_by_wh[product.id].get(wh.code, 0.0),
+        } for product in products for wh in warehouses]
+        return self.env['artaza.magento.connector'].call('POST', 'stock', payload)
+
+    @api.model
+    def _magento_push_price(self, products):
+        """Empuja el precio base (list_price) de `products` al middleware."""
+        payload = [
+            {'sku': product.default_code, 'price': product.list_price}
+            for product in products
+        ]
+        return self.env['artaza.magento.connector'].call('POST', 'prices', payload)
+
+    # ── Botón: sync unitario (stock + precio) ──────────────────
+    def magento_sync_now(self):
+        """Empuja stock y precio de este producto y limpia sus flags."""
+        self.ensure_one()
+        stock_result = self._magento_push_stock(self)
+        self._magento_push_price(self)
+        self.sudo().write({
+            'magento_stock_dirty': False,
+            'magento_price_dirty': False,
+        })
+        return stock_result  # el front lee `skipped` (bodegas pendientes)
 
     @api.model
     def magento_mark_all_dirty(self):
-        """Marca todos los productos sincronizables como pendientes (re-sync full)."""
+        """Marca todos los productos sincronizables como pendientes (stock + precio)."""
         products = self.search([('is_storable', '=', True), ('default_code', '!=', False)])
-        products.write({'magento_stock_dirty': True})
+        products.write({'magento_stock_dirty': True, 'magento_price_dirty': True})
         return len(products)
 
+    # ── Cron ───────────────────────────────────────────────────
     @api.model
     def _cron_magento_sync_stock(self):
-        """Cron: empuja el stock de los productos 'sucios' en lotes al middleware.
-
-        Tamaño de lote configurable (ir.config_parameter). Procesa todos los
-        pendientes en varios envíos; ante un error corta y los deja para el
-        próximo tick (el push es idempotente: cantidad absoluta por SKU/source).
-        """
+        """Cron: empuja stock y precio de los productos pendientes, en lotes."""
         icp = self.env['ir.config_parameter'].sudo()
         batch_size = int(icp.get_param('artaza_magento_connect.stock_batch_size') or 50)
-        warehouses = self.env['stock.warehouse'].search([], order='id')
-        if not warehouses:
-            return
-        connector = self.env['artaza.magento.connector']
+        self._magento_cron_push('magento_stock_dirty', self._magento_push_stock, batch_size)
+        self._magento_cron_push('magento_price_dirty', self._magento_push_price, batch_size)
 
+    @api.model
+    def _magento_cron_push(self, dirty_field, push_fn, batch_size):
+        """Procesa en lotes los productos con `dirty_field=True` usando `push_fn`.
+
+        Idempotente: la cantidad/precio son absolutos por SKU. Ante un error de
+        un lote corta y deja los pendientes para el próximo tick.
+        """
         sent = 0
         for _batch in range(10000):  # guarda contra loop infinito
             products = self.search([
-                ('magento_stock_dirty', '=', True),
+                (dirty_field, '=', True),
                 ('is_storable', '=', True),
                 ('default_code', '!=', False),
             ], limit=batch_size)
             if not products:
                 break
-
-            qty_by_wh = self._magento_qty_by_warehouse(products, warehouses)
-            payload = [{
-                'sku': product.default_code,
-                'warehouse_code': wh.code,
-                'qty': qty_by_wh[product.id].get(wh.code, 0.0),
-            } for product in products for wh in warehouses]
-
             try:
-                connector.call('POST', 'stock', payload)
+                push_fn(products)
             except Exception as exc:  # noqa: BLE001 - dejar pendientes para el próximo tick
-                _logger.warning("Cron stock Magento: lote falló, se reintenta luego: %s", exc)
+                _logger.warning(
+                    "Cron Magento (%s): lote falló, se reintenta luego: %s",
+                    dirty_field, exc,
+                )
                 break
-
-            products.write({'magento_stock_dirty': False})
+            products.write({dirty_field: False})
             sent += len(products)
 
         if sent:
-            _logger.info("Cron stock Magento: %s producto(s) sincronizado(s).", sent)
+            _logger.info("Cron Magento (%s): %s producto(s) sincronizado(s).", dirty_field, sent)

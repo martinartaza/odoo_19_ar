@@ -87,7 +87,7 @@ export class MagentoStockMatrix extends Component {
     async syncRow(row) {
         const result = await this.orm.call(
             "product.product",
-            "magento_sync_stock",
+            "magento_sync_now",
             [[row.id]]
         );
         const pending = (result.skipped || []).length;
