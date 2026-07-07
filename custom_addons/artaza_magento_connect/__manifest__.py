@@ -1,6 +1,6 @@
 {
     'name': 'Artaza Magento Connect',
-    'version': '19.0.6.0.0',
+    'version': '19.0.7.0.0',
     'category': 'Website/CMS',
     'summary': 'Gestiona el contenido CMS de Magento desde Odoo vía el middleware FastAPI',
     'description': """
@@ -19,10 +19,10 @@ endpoints y autenticación.
     """,
     'author': 'Sebastian Martin Artaza Saade',
     'maintainer': 'Sebastian Martin Artaza Saade',
-    'website': 'https://www.sebastianartaza.com',
+    'website': 'https://www.artaza.net',
     'support': 'martin.artaza@gmail.com',
     'license': 'LGPL-3',
-    'depends': ['base', 'stock'],
+    'depends': ['base', 'stock', 'sale'],
     'data': [
         'security/security.xml',
         'security/ir.model.access.csv',

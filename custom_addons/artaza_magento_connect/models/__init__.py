@@ -5,4 +5,5 @@ from . import cms_block
 from . import product_template
 from . import product_product
 from . import stock_quant
+from . import sale_order
 from . import res_config_settings

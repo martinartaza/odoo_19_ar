@@ -64,6 +64,26 @@
                                 </div>
                             </div>
                         </setting>
+                        <setting string="Importar órdenes desde Magento"
+                                 help="El cron trae las órdenes pagadas (como venta confirmada) y las de transferencia pendientes (como presupuesto para negociar).">
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <field name="magento_orders_cron_active"/>
+                                    <label for="magento_orders_cron_active" string="Importar órdenes automáticamente"/>
+                                </div>
+                                <div class="row">
+                                    <label string="Frecuencia" for="magento_orders_interval_number"
+                                           class="col-lg-4 o_light_label"/>
+                                    <field name="magento_orders_interval_number" class="oe_inline"/>
+                                    <field name="magento_orders_interval_type" class="oe_inline"/>
+                                </div>
+                                <div class="row">
+                                    <label string="Métodos de pago offline" for="magento_offline_methods"
+                                           class="col-lg-4 o_light_label"/>
+                                    <field name="magento_offline_methods" class="oe_inline"/>
+                                </div>
+                            </div>
+                        </setting>
                     </block>
                 </app>
             </xpath>
