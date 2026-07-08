@@ -2,6 +2,7 @@ import logging
 from urllib.parse import quote
 
 from odoo import api, fields, models
+from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
 
@@ -20,6 +21,17 @@ class SaleOrder(models.Model):
     )
     magento_order_state = fields.Char(
         string="Estado en Magento", copy=False, readonly=True,
+    )
+    magento_order_entity_id = fields.Integer(
+        string="Entity ID Magento", copy=False, readonly=True,
+    )
+    magento_order_total = fields.Monetary(
+        string="Total original Magento", copy=False, readonly=True,
+        help="Grand total de la orden en Magento al absorberla; base para el ajuste.",
+    )
+    magento_adjustment_reason = fields.Char(
+        string="Motivo del ajuste (Magento)", copy=False,
+        help="Se muestra al cliente en su orden de Magento junto al total acordado.",
     )
 
     _sql_constraints = [
@@ -105,6 +117,8 @@ class SaleOrder(models.Model):
             'order_line': line_commands,
             'magento_order_id': order['increment_id'],
             'magento_order_state': state,
+            'magento_order_entity_id': order.get('entity_id'),
+            'magento_order_total': order.get('grand_total') or 0.0,
         })
 
         # Odoo es dueño del monto: forzar el precio de Magento (evita que la
@@ -116,6 +130,35 @@ class SaleOrder(models.Model):
         if paid:
             so.action_confirm()  # pagada → orden de venta; transferencia → queda borrador
         return so
+
+    # ── Push del ajuste negociado a Magento (display-only) ─────
+    def action_magento_push_negotiation(self):
+        """Envía a Magento el ajuste/total acordado para mostrarlo al cliente.
+
+        No toca los balances de Magento: escribe campos informativos. El ajuste
+        es el delta contra el total original de la orden en Magento.
+        """
+        self.ensure_one()
+        if not self.magento_order_entity_id:
+            raise UserError(self.env._("Esta orden no proviene de Magento."))
+
+        adjustment = self.amount_total - (self.magento_order_total or 0.0)
+        self.env['artaza.magento.connector'].call('POST', 'negotiation', {
+            'order_id': self.magento_order_entity_id,
+            'adjustment_amount': adjustment,
+            'adjustment_reason': self.magento_adjustment_reason or False,
+            'negotiation_total': self.amount_total,
+        })
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'type': 'success',
+                'title': self.env._("Ajuste enviado a Magento"),
+                'message': self.env._("El cliente verá el total acordado en su orden."),
+                'sticky': False,
+            },
+        }
 
     # ── Upsert del cliente (por email) ─────────────────────────
     @api.model
