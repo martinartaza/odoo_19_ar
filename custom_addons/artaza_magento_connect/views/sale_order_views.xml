@@ -11,9 +11,10 @@
                         string="Send adjustment to Magento" class="btn-secondary"
                         invisible="not magento_order_id"/>
             </xpath>
-            <!-- Adjustment reason + reference to the Magento order -->
-            <field name="client_order_ref" position="after">
+            <!-- Magento order reference + adjustment reason, right under the customer -->
+            <field name="partner_id" position="after">
                 <field name="magento_order_id" readonly="1" invisible="not magento_order_id"/>
+                <field name="magento_order_state" readonly="1" invisible="not magento_order_id"/>
                 <field name="magento_adjustment_reason" invisible="not magento_order_id"/>
             </field>
         </field>
