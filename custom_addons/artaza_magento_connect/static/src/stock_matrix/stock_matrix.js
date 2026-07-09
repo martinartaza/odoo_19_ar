@@ -3,6 +3,7 @@
 import { Component, onWillStart, useState } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
+import { _t } from "@web/core/l10n/translation";
 
 const PAGE_SIZE = 50;
 
@@ -43,7 +44,7 @@ export class MagentoStockMatrix extends Component {
     }
 
     doSearch() {
-        this.state.offset = 0; // toda búsqueda vuelve a la primera página
+        this.state.offset = 0; // every search goes back to the first page
         this.load();
     }
 
@@ -93,11 +94,11 @@ export class MagentoStockMatrix extends Component {
         const pending = (result.skipped || []).length;
         if (pending) {
             this.notification.add(
-                `${row.sku}: enviado (${pending} bodega/s pendiente/s en el middleware)`,
+                _t("%s: sent (%s warehouse(s) pending in the middleware)", row.sku, pending),
                 { type: "warning" }
             );
         } else {
-            this.notification.add(`${row.sku}: stock sincronizado`, { type: "success" });
+            this.notification.add(_t("%s: stock synced", row.sku), { type: "success" });
         }
     }
 }

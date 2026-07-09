@@ -13,55 +13,66 @@ class ResConfigSettings(models.TransientModel):
     _inherit = 'res.config.settings'
 
     magento_middleware_base_url = fields.Char(
-        string="URL del middleware",
+        string="Middleware URL",
         config_parameter=PARAM_BASE_URL,
-        help="Base URL de la API del middleware FastAPI, "
-             "p.ej. https://www.artaza.net/api/v1",
+        help="Base URL of the FastAPI middleware API, "
+             "e.g. https://www.artaza.net/api/v1",
     )
     magento_api_key = fields.Char(
         string="API key",
         config_parameter=PARAM_API_KEY,
-        help="API key generada en el panel del middleware. "
-             "Se envía como 'Authorization: Bearer <key>'.",
+        help="API key generated in the middleware panel. "
+             "Sent as 'Authorization: Bearer <key>'.",
     )
 
-    # ── Cron de stock ──────────────────────────────────────────
+    # ── Stock cron ─────────────────────────────────────────────
     magento_stock_batch_size = fields.Integer(
-        string="Productos por lote",
+        string="Products per batch",
         config_parameter='artaza_magento_connect.stock_batch_size',
         default=50,
-        help="Cuántos productos manda el cron por envío (para probar, poné 5).",
+        help="How many products the cron sends per push (for testing, use 5).",
     )
-    magento_cron_active = fields.Boolean(string="Sync automática de stock")
-    magento_cron_interval_number = fields.Integer(string="Frecuencia", default=30)
+    magento_cron_active = fields.Boolean(string="Automatic stock sync")
+    magento_cron_interval_number = fields.Integer(string="Frequency", default=30)
     magento_cron_interval_type = fields.Selection(
         [
-            ('minutes', "Minutos"),
-            ('hours', "Horas"),
-            ('days', "Días"),
-            ('weeks', "Semanas"),
+            ('minutes', "Minutes"),
+            ('hours', "Hours"),
+            ('days', "Days"),
+            ('weeks', "Weeks"),
         ],
-        string="Unidad",
+        string="Unit",
         default='minutes',
     )
 
-    # ── Importación de órdenes (Magento → Odoo) ────────────────
-    magento_offline_methods = fields.Char(
-        string="Métodos de pago offline",
-        config_parameter='artaza_magento_connect.offline_methods',
-        default='banktransfer',
-        help="Códigos de métodos offline (separados por coma) cuyas órdenes "
-             "pendientes se absorben como presupuesto para negociar. Ej: banktransfer.",
+    # ── Order import (Magento → Odoo) ──────────────────────────
+    # Payment methods that produce PAID orders (state processing/complete) → confirmed sale.
+    magento_processing_methods = fields.Char(
+        string="Immediate-payment methods (processing)",
+        config_parameter='artaza_magento_connect.processing_methods',
+        default='mercadopago_adbpayment_checkout_pro',
+        help="Codes (comma-separated) of methods whose payment clears "
+             "instantly. Their orders are imported as a confirmed sale, with no "
+             "price change. E.g.: mercadopago_adbpayment_checkout_pro",
     )
-    magento_orders_cron_active = fields.Boolean(string="Importar órdenes automáticamente")
-    magento_orders_interval_number = fields.Integer(string="Frecuencia órdenes", default=15)
+    # Payment methods that produce UNPAID orders (state new) → draft quotation (negotiable).
+    magento_pending_methods = fields.Char(
+        string="Payment-pending methods (pending)",
+        config_parameter='artaza_magento_connect.pending_methods',
+        default='checkmo,banktransfer',
+        help="Codes (comma-separated) of offline methods awaiting settlement. "
+             "Their orders are imported as a quotation to negotiate: you can "
+             "adjust the price and inform Magento. E.g.: checkmo, banktransfer",
+    )
+    magento_orders_cron_active = fields.Boolean(string="Import orders automatically")
+    magento_orders_interval_number = fields.Integer(string="Orders frequency", default=15)
     magento_orders_interval_type = fields.Selection(
         [
-            ('minutes', "Minutos"),
-            ('hours', "Horas"),
-            ('days', "Días"),
+            ('minutes', "Minutes"),
+            ('hours', "Hours"),
+            ('days', "Days"),
         ],
-        string="Unidad órdenes",
+        string="Orders unit",
         default='minutes',
     )
 
@@ -72,7 +83,7 @@ class ResConfigSettings(models.TransientModel):
         return self.env.ref(ORDERS_CRON_XMLID, raise_if_not_found=False)
 
     def action_magento_test_connection(self):
-        """Valida la API key + conexión contra /ping del middleware."""
+        """Validate the API key + connection against the middleware /ping."""
         self.ensure_one()
         self.env['artaza.magento.connector'].test_connection()
         return {
@@ -80,38 +91,38 @@ class ResConfigSettings(models.TransientModel):
             'tag': 'display_notification',
             'params': {
                 'type': 'success',
-                'title': self.env._("Conexión correcta"),
-                'message': self.env._("El middleware respondió correctamente."),
+                'title': self.env._("Connection OK"),
+                'message': self.env._("The middleware responded correctly."),
                 'sticky': False,
             },
         }
 
     def action_magento_sync_warehouses(self):
-        """Registra las bodegas de Odoo en el middleware y muestra el estado."""
+        """Register the Odoo warehouses in the middleware and show the status."""
         self.ensure_one()
         result = self.env['artaza.magento.connector'].sync_warehouses()
         pending = result.get('pending_warehouses') or []
         if pending:
             kind = 'warning'
             message = self.env._(
-                "Bodegas registradas. Faltan relacionar en el middleware: %s",
+                "Warehouses registered. Still to be mapped in the middleware: %s",
                 ", ".join(pending),
             )
         else:
             kind = 'success'
-            message = self.env._("Tus bodegas ya están sincronizadas con Magento.")
+            message = self.env._("Your warehouses are already synced with Magento.")
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
                 'type': kind,
-                'title': self.env._("Sincronización de bodegas"),
+                'title': self.env._("Warehouse sync"),
                 'message': message,
                 'sticky': bool(pending),
             },
         }
 
-    # ── Frecuencia del cron (leída/escrita en el ir.cron) ──────
+    # ── Cron frequency (read/written on the ir.cron) ───────────
     @api.model
     def get_values(self):
         res = super().get_values()
@@ -149,7 +160,7 @@ class ResConfigSettings(models.TransientModel):
             })
 
     def action_magento_resync_all_stock(self):
-        """Marca TODOS los productos sincronizables como pendientes (full re-sync)."""
+        """Mark ALL syncable products as pending (full re-sync)."""
         self.ensure_one()
         count = self.env['product.product'].magento_mark_all_dirty()
         return {
@@ -157,9 +168,9 @@ class ResConfigSettings(models.TransientModel):
             'tag': 'display_notification',
             'params': {
                 'type': 'success',
-                'title': self.env._("Re-sincronización de stock"),
+                'title': self.env._("Stock re-sync"),
                 'message': self.env._(
-                    "%s producto(s) marcados. El cron los enviará en lotes.", count
+                    "%s product(s) marked. The cron will send them in batches.", count
                 ),
                 'sticky': False,
             },

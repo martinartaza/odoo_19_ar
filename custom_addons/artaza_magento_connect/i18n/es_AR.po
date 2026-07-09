@@ -1,0 +1,838 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* artaza_magento_connect
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-07-08 23:59+0000\n"
+"PO-Revision-Date: 2026-07-08 23:59+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Language: es_AR\n"
+"Plural-Forms: \n"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/res_config_settings.py:0
+msgid "%s product(s) marked. The cron will send them in batches."
+msgstr "%s producto(s) marcados. El cron los enviará en lotes."
+
+#. module: artaza_magento_connect
+#. odoo-javascript
+#: code:addons/artaza_magento_connect/static/src/stock_matrix/stock_matrix.js:0
+msgid "%s: sent (%s warehouse(s) pending in the middleware)"
+msgstr "%s: enviado (%s bodega/s pendiente/s en el middleware)"
+
+#. module: artaza_magento_connect
+#. odoo-javascript
+#: code:addons/artaza_magento_connect/static/src/stock_matrix/stock_matrix.js:0
+msgid "%s: stock synced"
+msgstr "%s: stock sincronizado"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_cms_page__page_layout__1column
+msgid "1 column"
+msgstr "1 columna"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_cms_page__page_layout__2columns-left
+msgid "2 columns (left)"
+msgstr "2 columnas (izquierda)"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_cms_page__page_layout__2columns-right
+msgid "2 columns (right)"
+msgstr "2 columnas (derecha)"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_cms_page__page_layout__3columns
+msgid "3 columns"
+msgstr "3 columnas"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid ""
+"<b>Immediate-payment</b> methods (Magento: <code>processing</code>):\n"
+"                                        their orders come in as a <b>confirmed sale</b>, with no price change.\n"
+"                                        Enter the <b>codes</b> separated by commas."
+msgstr "<b>Métodos con pago inmediato</b> (Magento: <code>processing</code>): sus órdenes entran como <b>venta confirmada</b>, sin cambio de precio. Poné los <b>códigos</b> separados por coma."
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid ""
+"<b>Payment-pending</b> methods (Magento: <code>new</code> / status\n"
+"                                        <code>pending</code>): their orders come in as a <b>quotation</b> to\n"
+"                                        negotiate; you can adjust the price and inform Magento. Codes separated by commas."
+msgstr "<b>Métodos con pago a acreditar</b> (Magento: <code>new</code> / status <code>pending</code>): sus órdenes entran como <b>presupuesto</b> para negociar; podés ajustar el precio e informarlo a Magento. Códigos separados por coma."
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_res_config_settings__magento_api_key
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "API key"
+msgstr ""
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_res_config_settings__magento_api_key
+msgid ""
+"API key generated in the middleware panel. Sent as 'Authorization: Bearer "
+"<key>'."
+msgstr "API key generada en el panel del middleware. Se envía como 'Authorization: Bearer <key>'."
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid ""
+"API key used to send CMS content to Magento through the FastAPI middleware."
+msgstr "API key para enviar contenido CMS a Magento vía el middleware FastAPI."
+
+#. module: artaza_magento_connect
+#. odoo-javascript
+#: code:addons/artaza_magento_connect/static/src/stock_matrix/stock_matrix.xml:0
+msgid "Action"
+msgstr "Acción"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_block__active
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_mixin__active
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_page__active
+msgid "Active"
+msgstr ""
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_sale_order__magento_adjustment_reason
+msgid "Adjustment Reason (Magento)"
+msgstr "Motivo del ajuste (Magento)"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/sale_order.py:0
+msgid "Adjustment sent to Magento"
+msgstr "Ajuste enviado a Magento"
+
+#. module: artaza_magento_connect
+#: model:res.groups,name:artaza_magento_connect.group_magento_manager
+msgid "Administrator"
+msgstr "Administrador"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_cms_block_form
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_cms_page_form
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_cms_page_search
+msgid "Archived"
+msgstr "Archivado"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_res_config_settings__magento_cron_active
+msgid "Automatic stock sync"
+msgstr "Sync automática de stock"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "Automatic stock sync (cron)"
+msgstr "Sincronización automática de stock (cron)"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_res_config_settings__magento_middleware_base_url
+msgid ""
+"Base URL of the FastAPI middleware API, e.g. https://www.artaza.net/api/v1"
+msgstr "Base URL de la API del middleware FastAPI, p.ej. https://www.artaza.net/api/v1"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_cms_block_form
+msgid "Block title"
+msgstr "Título del bloque"
+
+#. module: artaza_magento_connect
+#: model:ir.ui.menu,name:artaza_magento_connect.menu_magento_cms
+msgid "CMS"
+msgstr ""
+
+#. module: artaza_magento_connect
+#: model:ir.actions.act_window,name:artaza_magento_connect.action_cms_block
+#: model:ir.ui.menu,name:artaza_magento_connect.menu_cms_block
+msgid "CMS Blocks"
+msgstr "Bloques CMS"
+
+#. module: artaza_magento_connect
+#: model:ir.actions.act_window,name:artaza_magento_connect.action_cms_page
+#: model:ir.ui.menu,name:artaza_magento_connect.menu_cms_page
+msgid "CMS Pages"
+msgstr "Páginas CMS"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_res_config_settings__magento_processing_methods
+msgid ""
+"Codes (comma-separated) of methods whose payment clears instantly. Their "
+"orders are imported as a confirmed sale, with no price change. E.g.: "
+"mercadopago_adbpayment_checkout_pro"
+msgstr "Códigos (separados por coma) de métodos cuyo pago se acredita al instante. Sus órdenes entran como venta confirmada, sin cambio de precio. Ej.: mercadopago_adbpayment_checkout_pro"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_res_config_settings__magento_pending_methods
+msgid ""
+"Codes (comma-separated) of offline methods awaiting settlement. Their orders"
+" are imported as a quotation to negotiate: you can adjust the price and "
+"inform Magento. E.g.: checkmo, banktransfer"
+msgstr "Códigos (separados por coma) de métodos offline pendientes de acreditación. Sus órdenes entran como presupuesto para negociar: podés ajustar el precio y avisarle a Magento. Ej.: checkmo, banktransfer"
+
+#. module: artaza_magento_connect
+#: model:ir.model,name:artaza_magento_connect.model_res_config_settings
+msgid "Config Settings"
+msgstr ""
+
+#. module: artaza_magento_connect
+#: model:ir.ui.menu,name:artaza_magento_connect.menu_magento_config
+msgid "Configuration"
+msgstr "Configuración"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/res_config_settings.py:0
+msgid "Connection OK"
+msgstr "Conexión correcta"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/magento_connector.py:0
+msgid "Connection error with the middleware: %s"
+msgstr "Error de conexión con el middleware: %s"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_block__content
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_mixin__content
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_page__content
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_cms_page_form
+msgid "Content"
+msgstr "Contenido"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_page__content_heading
+msgid "Content heading"
+msgstr "Encabezado de contenido"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_block__create_uid
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_page__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_block__create_date
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_page__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__res_config_settings__magento_cron_interval_type__days
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__res_config_settings__magento_orders_interval_type__days
+msgid "Days"
+msgstr "Días"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_block__display_name
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_mixin__display_name
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_page__display_name
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_connector__display_name
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_product_product__display_name
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_product_template__display_name
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_res_config_settings__display_name
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_sale_order__display_name
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_stock_quant__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_cms_page__page_layout__empty
+msgid "Empty"
+msgstr "Vacío"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "Enable automatic stock sync"
+msgstr "Activar sync automática de stock"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_cms_block__sync_state__error
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_cms_mixin__sync_state__error
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_cms_page__sync_state__error
+msgid "Error"
+msgstr ""
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_res_config_settings__magento_cron_interval_number
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "Frequency"
+msgstr "Frecuencia"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_sale_order__magento_order_total
+msgid ""
+"Grand total of the order in Magento when absorbed; base for the adjustment."
+msgstr "Grand total de la orden en Magento al absorberla; base para el ajuste."
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_cms_page_form
+msgid "Heading..."
+msgstr "Encabezado..."
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__res_config_settings__magento_cron_interval_type__hours
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__res_config_settings__magento_orders_interval_type__hours
+msgid "Hours"
+msgstr "Horas"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_res_config_settings__magento_stock_batch_size
+msgid "How many products the cron sends per push (for testing, use 5)."
+msgstr "Cuántos productos manda el cron por envío (para probar, poné 5)."
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_block__id
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_mixin__id
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_page__id
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_connector__id
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_product_product__id
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_product_template__id
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_res_config_settings__id
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_sale_order__id
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_stock_quant__id
+msgid "ID"
+msgstr ""
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_block__identifier
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_mixin__identifier
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_page__identifier
+msgid "Identifier (URL key)"
+msgstr "Identificador (URL key)"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_res_config_settings__magento_processing_methods
+msgid "Immediate-payment methods (processing)"
+msgstr "Métodos con pago inmediato (processing)"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_res_config_settings__magento_orders_cron_active
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "Import orders automatically"
+msgstr "Importar órdenes automáticamente"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "Import orders from Magento"
+msgstr "Importar órdenes desde Magento"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_block__write_uid
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_page__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_block__write_date
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_page__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_block__sync_error
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_mixin__sync_error
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_page__sync_error
+msgid "Last error"
+msgstr "Último error"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_block__last_sync
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_mixin__last_sync
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_page__last_sync
+msgid "Last sync"
+msgstr "Última sincronización"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_page__page_layout
+msgid "Layout"
+msgstr ""
+
+#. module: artaza_magento_connect
+#. odoo-javascript
+#: code:addons/artaza_magento_connect/static/src/stock_matrix/stock_matrix.xml:0
+msgid "Loading…"
+msgstr "Cargando…"
+
+#. module: artaza_magento_connect
+#: model:ir.ui.menu,name:artaza_magento_connect.menu_magento_root
+msgid "Magento"
+msgstr ""
+
+#. module: artaza_magento_connect
+#: model:ir.model,name:artaza_magento_connect.model_artaza_magento_cms_block
+msgid "Magento CMS Block"
+msgstr "Bloque CMS de Magento"
+
+#. module: artaza_magento_connect
+#: model:ir.model,name:artaza_magento_connect.model_artaza_magento_cms_mixin
+msgid "Magento CMS Mixin"
+msgstr "Mixin CMS Magento"
+
+#. module: artaza_magento_connect
+#: model:ir.model,name:artaza_magento_connect.model_artaza_magento_cms_page
+msgid "Magento CMS Page"
+msgstr "Página CMS de Magento"
+
+#. module: artaza_magento_connect
+#: model:ir.module.category,name:artaza_magento_connect.module_category_magento_connect
+#: model:res.groups.privilege,name:artaza_magento_connect.privilege_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "Magento Connect"
+msgstr ""
+
+#. module: artaza_magento_connect
+#: model:ir.actions.act_window,name:artaza_magento_connect.action_magento_config_settings
+msgid "Magento Connect Settings"
+msgstr "Ajustes Magento Connect"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_sale_order__magento_order_entity_id
+msgid "Magento Entity ID"
+msgstr "Entity ID Magento"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_block__magento_id
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_mixin__magento_id
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_page__magento_id
+msgid "Magento ID"
+msgstr "ID en Magento"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_sale_order__magento_order_id
+msgid "Magento Order ID"
+msgstr "ID orden Magento"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_sale_order__magento_order_state
+msgid "Magento State"
+msgstr "Estado en Magento"
+
+#. module: artaza_magento_connect
+#: model:ir.model,name:artaza_magento_connect.model_artaza_magento_connector
+msgid "Magento middleware client (FastAPI)"
+msgstr "Cliente del middleware Magento (FastAPI)"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_artaza_magento_cms_block__store_ids
+#: model:ir.model.fields,help:artaza_magento_connect.field_artaza_magento_cms_mixin__store_ids
+#: model:ir.model.fields,help:artaza_magento_connect.field_artaza_magento_cms_page__store_ids
+msgid "Magento store-view IDs separated by commas. 0 = default/admin view."
+msgstr "IDs de store-view de Magento separados por coma. 0 = vista por defecto/admin."
+
+#. module: artaza_magento_connect
+#: model:ir.actions.server,name:artaza_magento_connect.ir_cron_magento_pull_orders_ir_actions_server
+msgid "Magento: import orders"
+msgstr "Magento: importar órdenes"
+
+#. module: artaza_magento_connect
+#: model:ir.actions.server,name:artaza_magento_connect.ir_cron_magento_stock_sync_ir_actions_server
+msgid "Magento: sync stock"
+msgstr "Magento: sincronizar stock"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "Mark everything for sync"
+msgstr "Marcar todo para sincronizar"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_page__meta_description
+msgid "Meta description"
+msgstr "Meta descripción"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_page__meta_keywords
+msgid "Meta keywords"
+msgstr ""
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_page__meta_title
+msgid "Meta title"
+msgstr "Meta título"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "Middleware (FastAPI)"
+msgstr ""
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_res_config_settings__magento_middleware_base_url
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "Middleware URL"
+msgstr "URL del middleware"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "Middleware connection"
+msgstr "Conexión al middleware"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__res_config_settings__magento_cron_interval_type__minutes
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__res_config_settings__magento_orders_interval_type__minutes
+msgid "Minutes"
+msgstr "Minutos"
+
+#. module: artaza_magento_connect
+#. odoo-javascript
+#: code:addons/artaza_magento_connect/static/src/stock_matrix/stock_matrix.xml:0
+msgid "Next ›"
+msgstr "Siguiente ›"
+
+#. module: artaza_magento_connect
+#. odoo-javascript
+#: code:addons/artaza_magento_connect/static/src/stock_matrix/stock_matrix.xml:0
+msgid "No products."
+msgstr "Sin productos."
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid ""
+"Odoo's internal cron pushes stock to Magento at this frequency. No system "
+"crontab required."
+msgstr "El cron interno de Odoo empuja el stock a Magento según esta frecuencia. No requiere crontab del sistema."
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_res_config_settings__magento_orders_interval_number
+msgid "Orders frequency"
+msgstr "Frecuencia órdenes"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_res_config_settings__magento_orders_interval_type
+msgid "Orders unit"
+msgstr "Unidad órdenes"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_sale_order__magento_order_total
+msgid "Original Magento Total"
+msgstr "Total original Magento"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_cms_page_form
+msgid "Page title"
+msgstr "Título de la página"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_res_config_settings__magento_pending_methods
+msgid "Payment-pending methods (pending)"
+msgstr "Métodos con pago a acreditar (pending)"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_cms_block__sync_state__pending
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_cms_mixin__sync_state__pending
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_cms_page__sync_state__pending
+msgid "Pending"
+msgstr "Pendiente"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_product_product__magento_price_dirty
+msgid "Price pending sync to Magento"
+msgstr "Precio pendiente de sync a Magento"
+
+#. module: artaza_magento_connect
+#: model:ir.model,name:artaza_magento_connect.model_product_template
+msgid "Product"
+msgstr ""
+
+#. module: artaza_magento_connect
+#: model:ir.model,name:artaza_magento_connect.model_product_product
+msgid "Product Variant"
+msgstr ""
+
+#. module: artaza_magento_connect
+#: model:ir.ui.menu,name:artaza_magento_connect.menu_magento_products
+msgid "Products"
+msgstr "Productos"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_res_config_settings__magento_stock_batch_size
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "Products per batch"
+msgstr "Productos por lote"
+
+#. module: artaza_magento_connect
+#: model:ir.actions.client,name:artaza_magento_connect.action_magento_stock_matrix
+msgid "Products — Magento Stock"
+msgstr "Productos — Stock Magento"
+
+#. module: artaza_magento_connect
+#. odoo-javascript
+#: code:addons/artaza_magento_connect/static/src/stock_matrix/stock_matrix.xml:0
+msgid "Products — Stock to Magento"
+msgstr "Productos — Stock hacia Magento"
+
+#. module: artaza_magento_connect
+#: model:ir.model,name:artaza_magento_connect.model_stock_quant
+msgid "Quants"
+msgstr ""
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid ""
+"Register your Odoo warehouses in the middleware. Then map each warehouse to "
+"a Magento source in the middleware panel."
+msgstr "Registra tus almacenes de Odoo en el middleware. Después relacionás cada bodega con un source de Magento en el panel del middleware."
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_cms_page_form
+msgid "SEO"
+msgstr ""
+
+#. module: artaza_magento_connect
+#. odoo-javascript
+#: code:addons/artaza_magento_connect/static/src/stock_matrix/stock_matrix.xml:0
+msgid "SKU"
+msgstr ""
+
+#. module: artaza_magento_connect
+#: model:ir.model,name:artaza_magento_connect.model_sale_order
+msgid "Sales Order"
+msgstr ""
+
+#. module: artaza_magento_connect
+#. odoo-javascript
+#: code:addons/artaza_magento_connect/static/src/stock_matrix/stock_matrix.xml:0
+msgid "Search"
+msgstr "Buscar"
+
+#. module: artaza_magento_connect
+#. odoo-javascript
+#: code:addons/artaza_magento_connect/static/src/stock_matrix/stock_matrix.xml:0
+msgid "Search by name or code (SKU)"
+msgstr "Buscar por nombre o código (SKU)"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_order_form_magento_negotiation
+msgid "Send adjustment to Magento"
+msgstr "Enviar ajuste a Magento"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_product_product__magento_stock_dirty
+msgid "Set when stock changes; the cron pushes it and clears it."
+msgstr "Se marca cuando cambia el stock; el cron lo empuja y lo limpia."
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_product_product__magento_price_dirty
+msgid "Set when the sales price changes; the cron pushes it."
+msgstr "Se marca cuando cambia el precio de venta; el cron lo empuja."
+
+#. module: artaza_magento_connect
+#: model:ir.ui.menu,name:artaza_magento_connect.menu_magento_settings
+msgid "Settings"
+msgstr "Ajustes"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_sale_order__magento_adjustment_reason
+msgid "Shown to the customer in their Magento order next to the agreed total."
+msgstr "Se muestra al cliente en su orden de Magento junto al total acordado."
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_page__sort_order
+msgid "Sort order"
+msgstr "Orden"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_product_product__magento_stock_dirty
+msgid "Stock pending sync to Magento"
+msgstr "Stock pendiente de sync a Magento"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/res_config_settings.py:0
+msgid "Stock re-sync"
+msgstr "Re-sincronización de stock"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_block__store_ids
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_mixin__store_ids
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_page__store_ids
+msgid "Store views"
+msgstr ""
+
+#. module: artaza_magento_connect
+#. odoo-javascript
+#: code:addons/artaza_magento_connect/static/src/stock_matrix/stock_matrix.xml:0
+msgid "Sync"
+msgstr "Sincronizar"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_cms_block_form
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_cms_page_form
+msgid "Sync now"
+msgstr "Sincronizar ahora"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_block__sync_state
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_mixin__sync_state
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_page__sync_state
+msgid "Sync state"
+msgstr "Estado de sync"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "Sync warehouses with Magento"
+msgstr "Sincronizar bodegas con Magento"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_cms_block__sync_state__synced
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_cms_mixin__sync_state__synced
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_cms_page__sync_state__synced
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_cms_page_search
+msgid "Synced"
+msgstr "Sincronizado"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "Test connection"
+msgstr "Probar conexión"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/magento_connector.py:0
+msgid ""
+"The Magento integration is not configured. Set the middleware URL and API "
+"key in Settings ▸ Magento Connect."
+msgstr "La integración con Magento no está configurada. Definí la URL del middleware y la API key en Ajustes ▸ Magento Connect."
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid ""
+"The cron imports paid orders (as a confirmed sale) and pending offline "
+"orders (as a quotation to negotiate)."
+msgstr "El cron trae las órdenes pagadas (como venta confirmada) y las de transferencia pendientes (como presupuesto para negociar)."
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/sale_order.py:0
+msgid "The customer will see the agreed total in their order."
+msgstr "El cliente verá el total acordado en su orden."
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/magento_cms_mixin.py:0
+msgid "The identifier cannot contain spaces: %s"
+msgstr "El identifier no puede contener espacios: %s"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/magento_connector.py:0
+msgid "The middleware rejected the operation (%(code)s): %(detail)s"
+msgstr "El middleware rechazó la operación (%(code)s): %(detail)s"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/res_config_settings.py:0
+msgid "The middleware responded correctly."
+msgstr "El middleware respondió correctamente."
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/sale_order.py:0
+msgid "This order does not come from Magento."
+msgstr "Esta orden no proviene de Magento."
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_block__name
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_mixin__name
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_page__name
+msgid "Title"
+msgstr "Título"
+
+#. module: artaza_magento_connect
+#. odoo-javascript
+#: code:addons/artaza_magento_connect/static/src/stock_matrix/stock_matrix.xml:0
+msgid "Total"
+msgstr ""
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_artaza_magento_cms_block__identifier
+#: model:ir.model.fields,help:artaza_magento_connect.field_artaza_magento_cms_mixin__identifier
+#: model:ir.model.fields,help:artaza_magento_connect.field_artaza_magento_cms_page__identifier
+msgid ""
+"Unique natural key linking the content in Odoo and Magento. Must not change "
+"after creation."
+msgstr "Clave natural única que vincula el contenido en Odoo y Magento. No debe cambiar tras la creación."
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_res_config_settings__magento_cron_interval_type
+msgid "Unit"
+msgstr "Unidad"
+
+#. module: artaza_magento_connect
+#: model:res.groups,name:artaza_magento_connect.group_magento_user
+msgid "User"
+msgstr "Usuario"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/res_config_settings.py:0
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "Warehouse sync"
+msgstr "Sincronización de bodegas"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/res_config_settings.py:0
+msgid "Warehouses registered. Still to be mapped in the middleware: %s"
+msgstr "Bodegas registradas. Faltan relacionar en el middleware: %s"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__res_config_settings__magento_cron_interval_type__weeks
+msgid "Weeks"
+msgstr "Semanas"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_cms_page_search
+msgid "With error"
+msgstr "Con error"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/res_config_settings.py:0
+msgid "Your warehouses are already synced with Magento."
+msgstr "Tus bodegas ya están sincronizadas con Magento."
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_cms_block_form
+msgid "block-identifier"
+msgstr "identifier-del-bloque"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "checkmo, banktransfer"
+msgstr ""
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "https://www.artaza.net/api/v1"
+msgstr ""
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "mercadopago_adbpayment_checkout_pro"
+msgstr ""
+
+#. module: artaza_magento_connect
+#. odoo-javascript
+#: code:addons/artaza_magento_connect/static/src/stock_matrix/stock_matrix.xml:0
+msgid "of"
+msgstr "de"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_cms_page_form
+msgid "url-key-of-the-page"
+msgstr "url-key-de-la-pagina"
+
+#. module: artaza_magento_connect
+#. odoo-javascript
+#: code:addons/artaza_magento_connect/static/src/stock_matrix/stock_matrix.xml:0
+msgid "‹ Previous"
+msgstr "‹ Anterior"

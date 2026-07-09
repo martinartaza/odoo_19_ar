@@ -2,32 +2,32 @@
 <templates xml:space="preserve">
     <t t-name="artaza_magento_connect.StockMatrix">
         <div class="o_magento_stock_matrix p-3">
-            <h4 class="mb-3">Productos — Stock hacia Magento</h4>
+            <h4 class="mb-3">Products — Stock to Magento</h4>
 
             <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap" style="gap: .5rem;">
                 <div class="d-flex align-items-center" style="gap: .5rem; max-width: 640px; flex: 1;">
                     <i class="fa fa-search text-muted"/>
                     <input type="text" class="form-control"
-                           placeholder="Buscar por nombre o código (SKU)"
+                           placeholder="Search by name or code (SKU)"
                            t-model="state.search"
                            t-on-keydown="(ev) => ev.key === 'Enter' ? this.doSearch() : null"/>
-                    <button class="btn btn-primary" t-on-click="() => this.doSearch()">Buscar</button>
+                    <button class="btn btn-primary" t-on-click="() => this.doSearch()">Search</button>
                 </div>
 
                 <div class="d-flex align-items-center" style="gap: .75rem;">
                     <small class="text-muted">
-                        <t t-esc="rangeStart"/>–<t t-esc="rangeEnd"/> de <t t-esc="state.total"/>
+                        <t t-esc="rangeStart"/>–<t t-esc="rangeEnd"/> of <t t-esc="state.total"/>
                     </small>
                     <div class="btn-group">
                         <button class="btn btn-sm btn-secondary" t-att-disabled="!canPrev"
-                                t-on-click="() => this.prevPage()">‹ Anterior</button>
+                                t-on-click="() => this.prevPage()">‹ Previous</button>
                         <button class="btn btn-sm btn-secondary" t-att-disabled="!canNext"
-                                t-on-click="() => this.nextPage()">Siguiente ›</button>
+                                t-on-click="() => this.nextPage()">Next ›</button>
                     </div>
                 </div>
             </div>
 
-            <div t-if="state.loading" class="text-muted">Cargando…</div>
+            <div t-if="state.loading" class="text-muted">Loading…</div>
 
             <table t-if="!state.loading" class="table table-sm table-hover align-middle">
                 <thead>
@@ -37,7 +37,7 @@
                             <t t-esc="wh.name"/>
                         </th>
                         <th class="text-end">Total</th>
-                        <th class="text-end">Acción</th>
+                        <th class="text-end">Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -52,12 +52,12 @@
                         <td class="text-end">
                             <button class="btn btn-sm btn-outline-primary"
                                     t-on-click.stop="() => this.syncRow(row)">
-                                Sincronizar
+                                Sync
                             </button>
                         </td>
                     </tr>
                     <tr t-if="!state.rows.length">
-                        <td colspan="99" class="text-center text-muted">Sin productos.</td>
+                        <td colspan="99" class="text-center text-muted">No products.</td>
                     </tr>
                 </tbody>
             </table>

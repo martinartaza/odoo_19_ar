@@ -5,13 +5,13 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
-            <!-- Botón: enviar el ajuste negociado a Magento (solo órdenes de Magento) -->
+            <!-- Button: send the negotiated adjustment to Magento (Magento orders only) -->
             <xpath expr="//header" position="inside">
                 <button name="action_magento_push_negotiation" type="object"
-                        string="Enviar ajuste a Magento" class="btn-secondary"
+                        string="Send adjustment to Magento" class="btn-secondary"
                         invisible="not magento_order_id"/>
             </xpath>
-            <!-- Motivo del ajuste + referencia a la orden de Magento -->
+            <!-- Adjustment reason + reference to the Magento order -->
             <field name="client_order_ref" position="after">
                 <field name="magento_order_id" readonly="1" invisible="not magento_order_id"/>
                 <field name="magento_adjustment_reason" invisible="not magento_order_id"/>

@@ -24,21 +24,21 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <button name="action_sync_now" type="object" string="Sincronizar ahora"
+                    <button name="action_sync_now" type="object" string="Sync now"
                             class="btn-primary" icon="fa-refresh"/>
                     <field name="sync_state" widget="statusbar"
                            statusbar_visible="pending,synced,error"/>
                 </header>
                 <sheet>
-                    <widget name="web_ribbon" title="Archivado" bg_color="text-bg-danger"
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger"
                             invisible="active"/>
                     <div class="oe_title">
                         <label for="name"/>
-                        <h1><field name="name" placeholder="Título del bloque"/></h1>
+                        <h1><field name="name" placeholder="Block title"/></h1>
                     </div>
                     <group>
                         <group>
-                            <field name="identifier" placeholder="identifier-del-bloque"/>
+                            <field name="identifier" placeholder="block-identifier"/>
                             <field name="active"/>
                             <field name="store_ids"/>
                         </group>
@@ -55,7 +55,7 @@
     </record>
 
     <record id="action_cms_block" model="ir.actions.act_window">
-        <field name="name">Bloques CMS</field>
+        <field name="name">CMS Blocks</field>
         <field name="res_model">artaza.magento.cms.block</field>
         <field name="view_mode">list,form</field>
     </record>

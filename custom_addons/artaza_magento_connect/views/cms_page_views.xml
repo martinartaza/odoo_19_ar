@@ -24,21 +24,21 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <button name="action_sync_now" type="object" string="Sincronizar ahora"
+                    <button name="action_sync_now" type="object" string="Sync now"
                             class="btn-primary" icon="fa-refresh"/>
                     <field name="sync_state" widget="statusbar"
                            statusbar_visible="pending,synced,error"/>
                 </header>
                 <sheet>
-                    <widget name="web_ribbon" title="Archivado" bg_color="text-bg-danger"
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger"
                             invisible="active"/>
                     <div class="oe_title">
                         <label for="name"/>
-                        <h1><field name="name" placeholder="Título de la página"/></h1>
+                        <h1><field name="name" placeholder="Page title"/></h1>
                     </div>
                     <group>
                         <group>
-                            <field name="identifier" placeholder="url-key-de-la-pagina"/>
+                            <field name="identifier" placeholder="url-key-of-the-page"/>
                             <field name="active"/>
                             <field name="store_ids"/>
                             <field name="sort_order"/>
@@ -51,8 +51,8 @@
                         </group>
                     </group>
                     <notebook>
-                        <page string="Contenido" name="content">
-                            <field name="content_heading" placeholder="Encabezado..."/>
+                        <page string="Content" name="content">
+                            <field name="content_heading" placeholder="Heading..."/>
                             <field name="content" widget="html"/>
                         </page>
                         <page string="SEO" name="seo">
@@ -75,15 +75,15 @@
             <search>
                 <field name="name"/>
                 <field name="identifier"/>
-                <filter name="synced" string="Sincronizado" domain="[('sync_state','=','synced')]"/>
-                <filter name="errors" string="Con error" domain="[('sync_state','=','error')]"/>
-                <filter name="archived" string="Archivado" domain="[('active','=',False)]"/>
+                <filter name="synced" string="Synced" domain="[('sync_state','=','synced')]"/>
+                <filter name="errors" string="With error" domain="[('sync_state','=','error')]"/>
+                <filter name="archived" string="Archived" domain="[('active','=',False)]"/>
             </search>
         </field>
     </record>
 
     <record id="action_cms_page" model="ir.actions.act_window">
-        <field name="name">Páginas CMS</field>
+        <field name="name">CMS Pages</field>
         <field name="res_model">artaza.magento.cms.page</field>
         <field name="view_mode">list,form</field>
     </record>

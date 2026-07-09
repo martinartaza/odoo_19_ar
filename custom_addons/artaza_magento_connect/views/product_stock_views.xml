@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <record id="action_magento_stock_matrix" model="ir.actions.client">
-        <field name="name">Productos — Stock Magento</field>
+        <field name="name">Products — Magento Stock</field>
         <field name="tag">artaza_magento_stock_matrix</field>
     </record>
 
-    <!-- sequence 1 → la app Magento aterriza en Productos (es el primer sub-menú) -->
-    <menuitem id="menu_magento_products" name="Productos"
+    <!-- sequence 1 → the Magento app lands on Products (it is the first sub-menu) -->
+    <menuitem id="menu_magento_products" name="Products"
               parent="menu_magento_root" action="action_magento_stock_matrix"
               sequence="1"/>
 </odoo>

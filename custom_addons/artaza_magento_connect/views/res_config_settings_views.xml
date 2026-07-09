@@ -8,11 +8,11 @@
             <xpath expr="//form" position="inside">
                 <app data-string="Magento Connect" string="Magento Connect" name="artaza_magento_connect">
                     <block title="Middleware (FastAPI)" name="magento_middleware">
-                        <setting string="Conexión al middleware"
-                                 help="API key para enviar contenido CMS a Magento vía el middleware FastAPI.">
+                        <setting string="Middleware connection"
+                                 help="API key used to send CMS content to Magento through the FastAPI middleware.">
                             <div class="content-group">
                                 <div class="row mt16">
-                                    <label string="URL del middleware" for="magento_middleware_base_url"
+                                    <label string="Middleware URL" for="magento_middleware_base_url"
                                            class="col-lg-4 o_light_label"/>
                                     <field name="magento_middleware_base_url"
                                            placeholder="https://www.artaza.net/api/v1"/>
@@ -24,63 +24,76 @@
                                 </div>
                                 <div class="row mt16">
                                     <button name="action_magento_test_connection" type="object"
-                                            string="Probar conexión" class="btn-secondary"
+                                            string="Test connection" class="btn-secondary"
                                             icon="fa-plug"/>
                                 </div>
                             </div>
                         </setting>
-                        <setting string="Sincronización de bodegas"
-                                 help="Registra tus almacenes de Odoo en el middleware. Después relacionás cada bodega con un source de Magento en el panel del middleware.">
+                        <setting string="Warehouse sync"
+                                 help="Register your Odoo warehouses in the middleware. Then map each warehouse to a Magento source in the middleware panel.">
                             <div class="content-group">
                                 <div class="row mt16">
                                     <button name="action_magento_sync_warehouses" type="object"
-                                            string="Sincronizar bodegas con Magento" class="btn-secondary"
+                                            string="Sync warehouses with Magento" class="btn-secondary"
                                             icon="fa-cubes"/>
                                 </div>
                             </div>
                         </setting>
-                        <setting string="Sincronización automática de stock (cron)"
-                                 help="El cron interno de Odoo empuja el stock a Magento según esta frecuencia. No requiere crontab del sistema.">
+                        <setting string="Automatic stock sync (cron)"
+                                 help="Odoo's internal cron pushes stock to Magento at this frequency. No system crontab required.">
                             <div class="content-group">
                                 <div class="row mt16">
                                     <field name="magento_cron_active"/>
-                                    <label for="magento_cron_active" string="Activar sync automática de stock"/>
+                                    <label for="magento_cron_active" string="Enable automatic stock sync"/>
                                 </div>
                                 <div class="row">
-                                    <label string="Frecuencia" for="magento_cron_interval_number"
+                                    <label string="Frequency" for="magento_cron_interval_number"
                                            class="col-lg-4 o_light_label"/>
                                     <field name="magento_cron_interval_number" class="oe_inline"/>
                                     <field name="magento_cron_interval_type" class="oe_inline"/>
                                 </div>
                                 <div class="row">
-                                    <label string="Productos por lote" for="magento_stock_batch_size"
+                                    <label string="Products per batch" for="magento_stock_batch_size"
                                            class="col-lg-4 o_light_label"/>
                                     <field name="magento_stock_batch_size" class="oe_inline"/>
                                 </div>
                                 <div class="row mt16">
                                     <button name="action_magento_resync_all_stock" type="object"
-                                            string="Marcar todo para sincronizar" class="btn-secondary"
+                                            string="Mark everything for sync" class="btn-secondary"
                                             icon="fa-refresh"/>
                                 </div>
                             </div>
                         </setting>
-                        <setting string="Importar órdenes desde Magento"
-                                 help="El cron trae las órdenes pagadas (como venta confirmada) y las de transferencia pendientes (como presupuesto para negociar).">
+                        <setting string="Import orders from Magento"
+                                 help="The cron imports paid orders (as a confirmed sale) and pending offline orders (as a quotation to negotiate).">
                             <div class="content-group">
                                 <div class="row mt16">
                                     <field name="magento_orders_cron_active"/>
-                                    <label for="magento_orders_cron_active" string="Importar órdenes automáticamente"/>
+                                    <label for="magento_orders_cron_active" string="Import orders automatically"/>
                                 </div>
                                 <div class="row">
-                                    <label string="Frecuencia" for="magento_orders_interval_number"
+                                    <label string="Frequency" for="magento_orders_interval_number"
                                            class="col-lg-4 o_light_label"/>
                                     <field name="magento_orders_interval_number" class="oe_inline"/>
                                     <field name="magento_orders_interval_type" class="oe_inline"/>
                                 </div>
-                                <div class="row">
-                                    <label string="Métodos de pago offline" for="magento_offline_methods"
-                                           class="col-lg-4 o_light_label"/>
-                                    <field name="magento_offline_methods" class="oe_inline"/>
+                                <div class="mt16">
+                                    <div class="text-muted mb4">
+                                        <b>Immediate-payment</b> methods (Magento: <code>processing</code>):
+                                        their orders come in as a <b>confirmed sale</b>, with no price change.
+                                        Enter the <b>codes</b> separated by commas.
+                                    </div>
+                                    <field name="magento_processing_methods" class="w-75"
+                                           placeholder="mercadopago_adbpayment_checkout_pro"/>
+                                </div>
+                                <div class="mt16">
+                                    <div class="text-muted mb4">
+                                        <b>Payment-pending</b> methods (Magento: <code>new</code> / status
+                                        <code>pending</code>): their orders come in as a <b>quotation</b> to
+                                        negotiate; you can adjust the price and inform Magento. Codes separated by commas.
+                                    </div>
+                                    <field name="magento_pending_methods" class="w-75"
+                                           placeholder="checkmo, banktransfer"/>
                                 </div>
                             </div>
                         </setting>
@@ -91,7 +104,7 @@
     </record>
 
     <record id="action_magento_config_settings" model="ir.actions.act_window">
-        <field name="name">Ajustes Magento Connect</field>
+        <field name="name">Magento Connect Settings</field>
         <field name="res_model">res.config.settings</field>
         <field name="view_mode">form</field>
         <field name="context">{'module': 'artaza_magento_connect'}</field>

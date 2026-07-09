@@ -7,7 +7,7 @@ from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
 
-# Claves usadas en ir.config_parameter (ver integration_v2.md §6.1, §12)
+# Keys used in ir.config_parameter (see integration_v2.md §6.1, §12)
 PARAM_BASE_URL = 'artaza_magento_connect.middleware_base_url'
 PARAM_API_KEY = 'artaza_magento_connect.api_key'
 
@@ -15,15 +15,15 @@ REQUEST_TIMEOUT = 20
 
 
 class MagentoConnector(models.AbstractModel):
-    """Cliente HTTP hacia el middleware FastAPI.
+    """HTTP client to the FastAPI middleware.
 
-    Autentica con una API key (enviada como ``Authorization: Bearer <key>``).
-    Es un AbstractModel: se usa vía ``self.env['artaza.magento.connector']``.
+    Authenticates with an API key (sent as ``Authorization: Bearer <key>``).
+    It is an AbstractModel: used via ``self.env['artaza.magento.connector']``.
     """
     _name = 'artaza.magento.connector'
-    _description = 'Cliente del middleware Magento (FastAPI)'
+    _description = 'Magento middleware client (FastAPI)'
 
-    # -- Configuración -------------------------------------------------------
+    # -- Configuration -------------------------------------------------------
 
     @api.model
     def _get_config(self):
@@ -32,22 +32,21 @@ class MagentoConnector(models.AbstractModel):
         api_key = ICP.get_param(PARAM_API_KEY)
         if not (base_url and api_key):
             raise UserError(self.env._(
-                "La integración con Magento no está configurada. "
-                "Definí la URL del middleware y la API key en "
-                "Ajustes ▸ Magento Connect."
+                "The Magento integration is not configured. Set the middleware "
+                "URL and API key in Settings ▸ Magento Connect."
             ))
         return {'base_url': base_url, 'api_key': api_key}
 
-    # -- Llamada genérica ----------------------------------------------------
+    # -- Generic call --------------------------------------------------------
 
     @api.model
     def call(self, method, endpoint, payload=None):
-        """Ejecuta una llamada autenticada al middleware.
+        """Run an authenticated call to the middleware.
 
         :param method: 'POST' | 'PUT' | 'GET' | 'DELETE'
-        :param endpoint: ruta relativa, p.ej. 'cms/pages' o 'cms/pages/<id>'
-        :param payload: dict a enviar como JSON (para POST/PUT)
-        :return: el cuerpo JSON de la respuesta (dict)
+        :param endpoint: relative path, e.g. 'cms/pages' or 'cms/pages/<id>'
+        :param payload: dict to send as JSON (for POST/PUT)
+        :return: the JSON body of the response (dict)
         """
         cfg = self._get_config()
         url = '%s/%s' % (cfg['base_url'], endpoint.lstrip('/'))
@@ -61,13 +60,13 @@ class MagentoConnector(models.AbstractModel):
         except requests.HTTPError as exc:
             detail = self._extract_error(exc.response)
             raise UserError(self.env._(
-                "El middleware rechazó la operación (%(code)s): %(detail)s",
+                "The middleware rejected the operation (%(code)s): %(detail)s",
                 code=exc.response.status_code if exc.response is not None else '?',
                 detail=detail,
             )) from exc
         except requests.RequestException as exc:
             raise UserError(self.env._(
-                "Error de conexión con el middleware: %s", exc
+                "Connection error with the middleware: %s", exc
             )) from exc
 
         if not resp.content:
@@ -79,15 +78,15 @@ class MagentoConnector(models.AbstractModel):
 
     @api.model
     def test_connection(self):
-        """Valida la API key + conexión contra el endpoint /ping del middleware."""
+        """Validate the API key + connection against the middleware /ping endpoint."""
         return self.call('GET', 'ping')
 
     @api.model
     def sync_warehouses(self):
-        """Registra las bodegas de Odoo en el middleware.
+        """Register the Odoo warehouses in the middleware.
 
-        Manda `[{code, name, is_default}]` (la principal = la primera por id)
-        y devuelve el status `{received, mapped, pending, pending_warehouses}`.
+        Sends `[{code, name, is_default}]` (default = the first one by id) and
+        returns the status `{received, mapped, pending, pending_warehouses}`.
         """
         Warehouse = self.env['stock.warehouse']
         warehouses = Warehouse.search([])
@@ -102,7 +101,7 @@ class MagentoConnector(models.AbstractModel):
     @staticmethod
     def _extract_error(response):
         if response is None:
-            return 'sin respuesta'
+            return 'no response'
         try:
             body = response.json()
         except ValueError:
