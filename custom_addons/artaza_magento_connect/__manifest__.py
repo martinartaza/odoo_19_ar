@@ -1,6 +1,6 @@
 {
     'name': 'Artaza Magento Connect',
-    'version': '19.0.8.1.0',
+    'version': '19.0.8.4.0',
     'category': 'Website/CMS',
     'summary': 'Gestiona el contenido CMS de Magento desde Odoo vía el middleware FastAPI',
     'description': """

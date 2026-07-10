@@ -147,12 +147,17 @@ class SaleOrder(models.Model):
         self.ensure_one()
         if not self.magento_order_entity_id:
             raise UserError(self.env._("This order does not come from Magento."))
+        if not self.magento_adjustment_reason:
+            raise UserError(self.env._(
+                "Fill in 'Adjustment Reason (Magento)' before sending the "
+                "adjustment. The customer will see it next to the agreed total."
+            ))
 
         adjustment = self.amount_total - (self.magento_order_total or 0.0)
         self.env['artaza.magento.connector'].call('POST', 'negotiation', {
             'order_id': self.magento_order_entity_id,
             'adjustment_amount': adjustment,
-            'adjustment_reason': self.magento_adjustment_reason or False,
+            'adjustment_reason': self.magento_adjustment_reason or None,
             'negotiation_total': self.amount_total,
         })
         return {

@@ -215,6 +215,16 @@ msgid "Content heading"
 msgstr "Encabezado de contenido"
 
 #. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/sale_order.py:0
+msgid ""
+"Fill in 'Adjustment Reason (Magento)' before sending the adjustment. The "
+"customer will see it next to the agreed total."
+msgstr ""
+"Completá el 'Motivo del ajuste (Magento)' antes de enviar el ajuste. El "
+"cliente lo verá junto al total acordado."
+
+#. module: artaza_magento_connect
 #: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_block__create_uid
 #: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_cms_page__create_uid
 msgid "Created by"
