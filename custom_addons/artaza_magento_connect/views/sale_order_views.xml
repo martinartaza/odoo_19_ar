@@ -7,6 +7,9 @@
         <field name="arch" type="xml">
             <!-- Button: send the negotiated adjustment to Magento (Magento orders only) -->
             <xpath expr="//header" position="inside">
+                <button name="action_open_set_total_wizard" type="object"
+                        string="Adjust total" class="btn-secondary"
+                        invisible="not magento_order_id"/>
                 <button name="action_magento_push_negotiation" type="object"
                         string="Send adjustment to Magento" class="btn-secondary"
                         invisible="not magento_order_id"/>

@@ -846,3 +846,49 @@ msgstr "url-key-de-la-pagina"
 #: code:addons/artaza_magento_connect/static/src/stock_matrix/stock_matrix.xml:0
 msgid "‹ Previous"
 msgstr "‹ Anterior"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_order_form_magento_negotiation
+msgid "Adjust total"
+msgstr "Ajustar total"
+
+#. module: artaza_magento_connect
+#: model:ir.actions.act_window,name:artaza_magento_connect.view_artaza_sale_total_wizard_form
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_artaza_sale_total_wizard_form
+msgid "Adjust order total"
+msgstr "Ajustar total de la orden"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_sale_total_wizard__current_total
+msgid "Current total"
+msgstr "Total actual"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_sale_total_wizard__new_total
+msgid "New total"
+msgstr "Nuevo total"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_sale_total_wizard__reason
+msgid "Reason"
+msgstr "Motivo"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_artaza_sale_total_wizard_form
+msgid "Apply"
+msgstr "Aplicar"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_artaza_sale_total_wizard_form
+msgid "e.g. volume discount / surcharge for a 90-day cheque"
+msgstr "ej: descuento por cantidad / recargo por cheque a 90 días"
+
+#. module: artaza_magento_connect
+#: code:addons/artaza_magento_connect/wizard/set_order_total_wizard.py:0
+msgid "The new total must be greater than zero."
+msgstr "El nuevo total debe ser mayor a cero."
+
+#. module: artaza_magento_connect
+#: code:addons/artaza_magento_connect/wizard/set_order_total_wizard.py:0
+msgid "The order has no priced lines to adjust."
+msgstr "La orden no tiene líneas con importe para ajustar."

@@ -3,3 +3,4 @@ access_cms_page_user,cms.page.user,model_artaza_magento_cms_page,group_magento_u
 access_cms_page_manager,cms.page.manager,model_artaza_magento_cms_page,group_magento_manager,1,1,1,1
 access_cms_block_user,cms.block.user,model_artaza_magento_cms_block,group_magento_user,1,1,1,0
 access_cms_block_manager,cms.block.manager,model_artaza_magento_cms_block,group_magento_manager,1,1,1,1
+access_artaza_sale_total_wizard,artaza.sale.total.wizard,model_artaza_sale_total_wizard,base.group_user,1,1,1,1

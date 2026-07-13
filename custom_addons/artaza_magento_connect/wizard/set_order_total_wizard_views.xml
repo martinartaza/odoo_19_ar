@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_artaza_sale_total_wizard_form" model="ir.ui.view">
+        <field name="name">artaza.sale.total.wizard.form</field>
+        <field name="model">artaza.sale.total.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Adjust order total">
+                <field name="order_id" invisible="1"/>
+                <field name="currency_id" invisible="1"/>
+                <group>
+                    <field name="current_total"/>
+                    <field name="new_total"/>
+                    <field name="reason"
+                           placeholder="e.g. volume discount / surcharge for a 90-day cheque"/>
+                </group>
+                <footer>
+                    <button name="action_apply" type="object" string="Apply" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

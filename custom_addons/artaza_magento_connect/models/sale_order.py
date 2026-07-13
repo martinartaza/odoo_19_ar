@@ -171,6 +171,20 @@ class SaleOrder(models.Model):
             },
         }
 
+    # ── Open the "adjust total" wizard (modal) ─────────────────
+    def action_open_set_total_wizard(self):
+        """Open a modal to type the desired total; it back-calculates the line
+        discount/surcharge and fills the Magento adjustment reason."""
+        self.ensure_one()
+        return {
+            'name': self.env._("Adjust total"),
+            'type': 'ir.actions.act_window',
+            'res_model': 'artaza.sale.total.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {'default_order_id': self.id},
+        }
+
     # ── Upsert the customer (by email) ─────────────────────────
     @api.model
     def _magento_upsert_partner(self, order):
