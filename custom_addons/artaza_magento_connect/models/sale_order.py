@@ -118,6 +118,20 @@ class SaleOrder(models.Model):
             }))
             prices.append(item.get('price') or 0.0)
 
+        # Shipping is a line, not a hidden fee: add it as a service line so the
+        # SO total matches Magento's grand_total (products + shipping) and the
+        # invoice carries the delivery cost. (Magento sends it tax-included.)
+        shipping_amount = order.get('shipping_amount') or 0.0
+        if shipping_amount:
+            shipping_product = self._magento_shipping_product()
+            line_commands.append((0, 0, {
+                'product_id': shipping_product.id,
+                'product_uom_qty': 1.0,
+                'price_unit': shipping_amount,
+                'name': self.env._("Shipping"),
+            }))
+            prices.append(shipping_amount)
+
         so = self.create({
             'partner_id': partner.id,
             'order_line': line_commands,
@@ -184,6 +198,31 @@ class SaleOrder(models.Model):
             'target': 'new',
             'context': {'default_order_id': self.id},
         }
+
+    # ── Shipping product (get-or-create) ───────────────────────
+    @api.model
+    def _magento_shipping_product(self):
+        """Return the service product used for the Magento shipping line.
+
+        Get-or-create by `default_code='MAGENTO_SHIPPING'`. A service product
+        (not stockable) keeps it out of inventory; it exists only to carry the
+        shipping cost on the sales order and invoice.
+        """
+        code = 'MAGENTO_SHIPPING'
+        product = self.env['product.product'].search(
+            [('default_code', '=', code)], limit=1,
+        )
+        if not product:
+            product = product.create({
+                'name': self.env._("Shipping"),
+                'default_code': code,
+                'type': 'service',
+                'list_price': 0.0,
+                'sale_ok': True,
+                'purchase_ok': False,
+                'taxes_id': [(5, 0, 0)],  # no default tax: price is tax-included
+            })
+        return product
 
     # ── Upsert the customer (by email) ─────────────────────────
     @api.model
