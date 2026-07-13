@@ -3,15 +3,14 @@ from odoo.exceptions import UserError
 
 
 class SaleTotalWizard(models.TransientModel):
-    """Let the user type the desired order total and back-calculate the line
-    discount/surcharge to reach it.
+    """Let the user type the desired order total; back-calculate the lines to reach it.
 
     Odoo computes forward (unit price × qty − discount → total); there is no
-    native "type the total". This wizard writes a uniform discount % on the
-    order lines so `amount_total` lands on `new_total`. A negative discount is a
-    surcharge (e.g. a fee for a 90-day cheque), so one field covers both cases.
-    The unit price is tax-included in this setup, so the total scales linearly
-    with the discount.
+    native "type the total". This wizard scales each line's tax-included unit
+    price by (new_total / current_total) and absorbs the rounding residual on the
+    last line, so `amount_total` lands EXACTLY on `new_total`. (A uniform discount
+    % would round to 2 decimals and miss an arbitrary target by a few pesos.)
+    A factor < 1 is a discount, > 1 a surcharge (e.g. a fee for a 90-day cheque).
     """
 
     _name = 'artaza.sale.total.wizard'
@@ -37,13 +36,16 @@ class SaleTotalWizard(models.TransientModel):
         lines = order.order_line.filtered(
             lambda line: not line.display_type and line.product_uom_qty
         )
-        # Base = total with NO discount. Unit price is tax-included here, so the
-        # order total scales linearly with a uniform discount %.
         base = sum(line.price_unit * line.product_uom_qty for line in lines)
-        if base <= 0:
+        if not lines or base <= 0:
             raise UserError(self.env._("The order has no priced lines to adjust."))
-        # Negative discount = surcharge; one field handles discount and increase.
-        discount = (1.0 - (self.new_total / base)) * 100.0
-        lines.write({'discount': discount})
+        factor = self.new_total / base
+        for line in lines:
+            line.write({'discount': 0.0, 'price_unit': line.price_unit * factor})
+        # Absorb the per-line rounding residual on the last line → exact total.
+        residual = self.new_total - order.amount_total
+        if residual:
+            last = lines[-1]
+            last.price_unit = last.price_unit + (residual / last.product_uom_qty)
         order.magento_adjustment_reason = self.reason
         return {'type': 'ir.actions.act_window_close'}
