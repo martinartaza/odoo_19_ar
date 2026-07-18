@@ -97,6 +97,26 @@
                                 </div>
                             </div>
                         </setting>
+                        <setting string="Import returns (RMA) from Magento"
+                                 help="Bring in the return requests customers open in the Magento storefront. The real return (picking, credit note) is then handled with native Odoo tools.">
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <field name="magento_rmas_cron_active"/>
+                                    <label for="magento_rmas_cron_active" string="Import RMAs automatically"/>
+                                </div>
+                                <div class="row">
+                                    <label string="Frequency" for="magento_rmas_interval_number"
+                                           class="col-lg-4 o_light_label"/>
+                                    <field name="magento_rmas_interval_number" class="oe_inline"/>
+                                    <field name="magento_rmas_interval_type" class="oe_inline"/>
+                                </div>
+                                <div class="row mt16">
+                                    <button name="action_magento_pull_rmas" type="object"
+                                            string="Import RMAs now" class="btn-secondary"
+                                            icon="fa-download"/>
+                                </div>
+                            </div>
+                        </setting>
                     </block>
                 </app>
             </xpath>

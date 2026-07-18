@@ -21,5 +21,15 @@
             <field name="interval_type">minutes</field>
             <field name="active" eval="False"/>
         </record>
+
+        <record id="ir_cron_magento_pull_rmas" model="ir.cron">
+            <field name="name">Magento: import RMAs</field>
+            <field name="model_id" ref="model_magento_rma"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_magento_pull_rmas()</field>
+            <field name="interval_number">15</field>
+            <field name="interval_type">minutes</field>
+            <field name="active" eval="False"/>
+        </record>
     </data>
 </odoo>

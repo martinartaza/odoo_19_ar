@@ -7,4 +7,5 @@ from . import product_product
 from . import stock_quant
 from . import sale_order
 from . import stock_picking
+from . import magento_rma
 from . import res_config_settings

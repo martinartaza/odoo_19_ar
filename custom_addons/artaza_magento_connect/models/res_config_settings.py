@@ -7,6 +7,7 @@ from .magento_connector import (
 
 CRON_XMLID = 'artaza_magento_connect.ir_cron_magento_stock_sync'
 ORDERS_CRON_XMLID = 'artaza_magento_connect.ir_cron_magento_pull_orders'
+RMAS_CRON_XMLID = 'artaza_magento_connect.ir_cron_magento_pull_rmas'
 
 
 class ResConfigSettings(models.TransientModel):
@@ -76,11 +77,42 @@ class ResConfigSettings(models.TransientModel):
         default='minutes',
     )
 
+    # ── Return (RMA) import (Magento → Odoo) ───────────────────
+    magento_rmas_cron_active = fields.Boolean(string="Import RMAs automatically")
+    magento_rmas_interval_number = fields.Integer(string="RMAs frequency", default=15)
+    magento_rmas_interval_type = fields.Selection(
+        [
+            ('minutes', "Minutes"),
+            ('hours', "Hours"),
+            ('days', "Days"),
+        ],
+        string="RMAs unit",
+        default='minutes',
+    )
+
     def _magento_stock_cron(self):
         return self.env.ref(CRON_XMLID, raise_if_not_found=False)
 
     def _magento_orders_cron(self):
         return self.env.ref(ORDERS_CRON_XMLID, raise_if_not_found=False)
+
+    def _magento_rmas_cron(self):
+        return self.env.ref(RMAS_CRON_XMLID, raise_if_not_found=False)
+
+    def action_magento_pull_rmas(self):
+        """Import returns (RMA) from Magento now and show how many came in."""
+        self.ensure_one()
+        count = self.env['magento.rma']._cron_magento_pull_rmas()
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'type': 'success',
+                'title': self.env._("Returns imported"),
+                'message': self.env._("%s new return(s) imported from Magento.", count),
+                'sticky': False,
+            },
+        }
 
     def action_magento_test_connection(self):
         """Validate the API key + connection against the middleware /ping."""
@@ -140,6 +172,13 @@ class ResConfigSettings(models.TransientModel):
                 magento_orders_interval_number=orders_cron.interval_number,
                 magento_orders_interval_type=orders_cron.interval_type,
             )
+        rmas_cron = self.env.ref(RMAS_CRON_XMLID, raise_if_not_found=False)
+        if rmas_cron:
+            res.update(
+                magento_rmas_cron_active=rmas_cron.active,
+                magento_rmas_interval_number=rmas_cron.interval_number,
+                magento_rmas_interval_type=rmas_cron.interval_type,
+            )
         return res
 
     def set_values(self):
@@ -157,6 +196,13 @@ class ResConfigSettings(models.TransientModel):
                 'active': self.magento_orders_cron_active,
                 'interval_number': max(1, self.magento_orders_interval_number or 1),
                 'interval_type': self.magento_orders_interval_type,
+            })
+        rmas_cron = self._magento_rmas_cron()
+        if rmas_cron:
+            rmas_cron.write({
+                'active': self.magento_rmas_cron_active,
+                'interval_number': max(1, self.magento_rmas_interval_number or 1),
+                'interval_type': self.magento_rmas_interval_type,
             })
 
     def action_magento_resync_all_stock(self):

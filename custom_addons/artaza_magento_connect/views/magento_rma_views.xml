@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_magento_rma_list" model="ir.ui.view">
+        <field name="name">magento.rma.list</field>
+        <field name="model">magento.rma</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="magento_increment_id"/>
+                <field name="magento_order_increment_id"/>
+                <field name="partner_id"/>
+                <field name="customer_email" optional="hide"/>
+                <field name="rma_type"/>
+                <field name="magento_status" widget="badge"
+                       decoration-info="magento_status == 'requested'"
+                       decoration-success="magento_status in ('accepted','approved','resolved_exchange','resolved_credit')"
+                       decoration-danger="magento_status in ('rejected','fraud','held')"/>
+                <field name="magento_created_at"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_magento_rma_form" model="ir.ui.view">
+        <field name="name">magento.rma.form</field>
+        <field name="model">magento.rma</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_sale_order" type="object"
+                                class="oe_stat_button" icon="fa-shopping-cart"
+                                invisible="not sale_order_id">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Sales Order</span>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="magento_increment_id" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="magento_order_increment_id"/>
+                            <field name="sale_order_id"/>
+                            <field name="partner_id"/>
+                            <field name="customer_email"/>
+                        </group>
+                        <group>
+                            <field name="rma_type"/>
+                            <field name="magento_status"/>
+                            <field name="reason_code"/>
+                            <field name="magento_created_at"/>
+                        </group>
+                    </group>
+                    <group string="Resolution (from Odoo, once decided)"
+                           invisible="not resolution and not credit_amount and not coupon_code">
+                        <field name="resolution"/>
+                        <field name="credit_amount"/>
+                        <field name="coupon_code"/>
+                    </group>
+                    <notebook>
+                        <page string="Items">
+                            <field name="line_ids">
+                                <list>
+                                    <field name="sku"/>
+                                    <field name="product_id"/>
+                                    <field name="name"/>
+                                    <field name="qty_requested"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Customer Note" invisible="not customer_note">
+                            <field name="customer_note" readonly="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_magento_rma" model="ir.actions.act_window">
+        <field name="name">Returns (RMA)</field>
+        <field name="res_model">magento.rma</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No returns imported yet</p>
+            <p>Returns requested by customers in Magento are imported here.
+               Use "Import RMAs from Magento" in the settings, or enable the cron.</p>
+        </field>
+    </record>
+</odoo>
