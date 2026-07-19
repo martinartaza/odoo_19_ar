@@ -10,10 +10,11 @@
                 <field name="partner_id"/>
                 <field name="customer_email" optional="hide"/>
                 <field name="rma_type"/>
-                <field name="magento_status" widget="badge"
-                       decoration-info="magento_status == 'requested'"
-                       decoration-success="magento_status in ('accepted','approved','resolved_exchange','resolved_credit')"
-                       decoration-danger="magento_status in ('rejected','fraud','held')"/>
+                <field name="state" widget="badge"
+                       decoration-info="state in ('requested','accepted','in_transit','inspection')"
+                       decoration-success="state in ('approved','resolved_exchange','resolved_credit')"
+                       decoration-danger="state in ('rejected','fraud','held','returned')"/>
+                <field name="magento_status" optional="hide"/>
                 <field name="magento_created_at"/>
             </list>
         </field>
@@ -24,6 +25,28 @@
         <field name="model">magento.rma</field>
         <field name="arch" type="xml">
             <form>
+                <header>
+                    <button name="action_accept" type="object" string="Accept"
+                            class="btn-primary" invisible="state != 'requested'"/>
+                    <button name="action_reject" type="object" string="Reject"
+                            invisible="state != 'requested'"/>
+                    <button name="action_receive" type="object" string="Received"
+                            class="btn-primary" invisible="state != 'accepted'"/>
+                    <button name="action_approve" type="object" string="Approve product"
+                            class="btn-primary" invisible="state != 'inspection'"/>
+                    <button name="action_fraud" type="object" string="Reject as fraud"
+                            invisible="state != 'inspection'"/>
+                    <button name="action_resolve_credit" type="object" string="Resolve: credit"
+                            class="btn-primary" invisible="state != 'approved'"/>
+                    <button name="action_resolve_exchange" type="object" string="Resolve: exchange"
+                            invisible="state != 'approved'"/>
+                    <button name="action_resolve_return" type="object" string="Return to customer"
+                            invisible="state != 'fraud'"/>
+                    <button name="action_resolve_hold" type="object" string="Hold"
+                            invisible="state != 'fraud'"/>
+                    <field name="state" widget="statusbar" readonly="1"
+                           statusbar_visible="requested,accepted,inspection,approved,resolved_credit"/>
+                </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
                         <button name="action_view_sale_order" type="object"
@@ -51,11 +74,15 @@
                             <field name="magento_created_at"/>
                         </group>
                     </group>
-                    <group string="Resolution (from Odoo, once decided)"
-                           invisible="not resolution and not credit_amount and not coupon_code">
-                        <field name="resolution"/>
+                    <group string="Decision">
+                        <field name="admin_message"
+                               placeholder="Shown to the customer in Magento (e.g. rejection reason)"/>
+                        <field name="inspection_note"
+                               placeholder="Internal assessment on receipt"/>
+                        <field name="resolution" readonly="1"/>
                         <field name="credit_amount"/>
                         <field name="coupon_code"/>
+                        <field name="odoo_reference" placeholder="e.g. credit note number"/>
                     </group>
                     <notebook>
                         <page string="Items">
@@ -73,6 +100,7 @@
                         </page>
                     </notebook>
                 </sheet>
+                <chatter/>
             </form>
         </field>
     </record>

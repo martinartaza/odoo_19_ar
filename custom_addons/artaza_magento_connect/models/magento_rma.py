@@ -2,12 +2,30 @@ import logging
 from urllib.parse import quote
 
 from odoo import api, fields, models
+from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
 
 CURSOR_PARAM = 'artaza_magento_connect.rmas_cursor'
 DEFAULT_CURSOR = '2000-01-01 00:00:00'
 PAGE_SIZE = 50
+
+# Local workflow states — kept identical to Magento's closed status set so the
+# push is a simple 1:1 (integration_v3.md §7.1). Magento only mirrors them.
+STATES = [
+    ('requested', "Requested"),
+    ('accepted', "Accepted"),
+    ('rejected', "Rejected"),
+    ('in_transit', "In transit"),
+    ('inspection', "Received / under inspection"),
+    ('approved', "Approved (product OK)"),
+    ('fraud', "Fraud / tampered"),
+    ('resolved_exchange', "Resolved: exchange"),
+    ('resolved_credit', "Resolved: credit"),
+    ('returned', "Returned to customer"),
+    ('held', "Held"),
+]
+VALID_STATES = {code for code, _label in STATES}
 
 
 class MagentoRma(models.Model):
@@ -21,6 +39,7 @@ class MagentoRma(models.Model):
     """
     _name = 'magento.rma'
     _description = 'Magento RMA (return request)'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
     _rec_name = 'magento_increment_id'
     _order = 'id desc'
 
@@ -55,9 +74,27 @@ class MagentoRma(models.Model):
     )
     reason_code = fields.Char(string="Reason", copy=False, readonly=True)
     customer_note = fields.Text(string="Customer Note", copy=False, readonly=True)
+
+    # ── Local workflow + operator-filled fields (pushed on the decision) ──
+    state = fields.Selection(
+        STATES, string="Status", default='requested', copy=False, tracking=True,
+        help="Local workflow state. Each transition is pushed to Magento.",
+    )
+    admin_message = fields.Text(
+        string="Message to customer", copy=False, tracking=True,
+        help="Shown to the customer in Magento (e.g. the rejection reason).",
+    )
+    inspection_note = fields.Text(
+        string="Inspection note (internal)", copy=False,
+        help="Operator's assessment on receipt. Not shown to the customer.",
+    )
     resolution = fields.Char(string="Resolution", copy=False, readonly=True)
-    credit_amount = fields.Float(string="Credit Amount", copy=False, readonly=True)
-    coupon_code = fields.Char(string="Coupon Code", copy=False, readonly=True)
+    credit_amount = fields.Float(string="Credit Amount", copy=False)
+    coupon_code = fields.Char(string="Coupon Code", copy=False)
+    odoo_reference = fields.Char(
+        string="Odoo Reference", copy=False,
+        help="Traceability reference sent to Magento (e.g. the credit note number).",
+    )
     magento_created_at = fields.Char(string="Requested At", copy=False, readonly=True)
     magento_updated_at = fields.Char(string="Updated At", copy=False, readonly=True)
     line_ids = fields.One2many(
@@ -146,6 +183,7 @@ class MagentoRma(models.Model):
             'customer_email': rma.get('customer_email'),
             'rma_type': rma_type if rma_type in ('defective', 'exchange') else False,
             'magento_status': rma.get('status'),
+            'state': rma.get('status') if rma.get('status') in VALID_STATES else 'requested',
             'reason_code': rma.get('reason_code'),
             'customer_note': rma.get('customer_note'),
             'resolution': rma.get('resolution'),
@@ -161,6 +199,85 @@ class MagentoRma(models.Model):
         if not email:
             return self.env['res.partner']
         return self.env['res.partner'].search([('email', '=', email)], limit=1)
+
+    # ── Workflow: decide and push the status back to Magento ───
+    def _push_status(self, status, resolution=None, admin_message=None,
+                     credit_amount=None, coupon_code=None):
+        """Push a status update to Magento (through the middleware) and advance
+        the local workflow. Nothing is written if the push fails."""
+        self.ensure_one()
+        if not self.magento_rma_id:
+            raise UserError(self.env._("This RMA has no Magento ID to update."))
+        payload = {
+            'status': status,
+            'admin_message': admin_message or None,
+            'resolution': resolution or None,
+            'credit_amount': credit_amount or None,
+            'coupon_code': coupon_code or None,
+            'odoo_reference': self.odoo_reference or None,
+        }
+        self.env['artaza.magento.connector'].call(
+            'POST', 'rma/%s/status' % self.magento_rma_id, payload,
+        )
+        vals = {'state': status, 'magento_status': status}
+        if resolution:
+            vals['resolution'] = resolution
+        self.write(vals)
+        self.message_post(body=self.env._("Pushed to Magento: %s", status))
+
+    def action_accept(self):
+        self.ensure_one()
+        self._push_status('accepted', admin_message=self.admin_message)
+
+    def action_reject(self):
+        self.ensure_one()
+        if not self.admin_message:
+            raise UserError(self.env._(
+                "Fill in 'Message to customer' with the rejection reason before "
+                "rejecting. The customer sees it in Magento."
+            ))
+        self._push_status('rejected', admin_message=self.admin_message)
+
+    def action_receive(self):
+        """Goods arrived and are being inspected (operator marks it manually
+        after validating the native return picking)."""
+        self.ensure_one()
+        self._push_status('inspection')
+
+    def action_approve(self):
+        self.ensure_one()
+        self._push_status('approved')
+
+    def action_fraud(self):
+        self.ensure_one()
+        self._push_status('fraud', admin_message=self.admin_message)
+
+    def action_resolve_return(self):
+        self.ensure_one()
+        self._push_status('returned', admin_message=self.admin_message)
+
+    def action_resolve_hold(self):
+        self.ensure_one()
+        self._push_status('held', admin_message=self.admin_message)
+
+    def action_resolve_exchange(self):
+        self.ensure_one()
+        self._push_status('resolved_exchange', resolution='exchange',
+                          admin_message=self.admin_message)
+
+    def action_resolve_credit(self):
+        """Resolve as credit. The credit note is made with native Odoo tools;
+        here the operator enters its amount and it is pushed to Magento."""
+        self.ensure_one()
+        if self.credit_amount <= 0:
+            raise UserError(self.env._(
+                "Enter the 'Credit Amount' (from the credit note) before "
+                "resolving as credit."
+            ))
+        self._push_status('resolved_credit', resolution='credit',
+                          credit_amount=self.credit_amount,
+                          coupon_code=self.coupon_code,
+                          admin_message=self.admin_message)
 
     # ── Smart button: open the linked sales order ──────────────
     def action_view_sale_order(self):
