@@ -95,6 +95,14 @@
                                     <field name="magento_pending_methods" class="w-75"
                                            placeholder="checkmo, banktransfer"/>
                                 </div>
+                                <div class="row mt16">
+                                    <button name="action_magento_pull_orders" type="object"
+                                            string="Import orders now" class="btn-secondary"
+                                            icon="fa-download"/>
+                                    <button name="%(action_magento_order_import_wizard)d" type="action"
+                                            string="Import one order by number" class="btn-link"
+                                            icon="fa-search"/>
+                                </div>
                             </div>
                         </setting>
                         <setting string="Import returns (RMA) from Magento"

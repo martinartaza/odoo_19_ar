@@ -14,6 +14,10 @@
     <menuitem id="menu_magento_rma" name="Returns (RMA)"
               parent="menu_magento_root" action="action_magento_rma" sequence="30"/>
 
+    <menuitem id="menu_magento_order_import" name="Import Order"
+              parent="menu_magento_root" action="action_magento_order_import_wizard"
+              sequence="40"/>
+
     <menuitem id="menu_magento_config" name="Configuration"
               parent="menu_magento_root" sequence="90"
               groups="group_magento_manager"/>

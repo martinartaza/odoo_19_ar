@@ -78,9 +78,43 @@ class SaleOrder(models.Model):
             if len(orders) < PAGE_SIZE:
                 break
 
+    # ── Manual import of one order by number (bypasses the cursor) ──
+    @api.model
+    def _magento_import_one(self, increment_id):
+        """Import a single Magento order by its number, ignoring the cursor and
+        the payment-method gate. Returns a dict the wizard renders:
+        {status: exists|imported|not_found|error, order?, message?}."""
+        increment_id = (increment_id or '').strip()
+        if not increment_id:
+            return {'status': 'error', 'message': self.env._("Enter an order number.")}
+
+        existing = self.search([('magento_order_id', '=', increment_id)], limit=1)
+        if existing:
+            return {'status': 'exists', 'order': existing}
+
+        connector = self.env['artaza.magento.connector']
+        try:
+            result = connector.call('GET', 'orders/%s' % quote(increment_id))
+        except Exception as exc:  # noqa: BLE001 - surface the middleware/Magento message
+            return {'status': 'error', 'message': str(exc)}
+
+        order = result.get('order')
+        if not order:
+            return {'status': 'not_found',
+                    'message': self.env._("Magento returned no order %s.", increment_id)}
+
+        icp = self.env['ir.config_parameter'].sudo()
+        processing_methods = _split_methods(icp.get_param(PROCESSING_METHODS_PARAM))
+        pending_methods = _split_methods(icp.get_param(PENDING_METHODS_PARAM))
+        try:
+            so = self._magento_absorb_order(order, processing_methods, pending_methods, force=True)
+        except Exception as exc:  # noqa: BLE001 - surface any absorption error
+            return {'status': 'error', 'message': str(exc)}
+        return {'status': 'imported', 'order': so}
+
     # ── Absorb a single order ──────────────────────────────────
     @api.model
-    def _magento_absorb_order(self, order, processing_methods, pending_methods):
+    def _magento_absorb_order(self, order, processing_methods, pending_methods, force=False):
         state = order.get('state')
         method = order.get('payment_method')
         # Magento state: 'processing'/'complete' = paid; 'new' (status pending) = placed, unpaid.
@@ -88,7 +122,8 @@ class SaleOrder(models.Model):
         # ones import as editable quotations (negotiable; price can be pushed back to Magento).
         paid = state in ('processing', 'complete') and method in processing_methods
         negotiable = state == 'new' and method in pending_methods
-        if not (paid or negotiable):
+        # force=True (manual import) brings the order in regardless of method/state.
+        if not (paid or negotiable) and not force:
             return  # unlisted method / online in-flight (pending_payment) → not absorbable
 
         # create-once: if it already exists, Odoo owns it and we do not overwrite it

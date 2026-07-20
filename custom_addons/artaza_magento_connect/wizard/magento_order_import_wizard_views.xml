@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_magento_order_import_wizard_form" model="ir.ui.view">
+        <field name="name">magento.order.import.wizard.form</field>
+        <field name="model">magento.order.import.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Import a Magento order">
+                <group>
+                    <field name="order_number"
+                           placeholder="e.g. 000000055"
+                           readonly="state in ('exists', 'imported')"/>
+                    <field name="state" invisible="1"/>
+                    <field name="sale_order_id" invisible="1"/>
+                </group>
+                <div class="alert alert-success" role="alert"
+                     invisible="state not in ('exists', 'imported')">
+                    <field name="message" readonly="1" nolabel="1"/>
+                </div>
+                <div class="alert alert-warning" role="alert"
+                     invisible="state != 'not_found'">
+                    <field name="message" readonly="1" nolabel="1"/>
+                </div>
+                <div class="alert alert-danger" role="alert"
+                     invisible="state != 'error'">
+                    <field name="message" readonly="1" nolabel="1"/>
+                </div>
+                <footer>
+                    <button name="action_import" type="object" string="Check / Import"
+                            class="btn-primary" invisible="state in ('exists', 'imported')"/>
+                    <button name="action_view_order" type="object" string="View order in Odoo"
+                            class="btn-primary" invisible="not sale_order_id"/>
+                    <button string="Close" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_magento_order_import_wizard" model="ir.actions.act_window">
+        <field name="name">Import Order from Magento</field>
+        <field name="res_model">magento.order.import.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

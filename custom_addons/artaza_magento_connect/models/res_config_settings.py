@@ -114,6 +114,24 @@ class ResConfigSettings(models.TransientModel):
             },
         }
 
+    def action_magento_pull_orders(self):
+        """Import orders from Magento now and show how many new ones came in."""
+        self.ensure_one()
+        sale_order = self.env['sale.order']
+        before = sale_order.search_count([('magento_order_id', '!=', False)])
+        sale_order._cron_magento_pull_orders()
+        count = sale_order.search_count([('magento_order_id', '!=', False)]) - before
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'type': 'success',
+                'title': self.env._("Orders imported"),
+                'message': self.env._("%s new order(s) imported from Magento.", count),
+                'sticky': False,
+            },
+        }
+
     def action_magento_test_connection(self):
         """Validate the API key + connection against the middleware /ping."""
         self.ensure_one()
