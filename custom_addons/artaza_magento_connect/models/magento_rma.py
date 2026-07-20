@@ -89,7 +89,22 @@ class MagentoRma(models.Model):
         help="Operator's assessment on receipt. Not shown to the customer.",
     )
     resolution = fields.Char(string="Resolution", copy=False, readonly=True)
-    credit_amount = fields.Float(string="Credit Amount", copy=False)
+    currency_id = fields.Many2one(
+        'res.currency', string="Currency", compute='_compute_currency_id', readonly=True,
+    )
+    refund_amount_total = fields.Monetary(
+        string="Total to refund (ref.)", compute='_compute_refund_amount_total',
+        currency_field='currency_id',
+        help="Reference amount to refund: the paid price (tax incl., from the Odoo "
+             "invoice) of the returned lines. NOT the order total. The credit note "
+             "reverses this; edit Credit Amount below for a partial refund.",
+    )
+    credit_amount = fields.Float(
+        string="Credit Amount", copy=False, compute='_compute_credit_amount',
+        store=True, readonly=False,
+        help="Amount to refund with the credit note. Pre-filled with the returned "
+             "lines' paid total; edit it for a partial refund.",
+    )
     coupon_code = fields.Char(string="Coupon Code", copy=False)
     odoo_reference = fields.Char(
         string="Odoo Reference", copy=False,
@@ -105,6 +120,25 @@ class MagentoRma(models.Model):
         ('magento_increment_id_uniq', 'unique(magento_increment_id)',
          "A Magento RMA with that number already exists."),
     ]
+
+    # ── Refund reference amounts (from the Odoo invoice) ───────
+    @api.depends('sale_order_id', 'sale_order_id.currency_id')
+    def _compute_currency_id(self):
+        for rma in self:
+            rma.currency_id = rma.sale_order_id.currency_id or rma.env.company.currency_id
+
+    @api.depends('line_ids.price_subtotal')
+    def _compute_refund_amount_total(self):
+        for rma in self:
+            rma.refund_amount_total = sum(rma.line_ids.mapped('price_subtotal'))
+
+    @api.depends('refund_amount_total')
+    def _compute_credit_amount(self):
+        """Pre-fill the credit amount with the reference total, but leave it
+        editable (partial refunds). Never clobber an operator-entered value."""
+        for rma in self:
+            if not rma.credit_amount:
+                rma.credit_amount = rma.refund_amount_total
 
     # ── Cron: pull RMAs from Magento ───────────────────────────
     @api.model
@@ -187,7 +221,6 @@ class MagentoRma(models.Model):
             'reason_code': rma.get('reason_code'),
             'customer_note': rma.get('customer_note'),
             'resolution': rma.get('resolution'),
-            'credit_amount': rma.get('credit_amount') or 0.0,
             'coupon_code': rma.get('coupon_code'),
             'magento_created_at': rma.get('created_at'),
             'magento_updated_at': rma.get('updated_at'),
@@ -366,3 +399,47 @@ class MagentoRmaLine(models.Model):
     name = fields.Char(string="Description", readonly=True)
     qty_requested = fields.Float(string="Qty to return", readonly=True)
     magento_order_item_id = fields.Integer(string="Magento Order Item ID", readonly=True)
+    currency_id = fields.Many2one(related='rma_id.currency_id', readonly=True)
+    price_unit = fields.Monetary(
+        string="Unit price paid", compute='_compute_amounts',
+        currency_field='currency_id',
+        help="Unit price the customer actually paid (tax included), taken from the "
+             "posted Odoo invoice. Falls back to the sales order line.",
+    )
+    price_subtotal = fields.Monetary(
+        string="Subtotal", compute='_compute_amounts', currency_field='currency_id',
+        help="price paid x qty to return.",
+    )
+
+    @api.depends('product_id', 'qty_requested', 'rma_id.sale_order_id')
+    def _compute_amounts(self):
+        for line in self:
+            unit = line._paid_unit_price()
+            line.price_unit = unit
+            line.price_subtotal = unit * (line.qty_requested or 0.0)
+
+    def _paid_unit_price(self):
+        """Per-unit gross price (tax incl.) the customer paid for this product.
+
+        Source of truth = the **posted Odoo invoice** (fiscal master), so it
+        already reflects the customer-group discount and any negotiated total.
+        Falls back to the sales order line, then 0. Magento never computes money.
+        """
+        self.ensure_one()
+        order = self.rma_id.sale_order_id
+        if not self.product_id or not order:
+            return 0.0
+        for move in order.invoice_ids.filtered(
+            lambda m: m.move_type == 'out_invoice' and m.state == 'posted'
+        ):
+            inv_line = move.invoice_line_ids.filtered(
+                lambda l: l.product_id == self.product_id and not l.display_type
+            )[:1]
+            if inv_line and inv_line.quantity:
+                return inv_line.price_total / inv_line.quantity
+        so_line = order.order_line.filtered(
+            lambda l: l.product_id == self.product_id and not l.display_type
+        )[:1]
+        if so_line and so_line.product_uom_qty:
+            return so_line.price_total / so_line.product_uom_qty
+        return 0.0

@@ -82,11 +82,13 @@
                         </group>
                     </group>
                     <group string="Decision">
+                        <field name="currency_id" invisible="1"/>
                         <field name="admin_message"
                                placeholder="Shown to the customer in Magento (e.g. rejection reason)"/>
                         <field name="inspection_note"
                                placeholder="Internal assessment on receipt"/>
                         <field name="resolution" readonly="1"/>
+                        <field name="refund_amount_total" widget="monetary"/>
                         <field name="credit_amount"/>
                         <field name="coupon_code"/>
                         <field name="odoo_reference" placeholder="e.g. credit note number"/>
@@ -95,10 +97,13 @@
                         <page string="Items">
                             <field name="line_ids">
                                 <list>
+                                    <field name="currency_id" column_invisible="1"/>
                                     <field name="sku"/>
                                     <field name="product_id"/>
                                     <field name="name"/>
                                     <field name="qty_requested"/>
+                                    <field name="price_unit"/>
+                                    <field name="price_subtotal" sum="Total to refund"/>
                                 </list>
                             </field>
                         </page>
