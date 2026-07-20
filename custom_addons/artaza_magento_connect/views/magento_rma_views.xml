@@ -56,6 +56,13 @@
                                 <span class="o_stat_text">Sales Order</span>
                             </div>
                         </button>
+                        <button name="action_create_replacement_delivery" type="object"
+                                class="oe_stat_button" icon="fa-truck"
+                                invisible="state != 'resolved_exchange'">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Crear reenvío</span>
+                            </div>
+                        </button>
                     </div>
                     <div class="oe_title">
                         <h1><field name="magento_increment_id" readonly="1"/></h1>

@@ -279,6 +279,60 @@ class MagentoRma(models.Model):
                           coupon_code=self.coupon_code,
                           admin_message=self.admin_message)
 
+    # ── Replacement shipment (Escenario 3: recambio) ───────────
+    def action_create_replacement_delivery(self):
+        """Create a delivery for the replacement product, pre-filled from the RMA
+        (customer + lines). The operator only confirms/validates it. Available
+        once the RMA is resolved as exchange."""
+        self.ensure_one()
+        if self.state != 'resolved_exchange':
+            raise UserError(self.env._(
+                "The replacement delivery is available once the RMA is resolved as exchange."
+            ))
+        partner = self.partner_id or self.sale_order_id.partner_id
+        if not partner:
+            raise UserError(self.env._("This RMA has no customer to deliver to."))
+        lines = self.line_ids.filtered('product_id')
+        if not lines:
+            raise UserError(self.env._("The RMA has no product matched in Odoo to ship."))
+
+        warehouse = self.sale_order_id.warehouse_id or self.env['stock.warehouse'].search(
+            [('company_id', '=', self.env.company.id)], limit=1,
+        )
+        picking_type = warehouse.out_type_id
+        if not picking_type:
+            raise UserError(self.env._("No delivery operation type is configured."))
+        src = picking_type.default_location_src_id or warehouse.lot_stock_id
+        dest = partner.property_stock_customer
+
+        moves = [(0, 0, {
+            'name': line.name or line.product_id.display_name,
+            'product_id': line.product_id.id,
+            'product_uom_qty': line.qty_requested or 1.0,
+            'product_uom': line.product_id.uom_id.id,
+            'location_id': src.id,
+            'location_dest_id': dest.id,
+        }) for line in lines]
+
+        picking = self.env['stock.picking'].create({
+            'picking_type_id': picking_type.id,
+            'partner_id': partner.id,
+            'location_id': src.id,
+            'location_dest_id': dest.id,
+            'origin': self.env._("Replacement %s", self.magento_increment_id),
+            'move_ids': moves,
+        })
+        picking.action_confirm()
+        self.message_post(body=self.env._("Replacement delivery created: %s", picking.name))
+        return {
+            'type': 'ir.actions.act_window',
+            'name': self.env._("Replacement delivery"),
+            'res_model': 'stock.picking',
+            'res_id': picking.id,
+            'view_mode': 'form',
+            'target': 'current',
+        }
+
     # ── Smart button: open the linked sales order ──────────────
     def action_view_sale_order(self):
         self.ensure_one()
