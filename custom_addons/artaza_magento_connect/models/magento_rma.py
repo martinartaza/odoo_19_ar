@@ -306,8 +306,8 @@ class MagentoRma(models.Model):
         dest = partner.property_stock_customer
 
         moves = [(0, 0, {
-            'name': line.name or line.product_id.display_name,
             'product_id': line.product_id.id,
+            'description_picking': line.name or line.product_id.display_name,
             'product_uom_qty': line.qty_requested or 1.0,
             'product_uom': line.product_id.uom_id.id,
             'location_id': src.id,
