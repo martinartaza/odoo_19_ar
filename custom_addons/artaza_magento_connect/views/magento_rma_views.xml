@@ -58,9 +58,9 @@
                         </button>
                         <button name="action_create_replacement_delivery" type="object"
                                 class="oe_stat_button" icon="fa-truck"
-                                invisible="state != 'resolved_exchange'">
+                                invisible="state not in ('resolved_exchange', 'returned')">
                             <div class="o_stat_info">
-                                <span class="o_stat_text">Crear reenvío</span>
+                                <span class="o_stat_text">Crear envío</span>
                             </div>
                         </button>
                     </div>

@@ -279,15 +279,19 @@ class MagentoRma(models.Model):
                           coupon_code=self.coupon_code,
                           admin_message=self.admin_message)
 
-    # ── Replacement shipment (Escenario 3: recambio) ───────────
+    # ── Outgoing delivery to the customer ──────────────────────
+    # Reused by two flows that both ship a product to the customer:
+    #   • resolved_exchange (Escenario 3): the replacement product.
+    #   • returned (Escenario 4): the product handed back after a fraud call.
     def action_create_replacement_delivery(self):
-        """Create a delivery for the replacement product, pre-filled from the RMA
-        (customer + lines). The operator only confirms/validates it. Available
-        once the RMA is resolved as exchange."""
+        """Create a delivery to the customer, pre-filled from the RMA (customer +
+        lines). The operator only confirms/validates it. Available once the RMA is
+        resolved as exchange (replacement) or as returned to customer."""
         self.ensure_one()
-        if self.state != 'resolved_exchange':
+        if self.state not in ('resolved_exchange', 'returned'):
             raise UserError(self.env._(
-                "The replacement delivery is available once the RMA is resolved as exchange."
+                "The delivery is available once the RMA is resolved as exchange "
+                "or returned to the customer."
             ))
         partner = self.partner_id or self.sale_order_id.partner_id
         if not partner:
@@ -305,6 +309,11 @@ class MagentoRma(models.Model):
         src = picking_type.default_location_src_id or warehouse.lot_stock_id
         dest = partner.property_stock_customer
 
+        if self.state == 'returned':
+            origin = self.env._("Return to customer %s", self.magento_increment_id)
+        else:
+            origin = self.env._("Replacement %s", self.magento_increment_id)
+
         moves = [(0, 0, {
             'product_id': line.product_id.id,
             'description_picking': line.name or line.product_id.display_name,
@@ -319,7 +328,7 @@ class MagentoRma(models.Model):
             'partner_id': partner.id,
             'location_id': src.id,
             'location_dest_id': dest.id,
-            'origin': self.env._("Replacement %s", self.magento_increment_id),
+            'origin': origin,
             'move_ids': moves,
         })
         picking.action_confirm()
