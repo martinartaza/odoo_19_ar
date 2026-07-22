@@ -90,7 +90,8 @@
                         <field name="resolution" readonly="1"/>
                         <field name="refund_amount_total" widget="monetary"/>
                         <field name="credit_amount"/>
-                        <field name="coupon_code"/>
+                        <field name="coupon_code" readonly="1"
+                               placeholder="Generated automatically when you resolve as credit"/>
                         <field name="odoo_reference" placeholder="e.g. credit note number"/>
                     </group>
                     <notebook>

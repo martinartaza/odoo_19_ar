@@ -299,18 +299,47 @@ class MagentoRma(models.Model):
                           admin_message=self.admin_message)
 
     def action_resolve_credit(self):
-        """Resolve as credit. The credit note is made with native Odoo tools;
-        here the operator enters its amount and it is pushed to Magento."""
+        """Resolve as credit: generate the Magento discount coupon for the credit
+        amount (via the middleware) and push the resolution + coupon to Magento.
+
+        The credit note is made with native Odoo tools (the fiscal document); the
+        coupon is how the customer redeems that credit in the store. The middleware
+        is idempotent by RMA number, so a retry never mints a second coupon."""
         self.ensure_one()
         if self.credit_amount <= 0:
             raise UserError(self.env._(
                 "Enter the 'Credit Amount' (from the credit note) before "
                 "resolving as credit."
             ))
+        if not self.coupon_code:
+            self._generate_coupon()
         self._push_status('resolved_credit', resolution='credit',
                           credit_amount=self.credit_amount,
                           coupon_code=self.coupon_code,
                           admin_message=self.admin_message)
+
+    def _generate_coupon(self):
+        """Ask the middleware to create a single-use Magento coupon for this RMA's
+        credit and store the returned code. Store scope is left to the middleware
+        (connection's default store — Odoo is single-store for now)."""
+        self.ensure_one()
+        email = self.customer_email or self.partner_id.email
+        if not email:
+            raise UserError(self.env._(
+                "The RMA has no customer email to issue the coupon to."
+            ))
+        result = self.env['artaza.magento.connector'].call('POST', 'coupons', {
+            'source_ref': self.magento_increment_id,
+            'customer_email': email,
+            'order_increment_id': self.magento_order_increment_id or '',
+            'amount': self.credit_amount,
+            'reason': 'rma_credit',
+        })
+        code = result.get('coupon_code')
+        if not code:
+            raise UserError(self.env._("The middleware did not return a coupon code."))
+        self.coupon_code = code
+        self.message_post(body=self.env._("Discount coupon generated: %s", code))
 
     # ── Outgoing delivery to the customer ──────────────────────
     # Reused by two flows that both ship a product to the customer:
