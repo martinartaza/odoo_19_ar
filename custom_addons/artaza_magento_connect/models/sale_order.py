@@ -182,6 +182,20 @@ class SaleOrder(models.Model):
             if line.price_unit != price:
                 line.price_unit = price
 
+        # The shipping line needs an IVA tax (l10n_ar requires exactly one per
+        # line, or the invoice won't post). Copy it from a product line so it
+        # matches whatever IVA is configured (Magento sends prices tax-included,
+        # so the products' tax keeps the total unchanged).
+        shipping_line = so.order_line.filtered(
+            lambda l: l.product_id.default_code == 'MAGENTO_SHIPPING'
+        )
+        if shipping_line and not shipping_line.tax_id:
+            product_tax = so.order_line.filtered(
+                lambda l: l.product_id.default_code != 'MAGENTO_SHIPPING' and l.tax_id
+            )[:1].tax_id
+            if product_tax:
+                shipping_line.tax_id = [(6, 0, product_tax.ids)]
+
         if paid:
             so.action_confirm()  # paid → sales order; offline pending → stays a quotation
         return so
@@ -259,6 +273,34 @@ class SaleOrder(models.Model):
             })
         return product
 
+    # ── AFIP fiscal mapping (Magento condition → Odoo) ─────────
+    @api.model
+    def _magento_afip_data(self, condition):
+        """Map the Magento fiscal condition to (responsibility, id_type).
+
+        Defaults to **Consumidor Final** (the B2C case) when the condition is
+        empty/unknown, so a customer imported without fiscal data can still be
+        invoiced (Factura B). Returns (False, False) if l10n_ar is not installed.
+        """
+        if 'l10n_ar.afip.responsibility.type' not in self.env:
+            return False, False
+        # Magento code → AFIP responsibility code (5 = Consumidor Final, default)
+        resp_code = {
+            'consumidor_final': '5',
+            'responsable_inscripto': '1',
+            'monotributo': '6',
+            'exento': '4',
+        }.get(condition or '', '5')
+        responsibility = self.env['l10n_ar.afip.responsibility.type'].search(
+            [('code', '=', resp_code)], limit=1,
+        )
+        # Consumidor Final → DNI; the rest are businesses → CUIT.
+        id_name = 'DNI' if resp_code == '5' else 'CUIT'
+        id_type = self.env['l10n_latam.identification.type'].search(
+            [('name', '=', id_name), ('country_id.code', '=', 'AR')], limit=1,
+        )
+        return responsibility, id_type
+
     # ── Upsert the customer (by email) ─────────────────────────
     @api.model
     def _magento_upsert_partner(self, order):
@@ -288,7 +330,7 @@ class SaleOrder(models.Model):
                 ('name', '=', billing['region']),
             ], limit=1)
 
-        return Partner.create({
+        vals = {
             'name': name,
             'email': email or False,
             'phone': billing.get('telephone') or False,
@@ -298,4 +340,11 @@ class SaleOrder(models.Model):
             'country_id': country.id or False,
             'state_id': state.id or False,
             'vat': billing.get('vat_id') or False,
-        })
+        }
+        # Fiscal condition (AFIP) so the invoice picks the right document type.
+        responsibility, id_type = self._magento_afip_data(customer.get('afip_responsibility'))
+        if responsibility:
+            vals['l10n_ar_afip_responsibility_type_id'] = responsibility.id
+        if id_type:
+            vals['l10n_latam_identification_type_id'] = id_type.id
+        return Partner.create(vals)
