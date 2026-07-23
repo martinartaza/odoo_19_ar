@@ -95,6 +95,17 @@
                                     <field name="magento_pending_methods" class="w-75"
                                            placeholder="checkmo, banktransfer"/>
                                 </div>
+                                <div class="mt16">
+                                    <div class="text-muted mb4">
+                                        <b>Impuesto del envío</b>: IVA que se pone en la línea de
+                                        envío de las órdenes importadas. Elegí el impuesto de venta
+                                        <b>con precio incluido</b> que usa tu contador para el flete
+                                        (normalmente IVA 21%). La alícuota del flete es una decisión
+                                        fiscal, <b>no</b> la del producto. Vacío = copia la del producto.
+                                    </div>
+                                    <field name="magento_shipping_tax_id"
+                                           options="{'no_create': True}"/>
+                                </div>
                                 <div class="row mt16">
                                     <button name="action_magento_pull_orders" type="object"
                                             string="Import orders now" class="btn-secondary"

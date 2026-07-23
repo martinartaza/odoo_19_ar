@@ -183,18 +183,19 @@ class SaleOrder(models.Model):
                 line.price_unit = price
 
         # The shipping line needs an IVA tax (l10n_ar requires exactly one per
-        # line, or the invoice won't post). Copy it from a product line so it
-        # matches whatever IVA is configured (Magento sends prices tax-included,
-        # so the products' tax keeps the total unchanged).
+        # line, or the invoice won't post). See _magento_shipping_tax for how the
+        # rate is chosen (the freight rate is a fiscal decision, not the product's).
         shipping_line = so.order_line.filtered(
             lambda l: l.product_id.default_code == 'MAGENTO_SHIPPING'
         )
-        if shipping_line and not shipping_line.tax_id:
-            product_tax = so.order_line.filtered(
-                lambda l: l.product_id.default_code != 'MAGENTO_SHIPPING' and l.tax_id
-            )[:1].tax_id
-            if product_tax:
-                shipping_line.tax_id = [(6, 0, product_tax.ids)]
+        if shipping_line and not shipping_line.tax_ids:
+            tax = self._magento_shipping_tax(so)
+            if tax:
+                shipping_line.tax_ids = [(6, 0, tax.ids)]
+                _logger.info(
+                    "Order %s: shipping line tax set to %s",
+                    order['increment_id'], tax.name,
+                )
 
         if paid:
             so.action_confirm()  # paid → sales order; offline pending → stays a quotation
@@ -247,6 +248,32 @@ class SaleOrder(models.Model):
             'target': 'new',
             'context': {'default_order_id': self.id},
         }
+
+    # ── Tax for the shipping line ──────────────────────────────
+    @api.model
+    def _magento_shipping_tax(self, so):
+        """Tax for the shipping line, in priority order:
+
+        1. The **configured shipping tax** (Settings ▸ Magento Connect). This is
+           the fiscally correct path: the freight's IVA is a decision (usually
+           21%, its own service rate), **not** the product's alícuota — so a
+           10.5% product does NOT force a 10.5% shipping, and mixed-rate orders
+           are handled deterministically. Pick the *price-included* sale tax.
+        2. Otherwise, the first product's own tax — Magento prices are
+           tax-included, so mirroring it keeps the total unchanged (safe default
+           for single-rate stores that don't configure a shipping tax).
+        3. The company's default sale tax as a last resort.
+        """
+        icp = self.env['ir.config_parameter'].sudo()
+        tax_id = icp.get_param('artaza_magento_connect.shipping_tax_id')
+        if tax_id:
+            tax = self.env['account.tax'].browse(int(tax_id)).exists()
+            if tax:
+                return tax
+        first_product = so.order_line.filtered(
+            lambda l: l.product_id.default_code != 'MAGENTO_SHIPPING'
+        )[:1].product_id
+        return first_product.taxes_id[:1] or self.env.company.account_sale_tax_id
 
     # ── Shipping product (get-or-create) ───────────────────────
     @api.model

@@ -65,6 +65,18 @@ class ResConfigSettings(models.TransientModel):
              "Their orders are imported as a quotation to negotiate: you can "
              "adjust the price and inform Magento. E.g.: checkmo, banktransfer",
     )
+    # Tax applied to the shipping line of imported orders. The freight's IVA is a
+    # fiscal decision (usually 21%, its own rate) — NOT the product's alícuota.
+    magento_shipping_tax_id = fields.Many2one(
+        'account.tax',
+        string="Shipping tax",
+        config_parameter='artaza_magento_connect.shipping_tax_id',
+        domain="[('type_tax_use', '=', 'sale')]",
+        help="IVA applied to the shipping line. Pick the PRICE-INCLUDED sale tax "
+             "your accountant uses for freight (usually IVA 21%). Leave empty to "
+             "mirror the products' tax (fine only if all your products share the "
+             "same rate).",
+    )
     magento_orders_cron_active = fields.Boolean(string="Import orders automatically")
     magento_orders_interval_number = fields.Integer(string="Orders frequency", default=15)
     magento_orders_interval_type = fields.Selection(
