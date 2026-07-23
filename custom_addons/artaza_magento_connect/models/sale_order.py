@@ -301,6 +301,46 @@ class SaleOrder(models.Model):
         )
         return responsibility, id_type
 
+    # ── Update the fiscal data of an existing customer ─────────
+    @api.model
+    def _magento_update_fiscal(self, partner, order):
+        """Refresh an existing customer's AFIP data from the latest order.
+
+        Only when the order carries an **explicit** fiscal condition (so an order
+        without the field never clobbers a customer already set to RI with a
+        default Consumidor Final). Touches only fiscal fields — never name or
+        address — and only what actually changed. Never blocks the import.
+        """
+        customer = order.get('customer') or {}
+        condition = customer.get('afip_responsibility')
+        if not condition:
+            return
+        billing = order.get('billing') or {}
+        vat = billing.get('vat_id')
+        responsibility, id_type = self._magento_afip_data(condition)
+
+        vals = {}
+        if responsibility and partner.l10n_ar_afip_responsibility_type_id != responsibility:
+            vals['l10n_ar_afip_responsibility_type_id'] = responsibility.id
+        if id_type and partner.l10n_latam_identification_type_id != id_type:
+            vals['l10n_latam_identification_type_id'] = id_type.id
+        if vat and partner.vat != vat:
+            vals['vat'] = vat
+        if not vals:
+            return
+        try:
+            partner.write(vals)
+            partner.message_post(body=self.env._(
+                "Fiscal condition updated from Magento order %(order)s: %(cond)s",
+                order=order.get('increment_id'),
+                cond=responsibility.name if responsibility else condition,
+            ))
+        except Exception as exc:  # noqa: BLE001 - never block the order import
+            _logger.warning(
+                "Order %s: could not update fiscal data of %s: %s",
+                order.get('increment_id'), partner.email, exc,
+            )
+
     # ── Upsert the customer (by email) ─────────────────────────
     @api.model
     def _magento_upsert_partner(self, order):
@@ -312,6 +352,10 @@ class SaleOrder(models.Model):
         if email:
             partner = Partner.search([('email', '=', email)], limit=1)
             if partner:
+                # Existing customer: refresh the fiscal condition from THIS order
+                # (a customer can move from Consumidor Final to Responsable
+                # Inscripto between purchases → next invoice must be an A, not a B).
+                self._magento_update_fiscal(partner, order)
                 return partner
 
         name = ' '.join(filter(None, [
