@@ -418,10 +418,25 @@ class MagentoRma(models.Model):
                 returned.get(line.product_id.id, 0.0) + (line.qty_requested or 0.0)
             )
 
-        credit_note = invoice._reverse_moves([{  # draft
-            'ref': self.env._("Credit note · RMA %s", self.magento_increment_id),
-            'invoice_date': fields.Date.context_today(self),
-        }])
+        # Use the native reversal WIZARD (not _reverse_moves directly): the
+        # l10n_latam extension computes the correct NC document type (NC B for a
+        # Factura B) and passes it to the reversal. Calling _reverse_moves directly
+        # would copy the invoice's document type → "can't use type invoice on a
+        # refund" error.
+        reversal = self.env['account.move.reversal'].with_context(
+            active_model='account.move', active_ids=invoice.ids,
+        ).create({
+            'move_ids': [(6, 0, invoice.ids)],
+            'journal_id': invoice.journal_id.id,
+            'reason': self.env._("Credit note · RMA %s", self.magento_increment_id),
+            'date': fields.Date.context_today(self),
+            'company_id': invoice.company_id.id,
+        })
+        reversal.reverse_moves()  # draft NC with the right document type
+        credit_note = reversal.new_move_ids
+        if not credit_note:
+            raise UserError(self.env._("The credit note could not be created."))
+        credit_note.ensure_one()
         # Keep only the returned lines, at the returned quantities. (In Odoo 19
         # product lines carry display_type='product'; only sections/notes are skipped.)
         to_unlink = credit_note.invoice_line_ids.browse()
