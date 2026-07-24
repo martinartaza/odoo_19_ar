@@ -278,8 +278,79 @@ class MagentoRma(models.Model):
         self._push_status('inspection')
 
     def action_approve(self):
+        """Open the restock-decision wizard: the product passed inspection, but
+        whether it re-enters sellable stock depends on the operator (a wrong-color
+        item is resellable; a factory-defective one is not)."""
         self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': self.env._("Approve product"),
+            'res_model': 'magento.rma.approve.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {'default_rma_id': self.id},
+        }
+
+    def _approve_with_restock(self, restock):
+        """Approve + auto-receive the returned goods per the wizard decision:
+        into sellable stock (`sellable`) or into scrap (`scrap`, damaged unit)."""
+        self.ensure_one()
+        if restock in ('sellable', 'scrap'):
+            self._create_return_picking(to_scrap=(restock == 'scrap'))
         self._push_status('approved')
+
+    def _create_return_picking(self, to_scrap=False):
+        """Receive the returned product into stock (auto-validated). Destination:
+        the warehouse's sellable stock, or the scrap location when it's damaged."""
+        self.ensure_one()
+        partner = self.partner_id or self.sale_order_id.partner_id
+        lines = self.line_ids.filtered('product_id')
+        if not partner or not lines:
+            return
+        warehouse = self.sale_order_id.warehouse_id or self.env['stock.warehouse'].search(
+            [('company_id', '=', self.env.company.id)], limit=1,
+        )
+        picking_type = warehouse.in_type_id
+        if not picking_type:
+            raise UserError(self.env._("No receipt operation type is configured."))
+        src = partner.property_stock_customer
+        if to_scrap:
+            # Odoo's own scrap destination: the company's inventory-usage location
+            # with the lowest id (see stock.scrap._compute_scrap_location_id).
+            dest = self.env['stock.location'].search([
+                ('company_id', 'in', [self.env.company.id, False]),
+                ('usage', '=', 'inventory'),
+            ], order='id', limit=1) or picking_type.default_location_dest_id
+        else:
+            dest = picking_type.default_location_dest_id or warehouse.lot_stock_id
+
+        moves = [(0, 0, {
+            'product_id': line.product_id.id,
+            'description_picking': line.name or line.product_id.display_name,
+            'product_uom_qty': line.qty_requested or 1.0,
+            'product_uom': line.product_id.uom_id.id,
+            'location_id': src.id,
+            'location_dest_id': dest.id,
+        }) for line in lines]
+
+        picking = self.env['stock.picking'].create({
+            'picking_type_id': picking_type.id,
+            'partner_id': partner.id,
+            'location_id': src.id,
+            'location_dest_id': dest.id,
+            'origin': self.env._("RMA return %s", self.magento_increment_id),
+            'move_ids': moves,
+        })
+        picking.action_confirm()
+        picking.action_assign()
+        for move in picking.move_ids:
+            move.quantity = move.product_uom_qty
+            move.picked = True
+        picking.with_context(skip_backorder=True, skip_sms=True)._action_done()
+        self.message_post(body=self.env._(
+            "Returned product received: %(pick)s → %(loc)s",
+            pick=picking.name, loc=dest.display_name,
+        ))
 
     def action_fraud(self):
         self.ensure_one()
@@ -299,24 +370,82 @@ class MagentoRma(models.Model):
                           admin_message=self.admin_message)
 
     def action_resolve_credit(self):
-        """Resolve as credit: generate the Magento discount coupon for the credit
-        amount (via the middleware) and push the resolution + coupon to Magento.
+        """Resolve as credit — in one action:
+          1. create + post the AR **Nota de Crédito** that reverses the invoice
+             (fiscal backing), recording its number in odoo_reference;
+          2. generate the Magento **coupon** for the credit amount (how the
+             customer redeems it) and push the resolution to Magento.
 
-        The credit note is made with native Odoo tools (the fiscal document); the
-        coupon is how the customer redeems that credit in the store. The middleware
-        is idempotent by RMA number, so a retry never mints a second coupon."""
+        Both steps are idempotent (NC skipped if odoo_reference is set; coupon is
+        idempotent by RMA number), so a retry never duplicates. Guarded by a
+        confirmation dialog on the button."""
         self.ensure_one()
         if self.credit_amount <= 0:
             raise UserError(self.env._(
-                "Enter the 'Credit Amount' (from the credit note) before "
-                "resolving as credit."
+                "Enter the 'Credit Amount' before resolving as credit."
             ))
+        if not self.odoo_reference:
+            self._create_credit_note()
         if not self.coupon_code:
             self._generate_coupon()
         self._push_status('resolved_credit', resolution='credit',
                           credit_amount=self.credit_amount,
                           coupon_code=self.coupon_code,
                           admin_message=self.admin_message)
+
+    def _create_credit_note(self):
+        """Create + post the credit note that reverses the order's invoice,
+        limited to the RETURNED lines/quantities (**partial-return aware**): if the
+        customer bought 2 and returns 1, the NC is only for that 1.
+
+        Built from the native reversal (so l10n_ar sets the right NC document type,
+        taxes and fiscal position), then trimmed to what the RMA actually returns.
+        Records the NC number in odoo_reference. Shipping is not an RMA line, so it
+        is not refunded — the NC total matches the returned products (= credit)."""
+        self.ensure_one()
+        order = self.sale_order_id
+        invoice = order.invoice_ids.filtered(
+            lambda m: m.move_type == 'out_invoice' and m.state == 'posted'
+        )[:1]
+        if not invoice:
+            raise UserError(self.env._(
+                "The order has no posted invoice to reverse. Invoice the order first."
+            ))
+        # Returned quantity per product (0 = product not in this return).
+        returned = {}
+        for line in self.line_ids.filtered('product_id'):
+            returned[line.product_id.id] = (
+                returned.get(line.product_id.id, 0.0) + (line.qty_requested or 0.0)
+            )
+
+        credit_note = invoice._reverse_moves([{  # draft
+            'ref': self.env._("Credit note · RMA %s", self.magento_increment_id),
+            'invoice_date': fields.Date.context_today(self),
+        }])
+        # Keep only the returned lines, at the returned quantities. (In Odoo 19
+        # product lines carry display_type='product'; only sections/notes are skipped.)
+        to_unlink = credit_note.invoice_line_ids.browse()
+        for cn_line in credit_note.invoice_line_ids:
+            if cn_line.display_type in ('line_section', 'line_note') or not cn_line.product_id:
+                continue
+            want = returned.get(cn_line.product_id.id, 0.0)
+            if want <= 0:
+                to_unlink |= cn_line
+            elif cn_line.quantity > want:
+                cn_line.quantity = want
+        to_unlink.unlink()
+
+        if not credit_note.invoice_line_ids.filtered(
+            lambda l: l.product_id and l.display_type not in ('line_section', 'line_note')
+        ):
+            credit_note.unlink()
+            raise UserError(self.env._(
+                "No returned line matches the invoice; cannot build the credit note."
+            ))
+
+        credit_note.action_post()
+        self.odoo_reference = credit_note.name
+        self.message_post(body=self.env._("Credit note created: %s", credit_note.name))
 
     def _generate_coupon(self):
         """Ask the middleware to create a single-use Magento coupon for this RMA's

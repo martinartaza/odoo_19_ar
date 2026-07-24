@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_magento_rma_approve_wizard_form" model="ir.ui.view">
+        <field name="name">magento.rma.approve.wizard.form</field>
+        <field name="model">magento.rma.approve.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Approve product">
+                <field name="rma_id" invisible="1"/>
+                <p>
+                    El producto pasó la inspección. <b>¿Vuelve a depósito para
+                    próxima venta?</b>
+                </p>
+                <group>
+                    <field name="restock" widget="radio" nolabel="1"/>
+                </group>
+                <footer>
+                    <button name="action_confirm" type="object" string="Confirmar"
+                            class="btn-primary"/>
+                    <button string="Cancelar" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

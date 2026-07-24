@@ -37,7 +37,8 @@
                     <button name="action_fraud" type="object" string="Reject as fraud"
                             invisible="state != 'inspection'"/>
                     <button name="action_resolve_credit" type="object" string="Resolve: credit"
-                            class="btn-primary" invisible="state != 'approved'"/>
+                            class="btn-primary" invisible="state != 'approved'"
+                            confirm="Estás por CREAR y POSTEAR una Nota de Crédito que reversa la factura, generar el cupón de descuento y enviarlo a Magento. Esta acción es fiscal. ¿Confirmás?"/>
                     <button name="action_resolve_exchange" type="object" string="Resolve: exchange"
                             invisible="state != 'approved'"/>
                     <button name="action_resolve_return" type="object" string="Return to customer"
