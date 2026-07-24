@@ -1549,3 +1549,13 @@ msgstr "url-key-de-la-pagina"
 #: code:addons/artaza_magento_connect/static/src/stock_matrix/stock_matrix.xml:0
 msgid "‹ Previous"
 msgstr "‹ Anterior"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "Orders"
+msgstr "Órdenes"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "Warehouses"
+msgstr "Bodegas"

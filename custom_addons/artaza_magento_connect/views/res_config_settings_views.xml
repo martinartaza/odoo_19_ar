@@ -7,20 +7,20 @@
         <field name="arch" type="xml">
             <xpath expr="//form" position="inside">
                 <app data-string="Magento Connect" string="Magento Connect" name="artaza_magento_connect">
-                    <block title="Middleware (FastAPI)" name="magento_middleware">
-                        <setting string="Middleware connection"
-                                 help="API key used to send CMS content to Magento through the FastAPI middleware.">
+                    <block title="Middleware connection" name="magento_middleware"
+                           help="API key used to send CMS content to Magento through the FastAPI middleware.">
+                        <div class="col-12">
                             <div class="content-group">
                                 <div class="row mt16">
                                     <label string="Middleware URL" for="magento_middleware_base_url"
-                                           class="col-lg-4 o_light_label"/>
-                                    <field name="magento_middleware_base_url"
+                                           class="col-lg-2 o_light_label"/>
+                                    <field name="magento_middleware_base_url" class="col-lg-6"
                                            placeholder="https://www.artaza.net/api/v1"/>
                                 </div>
                                 <div class="row">
                                     <label string="API key" for="magento_api_key"
-                                           class="col-lg-4 o_light_label"/>
-                                    <field name="magento_api_key" password="True"/>
+                                           class="col-lg-2 o_light_label"/>
+                                    <field name="magento_api_key" password="True" class="col-lg-6"/>
                                 </div>
                                 <div class="row mt16">
                                     <button name="action_magento_test_connection" type="object"
@@ -28,114 +28,132 @@
                                             icon="fa-plug"/>
                                 </div>
                             </div>
-                        </setting>
-                        <setting string="Warehouse sync"
-                                 help="Register your Odoo warehouses in the middleware. Then map each warehouse to a Magento source in the middleware panel.">
-                            <div class="content-group">
-                                <div class="row mt16">
-                                    <button name="action_magento_sync_warehouses" type="object"
-                                            string="Sync warehouses with Magento" class="btn-secondary"
-                                            icon="fa-cubes"/>
-                                </div>
-                            </div>
-                        </setting>
-                        <setting string="Automatic stock sync (cron)"
-                                 help="Odoo's internal cron pushes stock to Magento at this frequency. No system crontab required.">
-                            <div class="content-group">
-                                <div class="row mt16">
-                                    <field name="magento_cron_active"/>
-                                    <label for="magento_cron_active" string="Enable automatic stock sync"/>
-                                </div>
-                                <div class="row">
-                                    <label string="Frequency" for="magento_cron_interval_number"
-                                           class="col-lg-4 o_light_label"/>
-                                    <field name="magento_cron_interval_number" class="oe_inline"/>
-                                    <field name="magento_cron_interval_type" class="oe_inline"/>
-                                </div>
-                                <div class="row">
-                                    <label string="Products per batch" for="magento_stock_batch_size"
-                                           class="col-lg-4 o_light_label"/>
-                                    <field name="magento_stock_batch_size" class="oe_inline"/>
-                                </div>
-                                <div class="row mt16">
-                                    <button name="action_magento_resync_all_stock" type="object"
-                                            string="Mark everything for sync" class="btn-secondary"
-                                            icon="fa-refresh"/>
-                                </div>
-                            </div>
-                        </setting>
-                        <setting string="Import orders from Magento"
-                                 help="The cron imports paid orders (as a confirmed sale) and pending offline orders (as a quotation to negotiate).">
-                            <div class="content-group">
-                                <div class="row mt16">
-                                    <field name="magento_orders_cron_active"/>
-                                    <label for="magento_orders_cron_active" string="Import orders automatically"/>
-                                </div>
-                                <div class="row">
-                                    <label string="Frequency" for="magento_orders_interval_number"
-                                           class="col-lg-4 o_light_label"/>
-                                    <field name="magento_orders_interval_number" class="oe_inline"/>
-                                    <field name="magento_orders_interval_type" class="oe_inline"/>
-                                </div>
-                                <div class="mt16">
-                                    <div class="text-muted mb4">
-                                        <b>Immediate-payment</b> methods (Magento: <code>processing</code>):
-                                        their orders come in as a <b>confirmed sale</b>, with no price change.
-                                        Enter the <b>codes</b> separated by commas.
+                        </div>
+                    </block>
+                    <block name="magento_operations">
+                        <div class="col-12">
+                            <notebook>
+                                <page string="Stock" name="stock">
+                                    <div class="text-muted mt16 mb8">
+                                        Odoo's internal cron pushes stock to Magento at this frequency.
+                                        No system crontab required.
                                     </div>
-                                    <field name="magento_processing_methods" class="w-75"
-                                           placeholder="mercadopago_adbpayment_checkout_pro"/>
-                                </div>
-                                <div class="mt16">
-                                    <div class="text-muted mb4">
-                                        <b>Payment-pending</b> methods (Magento: <code>new</code> / status
-                                        <code>pending</code>): their orders come in as a <b>quotation</b> to
-                                        negotiate; you can adjust the price and inform Magento. Codes separated by commas.
+                                    <div class="content-group">
+                                        <div class="row">
+                                            <field name="magento_cron_active"/>
+                                            <label for="magento_cron_active" string="Enable automatic stock sync"/>
+                                        </div>
+                                        <div class="row">
+                                            <label string="Frequency" for="magento_cron_interval_number"
+                                                   class="col-lg-3 o_light_label"/>
+                                            <field name="magento_cron_interval_number" class="oe_inline"/>
+                                            <field name="magento_cron_interval_type" class="oe_inline"/>
+                                        </div>
+                                        <div class="row">
+                                            <label string="Products per batch" for="magento_stock_batch_size"
+                                                   class="col-lg-3 o_light_label"/>
+                                            <field name="magento_stock_batch_size" class="oe_inline"/>
+                                        </div>
+                                        <div class="row mt16">
+                                            <button name="action_magento_resync_all_stock" type="object"
+                                                    string="Mark everything for sync" class="btn-secondary"
+                                                    icon="fa-refresh"/>
+                                        </div>
                                     </div>
-                                    <field name="magento_pending_methods" class="w-75"
-                                           placeholder="checkmo, banktransfer"/>
-                                </div>
-                                <div class="mt16">
-                                    <div class="text-muted mb4">
-                                        <b>Impuesto del envío</b>: IVA que se pone en la línea de
-                                        envío de las órdenes importadas. Elegí el impuesto de venta
-                                        <b>con precio incluido</b> que usa tu contador para el flete
-                                        (normalmente IVA 21%). La alícuota del flete es una decisión
-                                        fiscal, <b>no</b> la del producto. Vacío = copia la del producto.
+                                </page>
+                                <page string="Orders" name="orders">
+                                    <div class="text-muted mt16 mb8">
+                                        The cron imports paid orders (as a confirmed sale) and pending
+                                        offline orders (as a quotation to negotiate).
                                     </div>
-                                    <field name="magento_shipping_tax_id"
-                                           options="{'no_create': True}"/>
-                                </div>
-                                <div class="row mt16">
-                                    <button name="action_magento_pull_orders" type="object"
-                                            string="Import orders now" class="btn-secondary"
-                                            icon="fa-download"/>
-                                    <button name="%(action_magento_order_import_wizard)d" type="action"
-                                            string="Import one order by number" class="btn-link"
-                                            icon="fa-search"/>
-                                </div>
-                            </div>
-                        </setting>
-                        <setting string="Import returns (RMA) from Magento"
-                                 help="Bring in the return requests customers open in the Magento storefront. The real return (picking, credit note) is then handled with native Odoo tools.">
-                            <div class="content-group">
-                                <div class="row mt16">
-                                    <field name="magento_rmas_cron_active"/>
-                                    <label for="magento_rmas_cron_active" string="Import RMAs automatically"/>
-                                </div>
-                                <div class="row">
-                                    <label string="Frequency" for="magento_rmas_interval_number"
-                                           class="col-lg-4 o_light_label"/>
-                                    <field name="magento_rmas_interval_number" class="oe_inline"/>
-                                    <field name="magento_rmas_interval_type" class="oe_inline"/>
-                                </div>
-                                <div class="row mt16">
-                                    <button name="action_magento_pull_rmas" type="object"
-                                            string="Import RMAs now" class="btn-secondary"
-                                            icon="fa-download"/>
-                                </div>
-                            </div>
-                        </setting>
+                                    <div class="content-group">
+                                        <div class="row">
+                                            <field name="magento_orders_cron_active"/>
+                                            <label for="magento_orders_cron_active" string="Import orders automatically"/>
+                                        </div>
+                                        <div class="row">
+                                            <label string="Frequency" for="magento_orders_interval_number"
+                                                   class="col-lg-3 o_light_label"/>
+                                            <field name="magento_orders_interval_number" class="oe_inline"/>
+                                            <field name="magento_orders_interval_type" class="oe_inline"/>
+                                        </div>
+                                        <div class="mt16">
+                                            <div class="text-muted mb4">
+                                                <b>Immediate-payment</b> methods (Magento: <code>processing</code>):
+                                                their orders come in as a <b>confirmed sale</b>, with no price change.
+                                                Enter the <b>codes</b> separated by commas.
+                                            </div>
+                                            <field name="magento_processing_methods" class="col-lg-6"
+                                                   placeholder="mercadopago_adbpayment_checkout_pro"/>
+                                        </div>
+                                        <div class="mt16">
+                                            <div class="text-muted mb4">
+                                                <b>Payment-pending</b> methods (Magento: <code>new</code> / status
+                                                <code>pending</code>): their orders come in as a <b>quotation</b> to
+                                                negotiate; you can adjust the price and inform Magento. Codes separated by commas.
+                                            </div>
+                                            <field name="magento_pending_methods" class="col-lg-6"
+                                                   placeholder="checkmo, banktransfer"/>
+                                        </div>
+                                        <div class="mt16">
+                                            <div class="text-muted mb4">
+                                                <b>Impuesto del envío</b>: IVA que se pone en la línea de
+                                                envío de las órdenes importadas. Elegí el impuesto de venta
+                                                <b>con precio incluido</b> que usa tu contador para el flete
+                                                (normalmente IVA 21%). La alícuota del flete es una decisión
+                                                fiscal, <b>no</b> la del producto. Vacío = copia la del producto.
+                                            </div>
+                                            <field name="magento_shipping_tax_id" class="col-lg-6"
+                                                   options="{'no_create': True}"/>
+                                        </div>
+                                        <div class="row mt16">
+                                            <button name="action_magento_pull_orders" type="object"
+                                                    string="Import orders now" class="btn-secondary"
+                                                    icon="fa-download"/>
+                                            <button name="%(action_magento_order_import_wizard)d" type="action"
+                                                    string="Import one order by number" class="btn-link"
+                                                    icon="fa-search"/>
+                                        </div>
+                                    </div>
+                                </page>
+                                <page string="Returns (RMA)" name="rma">
+                                    <div class="text-muted mt16 mb8">
+                                        Bring in the return requests customers open in the Magento storefront.
+                                        The real return (picking, credit note) is then handled with native Odoo tools.
+                                    </div>
+                                    <div class="content-group">
+                                        <div class="row">
+                                            <field name="magento_rmas_cron_active"/>
+                                            <label for="magento_rmas_cron_active" string="Import RMAs automatically"/>
+                                        </div>
+                                        <div class="row">
+                                            <label string="Frequency" for="magento_rmas_interval_number"
+                                                   class="col-lg-3 o_light_label"/>
+                                            <field name="magento_rmas_interval_number" class="oe_inline"/>
+                                            <field name="magento_rmas_interval_type" class="oe_inline"/>
+                                        </div>
+                                        <div class="row mt16">
+                                            <button name="action_magento_pull_rmas" type="object"
+                                                    string="Import RMAs now" class="btn-secondary"
+                                                    icon="fa-download"/>
+                                        </div>
+                                    </div>
+                                </page>
+                                <page string="Warehouses" name="warehouses">
+                                    <div class="text-muted mt16 mb8">
+                                        Register your Odoo warehouses in the middleware. Then map each
+                                        warehouse to a Magento source in the middleware panel.
+                                    </div>
+                                    <div class="content-group">
+                                        <div class="row mt16">
+                                            <button name="action_magento_sync_warehouses" type="object"
+                                                    string="Sync warehouses with Magento" class="btn-secondary"
+                                                    icon="fa-cubes"/>
+                                        </div>
+                                    </div>
+                                </page>
+                            </notebook>
+                        </div>
                     </block>
                 </app>
             </xpath>
