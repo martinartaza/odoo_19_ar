@@ -1559,3 +1559,15 @@ msgstr "Órdenes"
 #: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
 msgid "Warehouses"
 msgstr "Bodegas"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/magento_rma.py:0
+msgid ""
+"This order isn't invoiced yet, so there is no invoice for the credit note to "
+"reverse. Invoice the sale order first (Create Invoice → Confirm), then "
+"resolve this RMA as credit."
+msgstr ""
+"Esta orden todavía no está facturada, así que no hay factura para que la nota "
+"de crédito revierta. Facturá primero la orden de venta (Crear factura → "
+"Confirmar) y después resolvé esta RMA como crédito."

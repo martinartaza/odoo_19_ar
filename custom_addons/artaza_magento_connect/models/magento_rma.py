@@ -409,7 +409,9 @@ class MagentoRma(models.Model):
         )[:1]
         if not invoice:
             raise UserError(self.env._(
-                "The order has no posted invoice to reverse. Invoice the order first."
+                "This order isn't invoiced yet, so there is no invoice for the credit "
+                "note to reverse. Invoice the sale order first (Create Invoice → "
+                "Confirm), then resolve this RMA as credit."
             ))
         # Returned quantity per product (0 = product not in this return).
         returned = {}

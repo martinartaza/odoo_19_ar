@@ -184,6 +184,59 @@ class ResConfigSettings(models.TransientModel):
             },
         }
 
+    def action_magento_sync_taxes(self):
+        """Register the Odoo sale taxes in the middleware and show the status."""
+        self.ensure_one()
+        result = self.env['artaza.magento.connector'].sync_taxes()
+        pending = result.get('pending_taxes') or []
+        auto = result.get('auto_matched') or []
+        if pending:
+            kind = 'warning'
+            message = self.env._(
+                "Taxes registered. Still to be mapped to a Magento tax class "
+                "in the middleware: %s",
+                ", ".join(pending),
+            )
+        elif auto:
+            kind = 'success'
+            message = self.env._(
+                "Taxes matched to Magento by rate: %s", ", ".join(auto)
+            )
+        else:
+            kind = 'success'
+            message = self.env._("Your taxes are already mapped to Magento.")
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'type': kind,
+                'title': self.env._("Tax sync"),
+                'message': message,
+                'sticky': bool(pending),
+            },
+        }
+
+    def action_magento_resync_all_taxes(self):
+        """Mark ALL syncable products as pending so their tax class is re-pushed."""
+        self.ensure_one()
+        products = self.env['product.product'].search([
+            ('is_storable', '=', True), ('default_code', '!=', False),
+        ])
+        products.write({'magento_tax_dirty': True})
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'type': 'success',
+                'title': self.env._("Tax re-sync"),
+                'message': self.env._(
+                    "%s product(s) marked. The cron will send them in batches.",
+                    len(products),
+                ),
+                'sticky': False,
+            },
+        }
+
     # ── Cron frequency (read/written on the ir.cron) ───────────
     @api.model
     def get_values(self):

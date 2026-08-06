@@ -18,6 +18,12 @@ class ProductProduct(models.Model):
         default=False, index=True, copy=False,
         help="Set when the sales price changes; the cron pushes it.",
     )
+    magento_tax_dirty = fields.Boolean(
+        string="Tax pending sync to Magento",
+        default=False, index=True, copy=False,
+        help="Set when the customer tax changes; the cron pushes the matching "
+             "Magento tax class (the middleware maps alícuota → tax class).",
+    )
 
     # ── On-hand per warehouse ──────────────────────────────────
     @api.model
@@ -120,33 +126,77 @@ class ProductProduct(models.Model):
         ]
         return self.env['artaza.magento.connector'].call('POST', 'prices', payload)
 
-    # ── Button: single-product sync (stock + price) ────────────
+    def _magento_sale_tax(self):
+        """The customer (sale) tax this product carries, or an empty recordset.
+
+        Magento holds one tax class per product, so only the first sale tax is
+        mirrored; a product with several is logged and the first one wins.
+        """
+        self.ensure_one()
+        taxes = self.taxes_id.filtered(lambda t: t.type_tax_use in ('sale', 'all'))
+        if len(taxes) > 1:
+            _logger.warning(
+                "Product %s has %s sale taxes; syncing the first one (%s) to Magento.",
+                self.default_code, len(taxes), taxes[0].name,
+            )
+        return taxes[:1]
+
+    @api.model
+    def _magento_push_tax(self, products):
+        """Push each product's sale tax so Magento gets the matching tax class.
+
+        Only the Odoo tax id travels: the middleware maps it to the Magento
+        product tax class (IVA 21% → Taxable Goods, 10,5% → Electrónica).
+        Products with no sale tax are skipped — there is nothing to mirror.
+        """
+        payload = []
+        for product in products:
+            tax = product._magento_sale_tax()
+            if not tax:
+                _logger.info(
+                    "Product %s has no sale tax; skipping the tax push.",
+                    product.default_code,
+                )
+                continue
+            payload.append({'sku': product.default_code, 'tax_id': tax.id})
+        if not payload:
+            return {}
+        return self.env['artaza.magento.connector'].call('POST', 'product-taxes', payload)
+
+    # ── Button: single-product sync (stock + price + tax) ──────
     def magento_sync_now(self):
-        """Push this product's stock and price and clear its flags."""
+        """Push this product's stock, price and tax class, and clear its flags."""
         self.ensure_one()
         stock_result = self._magento_push_stock(self)
         self._magento_push_price(self)
+        self._magento_push_tax(self)
         self.sudo().write({
             'magento_stock_dirty': False,
             'magento_price_dirty': False,
+            'magento_tax_dirty': False,
         })
         return stock_result  # the front reads `skipped` (pending warehouses)
 
     @api.model
     def magento_mark_all_dirty(self):
-        """Mark all syncable products as pending (stock + price)."""
+        """Mark all syncable products as pending (stock + price + tax)."""
         products = self.search([('is_storable', '=', True), ('default_code', '!=', False)])
-        products.write({'magento_stock_dirty': True, 'magento_price_dirty': True})
+        products.write({
+            'magento_stock_dirty': True,
+            'magento_price_dirty': True,
+            'magento_tax_dirty': True,
+        })
         return len(products)
 
     # ── Cron ───────────────────────────────────────────────────
     @api.model
     def _cron_magento_sync_stock(self):
-        """Cron: push stock and price of the pending products, in batches."""
+        """Cron: push stock, price and tax class of the pending products."""
         icp = self.env['ir.config_parameter'].sudo()
         batch_size = int(icp.get_param('artaza_magento_connect.stock_batch_size') or 50)
         self._magento_cron_push('magento_stock_dirty', self._magento_push_stock, batch_size)
         self._magento_cron_push('magento_price_dirty', self._magento_push_price, batch_size)
+        self._magento_cron_push('magento_tax_dirty', self._magento_push_tax, batch_size)
 
     @api.model
     def _magento_cron_push(self, dirty_field, push_fn, batch_size):

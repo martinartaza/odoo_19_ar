@@ -98,6 +98,30 @@ class MagentoConnector(models.AbstractModel):
         } for wh in warehouses]
         return self.call('POST', 'warehouses/sync', payload)
 
+    @api.model
+    def sync_taxes(self):
+        """Register the Odoo sale taxes in the middleware.
+
+        Sends `[{id, name, amount, price_include}]` and returns the status
+        `{received, mapped, pending, pending_taxes, auto_matched}`. The
+        middleware auto-matches each alícuota to the Magento product tax class
+        whose rules apply that same rate; the rest is related by hand there.
+
+        `amount` is only meaningful for percentage taxes ('percent' and
+        'division', both of which express a rate) — a fixed-amount tax or a
+        group has no rate to match, so it is sent as null and stays pending.
+        """
+        taxes = self.env['account.tax'].search([
+            ('type_tax_use', 'in', ('sale', 'all')),
+        ])
+        payload = [{
+            'id': tax.id,
+            'name': tax.name,
+            'amount': tax.amount if tax.amount_type in ('percent', 'division') else None,
+            'price_include': tax.price_include,
+        } for tax in taxes]
+        return self.call('POST', 'taxes/sync', payload)
+
     @staticmethod
     def _extract_error(response):
         if response is None:

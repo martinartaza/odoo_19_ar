@@ -152,6 +152,33 @@
                                         </div>
                                     </div>
                                 </page>
+                                <page string="Taxes" name="taxes">
+                                    <div class="text-muted mt16 mb8">
+                                        Register your sale taxes (IVA 21% / 10,5%) in the middleware. It
+                                        matches each one to the Magento product tax class that applies the
+                                        same rate; anything ambiguous stays pending to be mapped by hand in
+                                        the middleware panel.
+                                    </div>
+                                    <div class="content-group">
+                                        <div class="row mt16">
+                                            <button name="action_magento_sync_taxes" type="object"
+                                                    string="Sync taxes with Magento" class="btn-secondary"
+                                                    icon="fa-percent"/>
+                                        </div>
+                                    </div>
+                                    <div class="text-muted mt16 mb8">
+                                        Changing a product's tax pushes it automatically. Use this to
+                                        re-send every product's tax class (after mapping a pending tax,
+                                        for instance).
+                                    </div>
+                                    <div class="content-group">
+                                        <div class="row mt16">
+                                            <button name="action_magento_resync_all_taxes" type="object"
+                                                    string="Re-sync every product's tax class"
+                                                    class="btn-secondary" icon="fa-refresh"/>
+                                        </div>
+                                    </div>
+                                </page>
                             </notebook>
                         </div>
                     </block>
