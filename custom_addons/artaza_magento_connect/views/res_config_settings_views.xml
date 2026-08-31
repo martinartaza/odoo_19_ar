@@ -7,25 +7,147 @@
         <field name="arch" type="xml">
             <xpath expr="//form" position="inside">
                 <app data-string="Magento Connect" string="Magento Connect" name="artaza_magento_connect">
-                    <block title="Middleware connection" name="magento_middleware"
-                           help="API key used to send CMS content to Magento through the FastAPI middleware.">
+                    <block title="Magento connection" name="magento_connection"
+                           help="Store URL and integration token Odoo uses to talk to Magento's REST API.">
                         <div class="col-12">
                             <div class="content-group">
                                 <div class="row mt16">
-                                    <label string="Middleware URL" for="magento_middleware_base_url"
+                                    <label string="Magento URL" for="magento_base_url"
                                            class="col-lg-2 o_light_label"/>
-                                    <field name="magento_middleware_base_url" class="col-lg-6"
-                                           placeholder="https://www.artaza.net/api/v1"/>
+                                    <field name="magento_base_url" class="col-lg-6"
+                                           placeholder="https://www.mystore.com"/>
                                 </div>
                                 <div class="row">
-                                    <label string="API key" for="magento_api_key"
+                                    <label string="Integration token" for="magento_token"
                                            class="col-lg-2 o_light_label"/>
-                                    <field name="magento_api_key" password="True" class="col-lg-6"/>
+                                    <field name="magento_token" password="True" class="col-lg-6"/>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-8 offset-lg-2 text-muted small">
+                                        Magento admin: <b>System ▸ Extensions ▸ Integrations</b>. The token
+                                        needs the ACLs of everything you sync (catalog, stock, tax, sales).
+                                        After adding a new endpoint, <b>reauthorize</b> the integration or
+                                        its calls come back 401.
+                                    </div>
+                                </div>
+                                <div class="row mt8">
+                                    <div class="col-lg-8 offset-lg-2">
+                                        <field name="magento_skip_ssl_verify" class="oe_inline"/>
+                                        <label for="magento_skip_ssl_verify"
+                                               string="Do not verify the SSL certificate"/>
+                                        <div class="text-muted small">
+                                            Tick ONLY in local development, when the store is served
+                                            with a self-signed certificate. Leave it unticked in production.
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="row mt16">
-                                    <button name="action_magento_test_connection" type="object"
-                                            string="Test connection" class="btn-secondary"
+                                    <button name="action_magento_test_direct_connection" type="object"
+                                            string="Test Magento connection" class="btn-primary"
                                             icon="fa-plug"/>
+                                </div>
+                            </div>
+                        </div>
+                    </block>
+                    <block title="Mapping (Odoo ⇄ Magento)" name="magento_mapping"
+                           help="Relate what each system calls differently. Everything is picked from a list Magento populates — no ids typed by hand.">
+                        <div class="col-12">
+                            <notebook>
+                                <page string="Warehouses → Sources" name="map_warehouses">
+                                    <div class="text-muted mt16 mb8">
+                                        Each Odoo warehouse pushes its stock to one Magento
+                                        <b>inventory source</b>. A warehouse with no source is
+                                        <b>not</b> synced — never guessed.
+                                        Press <b>Bring sources from Magento</b> first to fill the dropdown.
+                                    </div>
+                                    <div class="row mb8">
+                                        <button name="action_magento_refresh_sources" type="object"
+                                                string="Bring sources from Magento" class="btn-secondary"
+                                                icon="fa-download"/>
+                                    </div>
+                                    <field name="magento_warehouse_ids" nolabel="1">
+                                        <list editable="bottom" create="0" delete="0" edit="1">
+                                            <field name="name" readonly="1"/>
+                                            <field name="code" readonly="1"/>
+                                            <field name="magento_source_id"
+                                                   options="{'no_create': True, 'no_open': True}"
+                                                   placeholder="Pending — not synced"/>
+                                        </list>
+                                    </field>
+                                </page>
+                                <page string="Taxes → Tax classes" name="map_taxes">
+                                    <div class="text-muted mt16 mb8">
+                                        Each Odoo sale tax matches the Magento <b>product tax class</b>
+                                        whose rules apply the same rate. <b>Auto-match by rate</b> resolves
+                                        it when it is unambiguous; anything ambiguous stays empty for you
+                                        to pick. A tax with no class is <b>not</b> pushed.
+                                    </div>
+                                    <div class="text-muted mb8">
+                                        ⚠️ <b>Tax-included price</b> must be ticked on every mapped tax:
+                                        Magento sends gross prices (<i>Catalog Prices = Including Tax</i>).
+                                        If it is off, imported orders add the tax <b>on top</b> and their
+                                        total stops matching Magento's.
+                                    </div>
+                                    <div class="row mb8">
+                                        <button name="action_magento_refresh_tax_classes" type="object"
+                                                string="Bring tax classes from Magento" class="btn-secondary"
+                                                icon="fa-download"/>
+                                        <button name="action_magento_automatch_taxes" type="object"
+                                                string="Auto-match by rate" class="btn-secondary"
+                                                icon="fa-magic"/>
+                                        <button name="action_magento_resync_all_taxes" type="object"
+                                                string="Re-send every product's tax class"
+                                                class="btn-link" icon="fa-refresh"/>
+                                    </div>
+                                    <field name="magento_sale_tax_ids" nolabel="1">
+                                        <list editable="bottom" create="0" delete="0" edit="1">
+                                            <field name="name" readonly="1"/>
+                                            <field name="amount" readonly="1"/>
+                                            <field name="amount_type" readonly="1" optional="hide"/>
+                                            <field name="magento_tax_class_id"
+                                                   options="{'no_create': True, 'no_open': True}"
+                                                   placeholder="Pending — not pushed"/>
+                                            <field name="magento_price_include_ok"
+                                                   string="Tax-included price" readonly="1"
+                                                   widget="boolean_toggle"/>
+                                        </list>
+                                    </field>
+                                </page>
+                            </notebook>
+                        </div>
+                    </block>
+                    <block title="Sync history" name="magento_history"
+                           help="Every failed synchronisation is recorded here. No container logs, no commands.">
+                        <div class="col-12">
+                            <div class="content-group">
+                                <div class="row mt16" invisible="magento_log_error_count == 0">
+                                    <div class="col-lg-8 alert alert-danger mb8" role="alert">
+                                        <b><field name="magento_log_error_count" class="oe_inline"/></b>
+                                        sync problem(s) waiting to be looked at.
+                                    </div>
+                                </div>
+                                <div class="row" invisible="magento_log_error_count != 0">
+                                    <div class="col-lg-8 text-muted mb8">
+                                        No pending sync problems.
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <label string="Keep successful runs for" for="magento_log_retention_days"
+                                           class="col-lg-3 o_light_label"/>
+                                    <field name="magento_log_retention_days" class="oe_inline"/>
+                                    <span class="oe_inline ms-1">days</span>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-8 text-muted small">
+                                        Successful runs are collapsed to one line each and purged
+                                        after this many days. <b>Failures are never purged</b> —
+                                        mark them as handled instead. 0 = never purge.
+                                    </div>
+                                </div>
+                                <div class="row mt16">
+                                    <button name="action_magento_open_sync_log" type="object"
+                                            string="Open the sync history" class="btn-secondary"
+                                            icon="fa-history"/>
                                 </div>
                             </div>
                         </div>
@@ -97,14 +219,25 @@
                                         </div>
                                         <div class="mt16">
                                             <div class="text-muted mb4">
-                                                <b>Impuesto del envío</b>: IVA que se pone en la línea de
-                                                envío de las órdenes importadas. Elegí el impuesto de venta
-                                                <b>con precio incluido</b> que usa tu contador para el flete
-                                                (normalmente IVA 21%). La alícuota del flete es una decisión
-                                                fiscal, <b>no</b> la del producto. Vacío = copia la del producto.
+                                                <b>Shipping tax</b>: the tax put on the shipping line of
+                                                imported orders. Pick the <b>tax-included</b> sale tax your
+                                                accountant uses for freight. The freight's rate is a fiscal
+                                                decision, <b>not</b> the product's. Empty = mirror the
+                                                product's tax.
                                             </div>
                                             <field name="magento_shipping_tax_id" class="col-lg-6"
                                                    options="{'no_create': True}"/>
+                                        </div>
+                                        <div class="mt16">
+                                            <div class="text-muted mb4">
+                                                <b>Import from</b>: only orders updated at or after this
+                                                moment are brought in. It advances on its own as orders
+                                                arrive. Move it <b>back</b> to re-read a period — orders
+                                                already in Odoo are skipped, never duplicated — or
+                                                <b>forward</b> to ignore the store's history when
+                                                connecting for the first time.
+                                            </div>
+                                            <field name="magento_orders_cursor" class="col-lg-6"/>
                                         </div>
                                         <div class="row mt16">
                                             <button name="action_magento_pull_orders" type="object"
@@ -132,6 +265,14 @@
                                             <field name="magento_rmas_interval_number" class="oe_inline"/>
                                             <field name="magento_rmas_interval_type" class="oe_inline"/>
                                         </div>
+                                        <div class="mt16">
+                                            <div class="text-muted mb4">
+                                                <b>Import from</b>: the same watermark as orders, for
+                                                returns. Move it back to re-read a period without
+                                                duplicating anything.
+                                            </div>
+                                            <field name="magento_rmas_cursor" class="col-lg-6"/>
+                                        </div>
                                         <div class="row mt16">
                                             <button name="action_magento_pull_rmas" type="object"
                                                     string="Import RMAs now" class="btn-secondary"
@@ -139,46 +280,7 @@
                                         </div>
                                     </div>
                                 </page>
-                                <page string="Warehouses" name="warehouses">
-                                    <div class="text-muted mt16 mb8">
-                                        Register your Odoo warehouses in the middleware. Then map each
-                                        warehouse to a Magento source in the middleware panel.
-                                    </div>
-                                    <div class="content-group">
-                                        <div class="row mt16">
-                                            <button name="action_magento_sync_warehouses" type="object"
-                                                    string="Sync warehouses with Magento" class="btn-secondary"
-                                                    icon="fa-cubes"/>
-                                        </div>
-                                    </div>
-                                </page>
-                                <page string="Taxes" name="taxes">
-                                    <div class="text-muted mt16 mb8">
-                                        Register your sale taxes (IVA 21% / 10,5%) in the middleware. It
-                                        matches each one to the Magento product tax class that applies the
-                                        same rate; anything ambiguous stays pending to be mapped by hand in
-                                        the middleware panel.
-                                    </div>
-                                    <div class="content-group">
-                                        <div class="row mt16">
-                                            <button name="action_magento_sync_taxes" type="object"
-                                                    string="Sync taxes with Magento" class="btn-secondary"
-                                                    icon="fa-percent"/>
-                                        </div>
-                                    </div>
-                                    <div class="text-muted mt16 mb8">
-                                        Changing a product's tax pushes it automatically. Use this to
-                                        re-send every product's tax class (after mapping a pending tax,
-                                        for instance).
-                                    </div>
-                                    <div class="content-group">
-                                        <div class="row mt16">
-                                            <button name="action_magento_resync_all_taxes" type="object"
-                                                    string="Re-sync every product's tax class"
-                                                    class="btn-secondary" icon="fa-refresh"/>
-                                        </div>
-                                    </div>
-                                </page>
+                                
                             </notebook>
                         </div>
                     </block>

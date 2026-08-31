@@ -94,7 +94,7 @@ export class MagentoStockMatrix extends Component {
         const pending = (result.skipped || []).length;
         if (pending) {
             this.notification.add(
-                _t("%s: sent (%s warehouse(s) pending in the middleware)", row.sku, pending),
+                _t("%s: sent (%s warehouse(s) with no Magento source mapped)", row.sku, pending),
                 { type: "warning" }
             );
         } else {

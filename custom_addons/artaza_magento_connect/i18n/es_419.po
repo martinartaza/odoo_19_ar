@@ -1,0 +1,2683 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* artaza_magento_connect
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-15 02:13+0000\n"
+"PO-Revision-Date: 2026-08-07 17:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: es_419\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/artaza_magento_sync_log.py:0
+msgid "%(done)s re-imported, %(failed)s still failing — %(detail)s"
+msgstr "%(done)s reimportado(s), %(failed)s siguen fallando — %(detail)s"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/res_config_settings.py:0
+msgid ""
+"%(matched)s matched, but these taxes are NOT price-included: %(taxes)s. "
+"Magento sends gross prices, so imported orders would add the tax on top and "
+"their total would not match Magento's. Tick 'Included in Price' on them in "
+"Accounting."
+msgstr ""
+"%(matched)s emparejados, pero estos impuestos NO tienen el precio incluido: %"
+"(taxes)s. Magento envía precios brutos, así que los pedidos importados "
+"sumarían el impuesto por encima y su total no coincidiría con el de Magento. "
+"Marca 'Incluido en el precio' en Contabilidad."
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/res_config_settings.py:0
+msgid "%(matched)s matched. Still to choose by hand: %(pending)s"
+msgstr "%(matched)s emparejados. Falta elegir a mano: %(pending)s"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/res_config_settings.py:0
+msgid "%(new)s new, %(known)s already known."
+msgstr "%(new)s nuevos, %(known)s ya conocidos."
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/artaza_magento_sync_log.py:0
+msgid "%s OK"
+msgstr "%s OK"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/artaza_magento_sync_log.py:0
+msgid "%s failed"
+msgstr "%s con error"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/res_config_settings.py:0
+msgid "%s new order(s) imported from Magento."
+msgstr "%s pedido(s) nuevo(s) importado(s) de Magento."
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/res_config_settings.py:0
+msgid "%s new return(s) imported from Magento."
+msgstr "%s devolución(es) nueva(s) importada(s) de Magento."
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/res_config_settings.py:0
+msgid "%s product(s) marked. The cron will send them in batches."
+msgstr "%s producto(s) marcados. El cron los enviará en lotes."
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/artaza_magento_sync_log.py:0
+msgid "%s product(s) re-queued. The cron will send them again."
+msgstr "%s producto(s) vuelto(s) a encolar. El cron los enviará de nuevo."
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/artaza_magento_sync_log.py:0
+msgid "%s record(s) re-imported: %s"
+msgstr "%s registro(s) reimportado(s): %s"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/res_config_settings.py:0
+msgid "%s tax(es) matched. Nothing pending."
+msgstr "%s impuesto(s) emparejado(s). Nada pendiente."
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/artaza_magento_tax_class.py:0
+msgid "%s — no single rate"
+msgstr "%s — sin alícuota única"
+
+#. module: artaza_magento_connect
+#. odoo-javascript
+#: code:addons/artaza_magento_connect/static/src/stock_matrix/stock_matrix.js:0
+msgid "%s: sent (%s warehouse(s) with no Magento source mapped)"
+msgstr "%s: enviado (%s almacén(es) sin source de Magento asignado)"
+
+#. module: artaza_magento_connect
+#. odoo-javascript
+#: code:addons/artaza_magento_connect/static/src/stock_matrix/stock_matrix.js:0
+msgid "%s: stock synced"
+msgstr "%s: stock sincronizado"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid ""
+"<b>Immediate-payment</b> methods (Magento: <code>processing</code>):\n"
+"                                                their orders come in as a "
+"<b>confirmed sale</b>, with no price change.\n"
+"                                                Enter the <b>codes</b> "
+"separated by commas."
+msgstr ""
+"<b>Métodos de pago inmediato</b> (Magento: <code>processing</code>): sus "
+"pedidos entran como <b>venta confirmada</b>, sin cambio de precio. Escribe "
+"los <b>códigos</b> separados por comas."
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid ""
+"<b>Import from</b>: only orders updated at or after this\n"
+"                                                moment are brought in. It "
+"advances on its own as orders\n"
+"                                                arrive. Move it <b>back</b> "
+"to re-read a period — orders\n"
+"                                                already in Odoo are skipped, "
+"never duplicated — or\n"
+"                                                <b>forward</b> to ignore the "
+"store's history when\n"
+"                                                connecting for the first "
+"time."
+msgstr ""
+"<b>Importar desde</b>: solo entran los pedidos actualizados en ese momento o "
+"después. Avanza solo a medida que llegan pedidos. Movelo <b>hacia atrás</b> "
+"para releer un período —los pedidos que ya están en Odoo se saltean, nunca "
+"se duplican— o <b>hacia adelante</b> para ignorar el historial de la tienda "
+"al conectarla por primera vez."
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid ""
+"<b>Import from</b>: the same watermark as orders, for\n"
+"                                                returns. Move it back to re-"
+"read a period without\n"
+"                                                duplicating anything."
+msgstr ""
+"<b>Importar desde</b>: la misma marca de agua que la de pedidos, para "
+"devoluciones. Movelo hacia atrás para releer un período sin duplicar nada."
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid ""
+"<b>Payment-pending</b> methods (Magento: <code>new</code> / status\n"
+"                                                <code>pending</code>): their "
+"orders come in as a <b>quotation</b> to\n"
+"                                                negotiate; you can adjust "
+"the price and inform Magento. Codes separated by commas."
+msgstr ""
+"<b>Métodos con pago pendiente</b> (Magento: <code>new</code> / estado "
+"<code>pending</code>): sus pedidos entran como <b>presupuesto</b> a "
+"negociar; puedes ajustar el precio e informárselo a Magento. Códigos "
+"separados por comas."
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid ""
+"<b>Shipping tax</b>: the tax put on the shipping line of\n"
+"                                                imported orders. Pick the "
+"<b>tax-included</b> sale tax your\n"
+"                                                accountant uses for freight. "
+"The freight's rate is a fiscal\n"
+"                                                decision, <b>not</b> the "
+"product's. Empty = mirror the\n"
+"                                                product's tax."
+msgstr ""
+"<b>Impuesto del envío</b>: el impuesto que se pone en la línea de envío de "
+"los pedidos importados. Elegí el impuesto de venta <b>con precio incluido</"
+"b> que usa tu contador para el flete. La alícuota del flete es una decisión "
+"fiscal, <b>no</b> la del producto. Vacío = copia la del producto."
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_rma_form
+msgid "<span class=\"o_stat_text\">Create delivery</span>"
+msgstr "<span class=\"o_stat_text\">Crear envío</span>"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_rma_form
+msgid "<span class=\"o_stat_text\">Sales Order</span>"
+msgstr "<span class=\"o_stat_text\">Pedido de venta</span>"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "<span class=\"oe_inline ms-1\">days</span>"
+msgstr "<span class=\"oe_inline ms-1\">días</span>"
+
+#. module: artaza_magento_connect
+#: model:ir.model.constraint,message:artaza_magento_connect.constraint_artaza_magento_rma_magento_increment_id_uniq
+msgid "A Magento RMA with that number already exists."
+msgstr "Ya existe una devolución de Magento con ese número."
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_res_config_settings__magento_log_retention_days
+msgid ""
+"A daily cron deletes SUCCESSFUL runs older than this. Failures are never "
+"deleted automatically — an old error is usually the one that explains "
+"today's problem. 0 = never purge anything."
+msgstr ""
+"Un cron diario borra las ejecuciones CORRECTAS más antiguas que esto. Los "
+"errores no se borran nunca automáticamente: un error viejo suele ser el que "
+"explica el problema de hoy. 0 = no borrar nunca."
+
+#. module: artaza_magento_connect
+#: model:ir.model.constraint,message:artaza_magento_connect.constraint_sale_order_magento_order_id_uniq
+msgid "A sales order with that Magento ID already exists."
+msgstr "Ya existe un pedido de venta con ese ID de Magento."
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_rma_form
+msgid "Accept"
+msgstr "Aceptar"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_rma__state__accepted
+msgid "Accepted"
+msgstr "Aceptada"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_res_config_settings__magento_token
+msgid ""
+"Access token of the Magento integration (System ▸ Extensions ▸ "
+"Integrations). Sent as 'Authorization: Bearer <token>'."
+msgstr ""
+"Token de acceso de la integración de Magento (Sistema ▸ Extensiones ▸ "
+"Integraciones). Se envía como 'Authorization: Bearer <token>'."
+
+#. module: artaza_magento_connect
+#. odoo-javascript
+#: code:addons/artaza_magento_connect/static/src/stock_matrix/stock_matrix.xml:0
+msgid "Action"
+msgstr "Acción"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__message_needaction
+msgid "Action Needed"
+msgstr "Acción requerida"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__activity_ids
+msgid "Activities"
+msgstr "Actividades"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr "Decoración de Actividad de Excepción"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__activity_state
+msgid "Activity State"
+msgstr "Estado de la actividad"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__activity_type_icon
+msgid "Activity Type Icon"
+msgstr "Icono de tipo de actividad"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_order_total_wizard_form
+msgid "Adjust order total"
+msgstr "Ajustar total del pedido"
+
+#. module: artaza_magento_connect
+#: model:ir.model,name:artaza_magento_connect.model_artaza_magento_order_total_wizard
+msgid "Adjust order total (back-calculates the line discount/surcharge)"
+msgstr ""
+"Ajustar total del pedido (recalcula el descuento/recargo de las líneas)"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/sale_order.py:0
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_order_form_magento_negotiation
+msgid "Adjust total"
+msgstr "Ajustar total"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_sale_order__magento_adjustment_reason
+msgid "Adjustment Reason (Magento)"
+msgstr "Motivo del ajuste (Magento)"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/sale_order.py:0
+msgid "Adjustment sent to Magento"
+msgstr "Ajuste enviado a Magento"
+
+#. module: artaza_magento_connect
+#: model:res.groups,name:artaza_magento_connect.group_magento_manager
+msgid "Administrator"
+msgstr "Administrador"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_order_import_wizard__state__exists
+msgid "Already imported"
+msgstr "Ya importado"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_artaza_magento_rma__credit_amount
+msgid ""
+"Amount to refund with the credit note. Pre-filled with the returned lines' "
+"paid total; edit it for a partial refund."
+msgstr ""
+"Importe a devolver con la nota de crédito. Se precarga con el total pagado "
+"de las líneas devueltas; edítalo para una devolución parcial."
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_order_total_wizard_form
+msgid "Apply"
+msgstr "Aplicar"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/artaza_magento_rma.py:0
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_rma_approve_wizard_form
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_rma_form
+msgid "Approve product"
+msgstr "Aprobar producto"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_rma__state__approved
+msgid "Approved (product OK)"
+msgstr "Aprobada (producto OK)"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__message_attachment_count
+msgid "Attachment Count"
+msgstr "Número de archivos adjuntos"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "Auto-match by rate"
+msgstr "Emparejar por alícuota"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/res_config_settings.py:0
+msgid "Auto-match finished"
+msgstr "Emparejamiento terminado"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_res_config_settings__magento_cron_active
+msgid "Automatic stock sync"
+msgstr "Sync automática de stock"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_rma_approve_wizard__restock__sellable
+msgid "Back to stock (sellable again)"
+msgstr "Vuelve a depósito (revendible)"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_res_config_settings__magento_base_url
+msgid ""
+"Base URL of the Magento store, with no trailing slash, e.g. https://"
+"www.mystore.com. The REST paths are added by Odoo."
+msgstr ""
+"URL base de la tienda Magento, sin barra final, p. ej. https://"
+"www.mystore.com. Odoo agrega las rutas REST."
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid ""
+"Bring in the return requests customers open in the Magento storefront.\n"
+"                                        The real return (picking, credit "
+"note) is then handled with native Odoo tools."
+msgstr ""
+"Trae las solicitudes de devolución que los clientes abren en la tienda "
+"Magento. La devolución real (recepción, nota de crédito) se maneja después "
+"con las herramientas nativas de Odoo."
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "Bring sources from Magento"
+msgstr "Traer sources desde Magento"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "Bring tax classes from Magento"
+msgstr "Traer clases de impuesto desde Magento"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_order_total_wizard_form
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_rma_approve_wizard_form
+msgid "Cancel"
+msgstr "Cancelar"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/res_config_settings.py:0
+msgid "Check 'Tax-included price'"
+msgstr "Revisa 'Precio con impuesto incluido'"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_order_import_wizard_form
+msgid "Check / Import"
+msgstr "Verificar / Importar"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_order_import_wizard_form
+msgid "Close"
+msgstr "Cerrar"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_res_config_settings__magento_processing_methods
+msgid ""
+"Codes (comma-separated) of methods whose payment clears instantly. Their "
+"orders are imported as a confirmed sale, with no price change. E.g.: "
+"mercadopago_adbpayment_checkout_pro"
+msgstr ""
+"Códigos (separados por coma) de métodos cuyo pago se acredita al instante. "
+"Sus órdenes entran como venta confirmada, sin cambio de precio. Ej.: "
+"mercadopago_adbpayment_checkout_pro"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_res_config_settings__magento_pending_methods
+msgid ""
+"Codes (comma-separated) of offline methods awaiting settlement. Their orders "
+"are imported as a quotation to negotiate: you can adjust the price and "
+"inform Magento. E.g.: checkmo, banktransfer"
+msgstr ""
+"Códigos (separados por coma) de métodos offline pendientes de acreditación. "
+"Sus órdenes entran como presupuesto para negociar: puedes ajustar el precio "
+"y avisarle a Magento. Ej.: checkmo, banktransfer"
+
+#. module: artaza_magento_connect
+#: model:ir.model,name:artaza_magento_connect.model_res_config_settings
+msgid "Config Settings"
+msgstr "Ajustes de configuración"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_sync_log__operation__config
+#: model:ir.ui.menu,name:artaza_magento_connect.menu_magento_config
+msgid "Configuration"
+msgstr "Configuración"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_rma_approve_wizard_form
+msgid "Confirm"
+msgstr "Confirmar"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/artaza_magento_client.py:0
+msgid "Connection error with Magento: %s"
+msgstr "Error de conexión con Magento: %s"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/wizard/artaza_magento_order_import_wizard.py:0
+msgid "Could not import."
+msgstr "No se pudo importar."
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/artaza_magento_rma.py:0
+msgid "Could not work out which Magento website this coupon belongs to."
+msgstr "No se pudo determinar a qué sitio web de Magento pertenece este cupón."
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_sync_log__operation__coupon
+msgid "Coupon"
+msgstr "Cupón"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__coupon_code
+msgid "Coupon Code"
+msgstr "Código de cupón"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_order_import_wizard__create_uid
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_order_total_wizard__create_uid
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__create_uid
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma_approve_wizard__create_uid
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma_line__create_uid
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_source__create_uid
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_sync_log__create_uid
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_sync_log_line__create_uid
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_tax_class__create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_order_import_wizard__create_date
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_order_total_wizard__create_date
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__create_date
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma_approve_wizard__create_date
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma_line__create_date
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_source__create_date
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_sync_log__create_date
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_sync_log_line__create_date
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_tax_class__create_date
+msgid "Created on"
+msgstr "Creado el"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__credit_amount
+msgid "Credit Amount"
+msgstr "Monto de crédito"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/artaza_magento_rma.py:0
+msgid "Credit note created: %s"
+msgstr "Nota de crédito creada: %s"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/artaza_magento_rma.py:0
+msgid "Credit note · RMA %s"
+msgstr "Nota de crédito · RMA %s"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_sync_log__trigger__cron
+msgid "Cron"
+msgstr "Cron"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_order_total_wizard__currency_id
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__currency_id
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma_line__currency_id
+msgid "Currency"
+msgstr "Moneda"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_order_total_wizard__current_total
+msgid "Current total"
+msgstr "Total actual"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__partner_id
+msgid "Customer"
+msgstr "Cliente"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__customer_email
+msgid "Customer Email"
+msgstr "Email del cliente"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__customer_note
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_rma_form
+msgid "Customer Note"
+msgstr "Nota del cliente"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_sync_log_search
+msgid "Day"
+msgstr "Día"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__res_config_settings__magento_cron_interval_type__days
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__res_config_settings__magento_orders_interval_type__days
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__res_config_settings__magento_rmas_interval_type__days
+msgid "Days"
+msgstr "Días"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_rma_form
+msgid "Decision"
+msgstr "Decisión"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_rma__rma_type__defective
+msgid "Defective product"
+msgstr "Producto defectuoso"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma_line__name
+msgid "Description"
+msgstr "Descripción"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_sync_log__direction
+msgid "Direction"
+msgstr "Dirección"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/artaza_magento_rma.py:0
+msgid "Discount coupon generated: %s"
+msgstr "Cupón de descuento generado: %s"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_account_tax__display_name
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_client__display_name
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_order_import_wizard__display_name
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_order_total_wizard__display_name
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__display_name
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma_approve_wizard__display_name
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma_line__display_name
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_source__display_name
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_sync_log__display_name
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_sync_log_line__display_name
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_tax_class__display_name
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_product_product__display_name
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_product_template__display_name
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_res_config_settings__display_name
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_sale_order__display_name
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_stock_picking__display_name
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_stock_quant__display_name
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_stock_warehouse__display_name
+msgid "Display Name"
+msgstr "Nombre en pantalla"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_res_config_settings__magento_skip_ssl_verify
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "Do not verify the SSL certificate"
+msgstr "No verificar el certificado SSL"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma_approve_wizard__restock
+msgid "Does the product go back to stock?"
+msgstr "¿El producto vuelve a depósito?"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_order_import_wizard__state__draft
+msgid "Draft"
+msgstr "Borrador"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_sync_log__duration
+msgid "Duration (s)"
+msgstr "Duración (s)"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid ""
+"Each Odoo sale tax matches the Magento <b>product tax class</b>\n"
+"                                        whose rules apply the same rate. "
+"<b>Auto-match by rate</b> resolves\n"
+"                                        it when it is unambiguous; anything "
+"ambiguous stays empty for you\n"
+"                                        to pick. A tax with no class is "
+"<b>not</b> pushed."
+msgstr ""
+"Cada impuesto de venta de Odoo se corresponde con la <b>clase de impuesto</"
+"b> de Magento cuyas reglas aplican la misma alícuota. <b>Emparejar por "
+"alícuota</b> lo resuelve cuando no hay ambigüedad; lo ambiguo queda vacío "
+"para que lo elijas. Un impuesto sin clase <b>no</b> se envía."
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid ""
+"Each Odoo warehouse pushes its stock to one Magento\n"
+"                                        <b>inventory source</b>. A warehouse "
+"with no source is\n"
+"                                        <b>not</b> synced — never guessed.\n"
+"                                        Press <b>Bring sources from Magento</"
+"b> first to fill the dropdown."
+msgstr ""
+"Cada almacén de Odoo envía su stock a un <b>inventory source</b> de Magento. "
+"Un almacén sin source <b>no</b> se sincroniza: nunca se adivina. Usa primero "
+"<b>Traer sources desde Magento</b> para llenar la lista."
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "Enable automatic stock sync"
+msgstr "Activar sync automática de stock"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_source__enabled
+msgid "Enabled in Magento"
+msgstr "Habilitado en Magento"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/artaza_magento_rma.py:0
+msgid "Enter a return number."
+msgstr "Escribí un número de devolución."
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/sale_order.py:0
+msgid "Enter an order number."
+msgstr "Escribe un número de pedido."
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/artaza_magento_rma.py:0
+msgid "Enter the 'Credit Amount' before resolving as credit."
+msgstr "Completa el 'Importe a acreditar' antes de resolver como crédito."
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_sync_log__error_message
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_order_import_wizard__state__error
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_sync_log__state__error
+msgid "Error"
+msgstr "Error"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid ""
+"Every failed synchronisation is recorded here. No container logs, no "
+"commands."
+msgstr ""
+"Cada sincronización fallida queda registrada aquí. Sin logs de contenedor, "
+"sin comandos."
+
+#. module: artaza_magento_connect
+#: model_terms:ir.actions.act_window,help:artaza_magento_connect.action_magento_sync_log
+msgid ""
+"Every sync run that fails is recorded here — no need to read container\n"
+"                logs. Successful runs are kept for a while and then purged; "
+"errors are\n"
+"                never deleted automatically."
+msgstr ""
+"Cada sincronización que falla queda registrada aquí, sin necesidad de leer "
+"los logs del contenedor. Las ejecuciones correctas se conservan un tiempo y "
+"luego se depuran; los errores no se borran nunca automáticamente."
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_rma__rma_type__exchange
+msgid "Exchange for another product"
+msgstr "Cambio por otro producto"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_sync_log__count_error
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_sync_log_list
+msgid "Failed"
+msgstr "Fallido"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_sync_log__line_ids
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_sync_log_form
+msgid "Failures"
+msgstr "Fallos"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_account_tax__magento_price_include_ok
+msgid ""
+"False = this tax is NOT price-included, but the integration assumes it is "
+"(Magento runs 'Catalog Prices = Including Tax'). Imported orders would add "
+"the tax ON TOP and their total would not match Magento's."
+msgstr ""
+"Falso = este impuesto NO tiene el precio incluido, pero la integración asume "
+"que sí (Magento usa 'Catalog Prices = Including Tax'). Los pedidos "
+"importados sumarían el impuesto POR ENCIMA y su total no coincidiría con el "
+"de Magento."
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_artaza_magento_tax_class__single_rate
+msgid ""
+"False when the class applies several rates (or none): it cannot be auto-"
+"matched and must be chosen by hand."
+msgstr ""
+"Falso cuando la clase aplica varias alícuotas (o ninguna): no se puede "
+"emparejar automáticamente y hay que elegirla a mano."
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/sale_order.py:0
+msgid ""
+"Fill in 'Adjustment Reason (Magento)' before sending the adjustment. The "
+"customer will see it next to the agreed total."
+msgstr ""
+"Completa 'Motivo del ajuste (Magento)' antes de enviar el ajuste. El cliente "
+"lo verá junto al total acordado."
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/artaza_magento_rma.py:0
+msgid ""
+"Fill in 'Message to customer' with the rejection reason before rejecting. "
+"The customer sees it in Magento."
+msgstr ""
+"Completa 'Mensaje al cliente' con el motivo del rechazo antes de rechazar. "
+"El cliente lo ve en Magento."
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/sale_order.py:0
+msgid "Fiscal condition updated from Magento order %(order)s: %(cond)s"
+msgstr ""
+"Condición fiscal actualizada desde el pedido de Magento %(order)s: %(cond)s"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__message_follower_ids
+msgid "Followers"
+msgstr "Seguidores"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "Seguidores (Contactos)"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_artaza_magento_rma__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr "Icono de Font Awesome p. ej. fa-tasks"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_rma__state__fraud
+msgid "Fraud / tampered"
+msgstr "Fraude / alterado"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_res_config_settings__magento_cron_interval_number
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "Frequency"
+msgstr "Frecuencia"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_rma_form
+msgid "Generated automatically when you resolve as credit"
+msgstr "Se genera automáticamente al resolver como crédito"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_sale_order__magento_order_total
+msgid ""
+"Grand total of the order in Magento when absorbed; base for the adjustment."
+msgstr "Grand total de la orden en Magento al absorberla; base para el ajuste."
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_sync_log__http_status
+msgid "HTTP status"
+msgstr "Estado HTTP"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_sync_log__resolved
+msgid "Handled"
+msgstr "Atendido"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__has_message
+msgid "Has Message"
+msgstr "Tiene un mensaje"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_rma__state__held
+msgid "Held"
+msgstr "Retenida"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_rma_form
+msgid "Hold"
+msgstr "Retener"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__res_config_settings__magento_cron_interval_type__hours
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__res_config_settings__magento_orders_interval_type__hours
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__res_config_settings__magento_rmas_interval_type__hours
+msgid "Hours"
+msgstr "Horas"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_res_config_settings__magento_stock_batch_size
+msgid "How many products the cron sends per push (for testing, use 5)."
+msgstr "Cuántos productos manda el cron por envío (para probar, poné 5)."
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_account_tax__id
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_client__id
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_order_import_wizard__id
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_order_total_wizard__id
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__id
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma_approve_wizard__id
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma_line__id
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_source__id
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_sync_log__id
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_sync_log_line__id
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_tax_class__id
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_product_product__id
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_product_template__id
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_res_config_settings__id
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_sale_order__id
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_stock_picking__id
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_stock_quant__id
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_stock_warehouse__id
+msgid "ID"
+msgstr "ID"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_res_config_settings__magento_shipping_tax_id
+msgid ""
+"IVA applied to the shipping line. Pick the PRICE-INCLUDED sale tax your "
+"accountant uses for freight (usually IVA 21%). Leave empty to mirror the "
+"products' tax (fine only if all your products share the same rate)."
+msgstr ""
+"IVA que se aplica a la línea de envío. Elige el impuesto de venta CON PRECIO "
+"INCLUIDO que usa tu contador para el flete (normalmente IVA 21%). Vacío = "
+"copia el impuesto del producto (válido solo si todos tus productos comparten "
+"la misma alícuota)."
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__activity_exception_icon
+msgid "Icon"
+msgstr "Icono"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_artaza_magento_rma__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr "Icono para indicar una actividad de excepción."
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_artaza_magento_rma__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "Si está marcada, hay nuevos mensajes que requieren su atención."
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_artaza_magento_rma__message_has_error
+#: model:ir.model.fields,help:artaza_magento_connect.field_artaza_magento_rma__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr "Si está marcada, algunos mensajes tienen error de envío."
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_res_config_settings__magento_processing_methods
+msgid "Immediate-payment methods (processing)"
+msgstr "Métodos con pago inmediato (processing)"
+
+#. module: artaza_magento_connect
+#: model:ir.ui.menu,name:artaza_magento_connect.menu_magento_order_import
+msgid "Import Order"
+msgstr "Importar pedido"
+
+#. module: artaza_magento_connect
+#: model:ir.actions.act_window,name:artaza_magento_connect.action_magento_order_import_wizard
+msgid "Import Order from Magento"
+msgstr "Importar pedido desde Magento"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_res_config_settings__magento_rmas_cron_active
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "Import RMAs automatically"
+msgstr "Importar RMAs automáticamente"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "Import RMAs now"
+msgstr "Importar RMAs ahora"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_order_import_wizard_form
+msgid "Import a Magento order"
+msgstr "Importar un pedido de Magento"
+
+#. module: artaza_magento_connect
+#: model:ir.model,name:artaza_magento_connect.model_artaza_magento_order_import_wizard
+msgid "Import a Magento order by number"
+msgstr "Importar un pedido de Magento por número"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "Import one order by number"
+msgstr "Importar un pedido por número"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_res_config_settings__magento_orders_cron_active
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "Import orders automatically"
+msgstr "Importar órdenes automáticamente"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "Import orders now"
+msgstr "Importar pedidos ahora"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_res_config_settings__magento_orders_cursor
+msgid "Import orders updated since"
+msgstr "Importar órdenes actualizadas desde"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_res_config_settings__magento_rmas_cursor
+msgid "Import returns updated since"
+msgstr "Importar devoluciones actualizadas desde"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_order_import_wizard__state__imported
+msgid "Imported"
+msgstr "Importado"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/wizard/artaza_magento_order_import_wizard.py:0
+msgid "Imported as %s."
+msgstr "Importado como %s."
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_rma__state__in_transit
+msgid "In transit"
+msgstr "En tránsito"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__inspection_note
+msgid "Inspection note (internal)"
+msgstr "Nota de inspección (interna)"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_res_config_settings__magento_token
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "Integration token"
+msgstr "Token de integración"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_rma_form
+msgid "Internal assessment on receipt"
+msgstr "Evaluación interna al recibir"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__message_is_follower
+msgid "Is Follower"
+msgstr "Es un seguidor"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_rma_form
+msgid "Items"
+msgstr "Ítems"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "Keep successful runs for"
+msgstr "Conservar las ejecuciones correctas durante"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_res_config_settings__magento_log_retention_days
+msgid "Keep successful runs for (days)"
+msgstr "Conservar las ejecuciones correctas (días)"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_order_import_wizard__write_uid
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_order_total_wizard__write_uid
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__write_uid
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma_approve_wizard__write_uid
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma_line__write_uid
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_source__write_uid
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_sync_log__write_uid
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_sync_log_line__write_uid
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_tax_class__write_uid
+msgid "Last Updated by"
+msgstr "Última actualización por"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_order_import_wizard__write_date
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_order_total_wizard__write_date
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__write_date
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma_approve_wizard__write_date
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma_line__write_date
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_source__write_date
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_sync_log__write_date
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_sync_log_line__write_date
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_tax_class__write_date
+msgid "Last Updated on"
+msgstr "Última actualización el"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__line_ids
+msgid "Lines"
+msgstr "Líneas"
+
+#. module: artaza_magento_connect
+#. odoo-javascript
+#: code:addons/artaza_magento_connect/static/src/stock_matrix/stock_matrix.xml:0
+msgid "Loading…"
+msgstr "Cargando…"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_artaza_magento_rma__state
+msgid "Local workflow state. Each transition is pushed to Magento."
+msgstr "Estado del flujo local. Cada transición se empuja a Magento."
+
+#. module: artaza_magento_connect
+#: model:ir.ui.menu,name:artaza_magento_connect.menu_magento_root
+msgid "Magento"
+msgstr "Magento"
+
+#. module: artaza_magento_connect
+#: model:ir.module.category,name:artaza_magento_connect.module_category_magento_connect
+#: model:res.groups.privilege,name:artaza_magento_connect.privilege_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "Magento Connect"
+msgstr "Magento Connect"
+
+#. module: artaza_magento_connect
+#: model:ir.actions.act_window,name:artaza_magento_connect.action_magento_config_settings
+msgid "Magento Connect Settings"
+msgstr "Ajustes Magento Connect"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_sale_order__magento_order_entity_id
+msgid "Magento Entity ID"
+msgstr "Entity ID Magento"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_stock_warehouse__magento_source_id
+msgid ""
+"Magento MSI source this warehouse's stock is pushed to. Empty = pending: the "
+"stock of this warehouse is NOT sent (never guessed)."
+msgstr ""
+"Source MSI de Magento al que se envía el stock de este almacén. Vacío = "
+"pendiente: el stock de este almacén NO se envía (nunca se adivina)."
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__magento_order_entity_id
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_sale_order__magento_order_id
+msgid "Magento Order ID"
+msgstr "ID orden Magento"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma_line__magento_order_item_id
+msgid "Magento Order Item ID"
+msgstr "ID de ítem de pedido Magento"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_order_import_wizard__order_number
+msgid "Magento Order Number"
+msgstr "Número de pedido de Magento"
+
+#. module: artaza_magento_connect
+#: model:ir.model,name:artaza_magento_connect.model_artaza_magento_client
+msgid "Magento REST client (direct)"
+msgstr "Cliente REST de Magento (directo)"
+
+#. module: artaza_magento_connect
+#: model:ir.model,name:artaza_magento_connect.model_artaza_magento_rma
+msgid "Magento RMA (return request)"
+msgstr "RMA de Magento (solicitud de devolución)"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__magento_rma_id
+msgid "Magento RMA ID"
+msgstr "ID de RMA Magento"
+
+#. module: artaza_magento_connect
+#: model:ir.model,name:artaza_magento_connect.model_artaza_magento_rma_line
+msgid "Magento RMA line"
+msgstr "Línea de RMA de Magento"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_sale_order__magento_order_state
+msgid "Magento State"
+msgstr "Estado en Magento"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__magento_status
+msgid "Magento Status"
+msgstr "Estado en Magento"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_res_config_settings__magento_base_url
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "Magento URL"
+msgstr "URL de Magento"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid ""
+"Magento admin: <b>System ▸ Extensions ▸ Integrations</b>. The token\n"
+"                                        needs the ACLs of everything you "
+"sync (catalog, stock, tax, sales).\n"
+"                                        After adding a new endpoint, "
+"<b>reauthorize</b> the integration or\n"
+"                                        its calls come back 401."
+msgstr ""
+"Administración de Magento: <b>Sistema ▸ Extensiones ▸ Integraciones</b>. El "
+"token necesita los permisos de todo lo que sincronices (catálogo, stock, "
+"impuestos, ventas). Después de agregar un punto de entrada nuevo, "
+"<b>reautoriza</b> la integración o sus llamadas devuelven 401."
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_tax_class__magento_class_id
+msgid "Magento class id"
+msgstr "Id de clase de Magento"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "Magento connection"
+msgstr "Conexión con Magento"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/res_config_settings.py:0
+msgid "Magento connection OK"
+msgstr "Conexión con Magento correcta"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/product_product.py:0
+msgid "Magento does not know that SKU."
+msgstr "Magento no conoce ese SKU."
+
+#. module: artaza_magento_connect
+#: model:ir.model,name:artaza_magento_connect.model_artaza_magento_source
+msgid "Magento inventory source"
+msgstr "Inventory source de Magento"
+
+#. module: artaza_magento_connect
+#: model:ir.model,name:artaza_magento_connect.model_artaza_magento_tax_class
+msgid "Magento product tax class"
+msgstr "Clase de impuesto de producto de Magento"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/artaza_magento_client.py:0
+msgid "Magento rejected the operation (%(code)s): %(detail)s"
+msgstr "Magento rechazó la operación (%(code)s): %(detail)s"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/sale_order.py:0
+msgid "Magento returned no order %s."
+msgstr "Magento no devolvió ningún pedido %s."
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/artaza_magento_rma.py:0
+msgid "Magento returned no return %s."
+msgstr "Magento no devolvió ninguna devolución %s."
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_artaza_magento_rma__magento_rma_id
+msgid "Magento rma entity_id — the target of the status push."
+msgstr "entity_id del RMA en Magento — destino del push de estado."
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_stock_warehouse__magento_source_id
+msgid "Magento source"
+msgstr "Source de Magento"
+
+#. module: artaza_magento_connect
+#: model:ir.model,name:artaza_magento_connect.model_artaza_magento_sync_log_line
+msgid "Magento sync failure"
+msgstr "Fallo de sincronización con Magento"
+
+#. module: artaza_magento_connect
+#: model:ir.model,name:artaza_magento_connect.model_artaza_magento_sync_log
+msgid "Magento sync log"
+msgstr "Registro de sincronización con Magento"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_account_tax__magento_tax_class_id
+msgid "Magento tax class"
+msgstr "Clase de impuesto de Magento"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_sync_log__direction__in
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_sync_log_search
+msgid "Magento → Odoo"
+msgstr "Magento → Odoo"
+
+#. module: artaza_magento_connect
+#: model:ir.actions.server,name:artaza_magento_connect.ir_cron_magento_pull_orders_ir_actions_server
+msgid "Magento: importar órdenes"
+msgstr "Magento: importar pedidos"
+
+#. module: artaza_magento_connect
+#: model:ir.actions.server,name:artaza_magento_connect.ir_cron_magento_stock_sync_ir_actions_server
+msgid "Magento: sincronizar stock"
+msgstr "Magento: sincronizar stock"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_sync_log__trigger__manual
+msgid "Manual"
+msgstr "Manual"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "Mapping (Odoo ⇄ Magento)"
+msgstr "Relaciones (Odoo ⇄ Magento)"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_sync_log_form
+msgid "Mark as handled"
+msgstr "Marcar como atendido"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "Mark everything for sync"
+msgstr "Marcar todo para sincronizar"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__message_has_error
+msgid "Message Delivery error"
+msgstr "Error de envío de mensaje"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__admin_message
+msgid "Message to customer"
+msgstr "Mensaje al cliente"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__message_ids
+msgid "Messages"
+msgstr "Mensajes"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__res_config_settings__magento_cron_interval_type__minutes
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__res_config_settings__magento_orders_interval_type__minutes
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__res_config_settings__magento_rmas_interval_type__minutes
+msgid "Minutes"
+msgstr "Minutos"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_artaza_magento_source__enabled
+msgid "Mirrors the source's own enabled flag in Magento."
+msgstr "Refleja el estado de habilitación que el source tiene en Magento."
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_sync_log_line__res_model
+msgid "Model"
+msgstr "Modelo"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr "Fecha límite de mi actividad"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_source__name
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_tax_class__name
+msgid "Name"
+msgstr "Nombre"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_sync_log__operation__negotiation
+msgid "Negotiation"
+msgstr "Negociación"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_order_total_wizard__new_total
+msgid "New total"
+msgstr "Total nuevo"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr "Fecha límite de la siguiente actividad"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__activity_summary
+msgid "Next Activity Summary"
+msgstr "Resumen de la siguiente actividad"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__activity_type_id
+msgid "Next Activity Type"
+msgstr "Tipo de la siguiente actividad"
+
+#. module: artaza_magento_connect
+#. odoo-javascript
+#: code:addons/artaza_magento_connect/static/src/stock_matrix/stock_matrix.xml:0
+msgid "Next ›"
+msgstr "Siguiente ›"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/artaza_magento_rma.py:0
+msgid "No delivery operation type is configured."
+msgstr "No hay un tipo de operación de entrega configurado."
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "No pending sync problems."
+msgstr "No hay problemas de sincronización pendientes."
+
+#. module: artaza_magento_connect
+#. odoo-javascript
+#: code:addons/artaza_magento_connect/static/src/stock_matrix/stock_matrix.xml:0
+msgid "No products."
+msgstr "Sin productos."
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/artaza_magento_rma.py:0
+msgid "No receipt operation type is configured."
+msgstr "No hay un tipo de operación de recepción configurado."
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/artaza_magento_rma.py:0
+msgid "No returned line matches the invoice; cannot build the credit note."
+msgstr ""
+"Ninguna línea devuelta coincide con la factura; no se puede armar la nota de "
+"crédito."
+
+#. module: artaza_magento_connect
+#: model_terms:ir.actions.act_window,help:artaza_magento_connect.action_magento_rma
+msgid "No returns imported yet"
+msgstr "Aún no se importaron devoluciones"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/artaza_magento_sync_log.py:0
+msgid "None of those SKUs exist in Odoo any more."
+msgstr "Ninguno de esos SKU existe ya en Odoo."
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_rma_approve_wizard__restock__scrap
+msgid "Not back to stock (damaged / written off)"
+msgstr "No vuelve a depósito (dañado / descartado)"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_order_import_wizard__state__not_found
+msgid "Not found"
+msgstr "No encontrado"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_sync_log_search
+msgid "Not handled yet"
+msgstr "Sin atender"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_sync_log__note
+msgid "Note"
+msgstr "Nota"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.actions.act_window,help:artaza_magento_connect.action_magento_sync_log
+msgid "Nothing has failed."
+msgstr "No falló nada."
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__message_needaction_counter
+msgid "Number of Actions"
+msgstr "Número de acciones"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__message_has_error_counter
+msgid "Number of errors"
+msgstr "Número de errores"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_artaza_magento_rma__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "Número de mensajes que requieren una acción"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_artaza_magento_rma__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "Número de mensajes con error de envío"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_sync_log__count_ok
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_sync_log_list
+msgid "OK"
+msgstr "Aceptar"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_order_import_wizard__sale_order_id
+msgid "Odoo Order"
+msgstr "Pedido de Odoo"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__odoo_reference
+msgid "Odoo Reference"
+msgstr "Referencia Odoo"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_sync_log__direction__out
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_sync_log_search
+msgid "Odoo → Magento"
+msgstr "Odoo → Magento"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid ""
+"Odoo's internal cron pushes stock to Magento at this frequency.\n"
+"                                        No system crontab required."
+msgstr ""
+"El cron interno de Odoo envía el stock a Magento con esta frecuencia. No "
+"hace falta un crontab del sistema."
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_artaza_magento_sync_log__ok_refs
+msgid "One line per operation, not per item: the refs that went through."
+msgstr "Una línea por ejecución, no por ítem: las referencias que se enviaron."
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_sync_log_form
+msgid ""
+"One line per run, not per item — enough to answer\n"
+"                                \"did this SKU go out in that batch?\" "
+"without a row each."
+msgstr ""
+"Una línea por ejecución, no por ítem: alcanza para responder \"¿este SKU "
+"salió en ese lote?\" sin una fila para cada uno."
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_res_config_settings__magento_orders_cursor
+msgid ""
+"Only orders updated at or after this moment are imported. It moves forward "
+"on its own as orders come in. Move it back to re-read a period (orders "
+"already in Odoo are skipped, never duplicated); move it forward to ignore "
+"history when connecting an existing store."
+msgstr ""
+"Solo se importan los pedidos actualizados en ese momento o después. Avanza "
+"solo a medida que entran pedidos. Movelo hacia atrás para releer un período "
+"(los pedidos que ya están en Odoo se saltean, nunca se duplican); movelo "
+"hacia adelante para ignorar el historial al conectar una tienda existente."
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_sync_log_form
+msgid "Open"
+msgstr "Abierto"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "Open the sync history"
+msgstr "Abrir el historial de sincronización"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_sync_log__operation
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_sync_log_line__operation
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_sync_log_search
+msgid "Operation"
+msgstr "Operación"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_artaza_magento_rma__inspection_note
+msgid "Operator's assessment on receipt. Not shown to the customer."
+msgstr "Evaluación del operario al recibir. No se muestra al cliente."
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_order_total_wizard__order_id
+msgid "Order"
+msgstr "Pedido"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/sale_order.py:0
+msgid ""
+"Order %(order)s was not imported: no product in Odoo has the Internal "
+"Reference %(skus)s. Create it (or fix the reference) and re-import the order "
+"from the sync history."
+msgstr ""
+"El pedido %(order)s no se importó: ningún producto de Odoo tiene la "
+"referencia interna %(skus)s. Crealo (o corregí la referencia) y reimportá el "
+"pedido desde el historial de sincronización."
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__magento_order_increment_id
+msgid "Order Number"
+msgstr "Número de pedido"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_sync_log__operation__order_pull
+msgid "Order import"
+msgstr "Importación de pedidos"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "Orders"
+msgstr "Órdenes"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_res_config_settings__magento_orders_interval_number
+msgid "Orders frequency"
+msgstr "Frecuencia órdenes"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/res_config_settings.py:0
+msgid "Orders imported"
+msgstr "Pedidos importados"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_res_config_settings__magento_orders_interval_type
+msgid "Orders unit"
+msgstr "Unidad órdenes"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_sale_order__magento_order_total
+msgid "Original Magento Total"
+msgstr "Total original Magento"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_sync_log__state__partial
+msgid "Partial"
+msgstr "Parcial"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_res_config_settings__magento_pending_methods
+msgid "Payment-pending methods (pending)"
+msgstr "Métodos con pago a acreditar (pending)"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "Pending — not pushed"
+msgstr "Pendiente — no se envía"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "Pending — not synced"
+msgstr "Pendiente — no se sincroniza"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_sync_log__operation__price
+msgid "Price"
+msgstr "Precio"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_product_product__magento_price_dirty
+msgid "Price pending sync to Magento"
+msgstr "Precio pendiente de sync a Magento"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_sync_log_search
+msgid "Problems"
+msgstr "Problemas"
+
+#. module: artaza_magento_connect
+#: model:ir.model,name:artaza_magento_connect.model_product_template
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma_line__product_id
+msgid "Product"
+msgstr "Producto"
+
+#. module: artaza_magento_connect
+#: model:ir.model,name:artaza_magento_connect.model_product_product
+msgid "Product Variant"
+msgstr "Variante del producto"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_account_tax__magento_tax_class_id
+msgid ""
+"Product tax class assigned in Magento to products carrying this tax. Empty = "
+"pending: those products' tax class is NOT pushed."
+msgstr ""
+"Clase de impuesto asignada en Magento a los productos que llevan este "
+"impuesto. Vacío = pendiente: la clase de impuesto de esos productos NO se "
+"envía."
+
+#. module: artaza_magento_connect
+#: model:ir.ui.menu,name:artaza_magento_connect.menu_magento_products
+msgid "Products"
+msgstr "Productos"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_res_config_settings__magento_stock_batch_size
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "Products per batch"
+msgstr "Productos por lote"
+
+#. module: artaza_magento_connect
+#: model:ir.actions.client,name:artaza_magento_connect.action_magento_stock_matrix
+msgid "Products — Magento Stock"
+msgstr "Productos — Stock Magento"
+
+#. module: artaza_magento_connect
+#. odoo-javascript
+#: code:addons/artaza_magento_connect/static/src/stock_matrix/stock_matrix.xml:0
+msgid "Products — Stock to Magento"
+msgstr "Productos — Stock hacia Magento"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/artaza_magento_rma.py:0
+msgid "Pushed to Magento: %s"
+msgstr "Enviado a Magento: %s"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma_line__qty_requested
+msgid "Qty to return"
+msgstr "Cant. a devolver"
+
+#. module: artaza_magento_connect
+#: model:ir.model,name:artaza_magento_connect.model_stock_quant
+msgid "Quants"
+msgstr "Cuantos"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma_approve_wizard__rma_id
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma_line__rma_id
+msgid "RMA"
+msgstr "RMA"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__magento_increment_id
+msgid "RMA Number"
+msgstr "Número de RMA"
+
+#. module: artaza_magento_connect
+#: model:ir.model,name:artaza_magento_connect.model_artaza_magento_rma_approve_wizard
+msgid "RMA approve: restock decision"
+msgstr "Aprobación de RMA: decisión de reingreso"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/artaza_magento_rma.py:0
+msgid "RMA return %s"
+msgstr "Devolución RMA %s"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_res_config_settings__magento_rmas_interval_number
+msgid "RMAs frequency"
+msgstr "Frecuencia de RMAs"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_res_config_settings__magento_rmas_interval_type
+msgid "RMAs unit"
+msgstr "Unidad de RMAs"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_tax_class__rate
+msgid "Rate (%)"
+msgstr "Alícuota (%)"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_artaza_magento_tax_class__rate
+msgid ""
+"Rate the Magento tax rules apply to this class. Only meaningful when the "
+"class applies exactly one rate."
+msgstr ""
+"Alícuota que las reglas de impuesto de Magento aplican a esta clase. Solo "
+"tiene sentido cuando la clase aplica exactamente una."
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_sync_log_form
+msgid "Re-import now"
+msgstr "Reimportar ahora"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_sync_log_form
+msgid "Re-queue the failed items"
+msgstr "Volver a encolar los ítems fallidos"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "Re-send every product's tax class"
+msgstr "Reenviar la clase de impuesto de todos los productos"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_order_total_wizard__reason
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__reason_code
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_sync_log_line__error_message
+msgid "Reason"
+msgstr "Motivo"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_rma_form
+msgid "Received"
+msgstr "Recibido"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_rma__state__inspection
+msgid "Received / under inspection"
+msgstr "Recibida / en revisión"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_sync_log_line__res_id
+msgid "Record id"
+msgstr "Id del registro"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_sync_log_line__ref
+msgid "Reference"
+msgstr "Referencia"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_artaza_magento_rma__refund_amount_total
+msgid ""
+"Reference amount to refund: the paid price (tax incl., from the Odoo "
+"invoice) of the returned lines. NOT the order total. The credit note "
+"reverses this; edit Credit Amount below for a partial refund."
+msgstr ""
+"Importe de referencia a devolver: el precio pagado (con impuestos, según la "
+"factura de Odoo) de las líneas devueltas. NO el total del pedido. La nota de "
+"crédito revierte esto; edita el Importe a acreditar de abajo para una "
+"devolución parcial."
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_sync_log_search
+msgid "Reference sent"
+msgstr "Referencia enviada"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_rma_form
+msgid "Reject"
+msgstr "Rechazar"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_rma_form
+msgid "Reject as fraud"
+msgstr "Rechazar por fraude"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_rma__state__rejected
+msgid "Rejected"
+msgstr "Rechazada"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid ""
+"Relate what each system calls differently. Everything is picked from a list "
+"Magento populates — no ids typed by hand."
+msgstr ""
+"Relaciona lo que cada sistema llama distinto. Todo se elige de una lista que "
+"llena Magento: no se escribe ningún id a mano."
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/artaza_magento_rma.py:0
+msgid "Replacement %s"
+msgstr "Reemplazo %s"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/artaza_magento_rma.py:0
+msgid "Replacement delivery"
+msgstr "Entrega de reemplazo"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/artaza_magento_rma.py:0
+msgid "Replacement delivery created: %s"
+msgstr "Entrega de reemplazo creada: %s"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_sync_log_form
+msgid "Request / response"
+msgstr "Petición / respuesta"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_sync_log__request_payload
+msgid "Request sent"
+msgstr "Solicitud enviada"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_rma__state__requested
+msgid "Requested"
+msgstr "Solicitada"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__magento_created_at
+msgid "Requested At"
+msgstr "Solicitada el"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__resolution
+msgid "Resolution"
+msgstr "Resolución"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_rma_form
+msgid "Resolve: credit"
+msgstr "Resolver: crédito"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_rma_form
+msgid "Resolve: exchange"
+msgstr "Resolver: recambio"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_rma__state__resolved_credit
+msgid "Resolved: credit"
+msgstr "Resuelta: crédito"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_rma__state__resolved_exchange
+msgid "Resolved: exchange"
+msgstr "Resuelta: recambio"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_sync_log__response_body
+msgid "Response"
+msgstr "Respuesta"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__activity_user_id
+msgid "Responsible User"
+msgstr "Usuario responsable"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_order_import_wizard__message
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_sync_log__state
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_sync_log_line__state
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_sync_log_search
+msgid "Result"
+msgstr "Resultado"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_sync_log__operation__rma_pull
+msgid "Return import"
+msgstr "Importación de devoluciones"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_sync_log__operation__rma_status
+msgid "Return status"
+msgstr "Estado de la devolución"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_rma_form
+msgid "Return to customer"
+msgstr "Devolver al cliente"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/artaza_magento_rma.py:0
+msgid "Return to customer %s"
+msgstr "Devolución al cliente %s"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/artaza_magento_rma.py:0
+msgid "Returned product received: %(pick)s → %(loc)s"
+msgstr "Producto devuelto recibido: %(pick)s → %(loc)s"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_rma__state__returned
+msgid "Returned to customer"
+msgstr "Devuelta al cliente"
+
+#. module: artaza_magento_connect
+#: model:ir.actions.act_window,name:artaza_magento_connect.action_magento_rma
+#: model:ir.ui.menu,name:artaza_magento_connect.menu_magento_rma
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "Returns (RMA)"
+msgstr "Devoluciones (RMA)"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/res_config_settings.py:0
+msgid "Returns imported"
+msgstr "Devoluciones importadas"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.actions.act_window,help:artaza_magento_connect.action_magento_rma
+msgid ""
+"Returns requested by customers in Magento are imported here.\n"
+"               Use \"Import RMAs from Magento\" in the settings, or enable "
+"the cron."
+msgstr ""
+"Las devoluciones que los clientes solicitan en Magento se importan aquí. Usa "
+"\"Importar RMA desde Magento\" en los ajustes, o activa el cron."
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_sync_log_line__log_id
+msgid "Run"
+msgstr "Ejecutar"
+
+#. module: artaza_magento_connect
+#. odoo-javascript
+#: code:addons/artaza_magento_connect/static/src/stock_matrix/stock_matrix.xml:0
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma_line__sku
+msgid "SKU"
+msgstr "SKU"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_artaza_magento_sync_log_line__ref
+msgid ""
+"SKU / order number. Kept as text so it survives the record being deleted."
+msgstr ""
+"SKU / número de pedido. Se guarda como texto para que sobreviva al borrado "
+"del registro."
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr "Error de envío del SMS"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_res_config_settings__magento_sale_tax_ids
+msgid "Sale taxes"
+msgstr "Impuestos de venta"
+
+#. module: artaza_magento_connect
+#: model:ir.model,name:artaza_magento_connect.model_sale_order
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__sale_order_id
+msgid "Sales Order"
+msgstr "Orden de venta"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_res_config_settings__magento_rmas_cursor
+msgid ""
+"Same watermark as the orders one, for returns (RMA). Returns are create-once "
+"too, so moving it back re-reads without duplicating."
+msgstr ""
+"La misma marca de agua que la de pedidos, para devoluciones (RMA). Las "
+"devoluciones también se crean una sola vez, así que moverla hacia atrás "
+"relee sin duplicar."
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_sync_log__trigger__ui
+msgid "Screen"
+msgstr "Pantalla"
+
+#. module: artaza_magento_connect
+#. odoo-javascript
+#: code:addons/artaza_magento_connect/static/src/stock_matrix/stock_matrix.xml:0
+msgid "Search"
+msgstr "Buscar"
+
+#. module: artaza_magento_connect
+#. odoo-javascript
+#: code:addons/artaza_magento_connect/static/src/stock_matrix/stock_matrix.xml:0
+msgid "Search by name or code (SKU)"
+msgstr "Buscar por nombre o código (SKU)"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_artaza_magento_rma_approve_wizard__restock
+msgid ""
+"Sellable: it re-enters stock and can be sold again. Damaged/written off: it "
+"is received but goes to scrap, not to sale."
+msgstr ""
+"Revendible: entra a stock y se puede volver a vender. Dañado/descartado: se "
+"recibe pero va a descarte, no a la venta."
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_order_form_magento_negotiation
+msgid "Send adjustment to Magento"
+msgstr "Enviar ajuste a Magento"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_sync_log__ok_refs
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_sync_log_form
+msgid "Sent OK"
+msgstr "Enviado correctamente"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_stock_picking__magento_shipment_done
+msgid "Sent to Magento"
+msgstr "Enviado a Magento"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_product_product__magento_stock_dirty
+msgid "Set when stock changes; the cron pushes it and clears it."
+msgstr "Se marca cuando cambia el stock; el cron lo empuja y lo limpia."
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_product_product__magento_tax_dirty
+msgid ""
+"Set when the customer tax changes; the cron pushes the matching Magento tax "
+"class mapped to the product's sale tax."
+msgstr ""
+"Se activa cuando cambia el impuesto del cliente; el cron envía la clase de "
+"impuesto de Magento asignada al impuesto de venta del producto."
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_product_product__magento_price_dirty
+msgid "Set when the sales price changes; the cron pushes it."
+msgstr "Se marca cuando cambia el precio de venta; el cron lo empuja."
+
+#. module: artaza_magento_connect
+#: model:ir.ui.menu,name:artaza_magento_connect.menu_magento_settings
+msgid "Settings"
+msgstr "Ajustes"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_sync_log__operation__shipment
+msgid "Shipment"
+msgstr "Envío"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/sale_order.py:0
+msgid "Shipping"
+msgstr "Envío"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_res_config_settings__magento_shipping_tax_id
+msgid "Shipping tax"
+msgstr "Impuesto del envío"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_rma_form
+msgid "Shown to the customer in Magento (e.g. rejection reason)"
+msgstr "Se muestra al cliente en Magento (ej. motivo del rechazo)"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_artaza_magento_rma__admin_message
+msgid "Shown to the customer in Magento (e.g. the rejection reason)."
+msgstr "Se muestra al cliente en Magento (ej. el motivo del rechazo)."
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_sale_order__magento_adjustment_reason
+msgid "Shown to the customer in their Magento order next to the agreed total."
+msgstr "Se muestra al cliente en su orden de Magento junto al total acordado."
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_tax_class__single_rate
+msgid "Single rate"
+msgstr "Alícuota única"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_source__code
+msgid "Source code"
+msgstr "Código del source"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/res_config_settings.py:0
+msgid "Sources updated"
+msgstr "Sources actualizados"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_sync_log__started_at
+msgid "Started at"
+msgstr "Iniciado el"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_order_import_wizard__state
+msgid "State"
+msgstr "Estado"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__state
+msgid "Status"
+msgstr "Estado"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_artaza_magento_rma__magento_status
+msgid "Status as shown in Magento (requested, accepted, …)."
+msgstr "Estado como se muestra en Magento (requested, accepted, …)."
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_artaza_magento_rma__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+"Estado basado en actividades\n"
+"Vencida: la fecha límite ya ha pasado\n"
+"Hoy: la fecha límite es hoy\n"
+"Planificada: actividades futuras."
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_sync_log__operation__stock
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "Stock"
+msgstr "Stock"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_product_product__magento_stock_dirty
+msgid "Stock pending sync to Magento"
+msgstr "Stock pendiente de sync a Magento"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/res_config_settings.py:0
+msgid "Stock re-sync"
+msgstr "Re-sincronización de stock"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid ""
+"Store URL and integration token Odoo uses to talk to Magento's REST API."
+msgstr ""
+"URL de la tienda y token de integración que Odoo usa para hablar con la API "
+"REST de Magento."
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/res_config_settings.py:0
+msgid "Store views found: %s"
+msgstr "Vistas de tienda encontradas: %s"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma_line__price_subtotal
+msgid "Subtotal"
+msgstr "Subtotal"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_sync_log__state__success
+msgid "Success"
+msgstr "Éxito"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid ""
+"Successful runs are collapsed to one line each and purged\n"
+"                                        after this many days. <b>Failures "
+"are never purged</b> —\n"
+"                                        mark them as handled instead. 0 = "
+"never purge."
+msgstr ""
+"Las ejecuciones correctas se resumen en una línea y se depuran pasados estos "
+"días. <b>Los fallos no se depuran nunca</b>: márcalos como atendidos. 0 = no "
+"depurar nunca."
+
+#. module: artaza_magento_connect
+#. odoo-javascript
+#: code:addons/artaza_magento_connect/static/src/stock_matrix/stock_matrix.xml:0
+msgid "Sync"
+msgstr "Sincronizar"
+
+#. module: artaza_magento_connect
+#: model:ir.ui.menu,name:artaza_magento_connect.menu_magento_sync_log
+msgid "Sync History"
+msgstr "Historial de sincronización"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/artaza_magento_sync_log.py:0
+#: model:ir.actions.act_window,name:artaza_magento_connect.action_magento_sync_log
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "Sync history"
+msgstr "Historial de sincronización"
+
+#. module: artaza_magento_connect
+#: model:ir.actions.act_window,name:artaza_magento_connect.action_magento_sync_log_all
+msgid "Sync history (all)"
+msgstr "Historial de sincronización (todo)"
+
+#. module: artaza_magento_connect
+#: model:ir.model,name:artaza_magento_connect.model_account_tax
+msgid "Tax"
+msgstr "Impuesto"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__artaza_magento_sync_log__operation__tax
+msgid "Tax class"
+msgstr "Clase de impuesto"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/res_config_settings.py:0
+msgid "Tax classes updated"
+msgstr "Clases de impuesto actualizadas"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_product_product__magento_tax_dirty
+msgid "Tax pending sync to Magento"
+msgstr "Impuesto pendiente de sincronizar con Magento"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/res_config_settings.py:0
+msgid "Tax re-sync"
+msgstr "Resincronización de impuestos"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_account_tax__magento_price_include_ok
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "Tax-included price"
+msgstr "Precio con impuesto incluido"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "Taxes → Tax classes"
+msgstr "Impuestos → Clases de impuesto"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "Test Magento connection"
+msgstr "Probar la conexión con Magento"
+
+#. module: artaza_magento_connect
+#: model:ir.model.constraint,message:artaza_magento_connect.constraint_artaza_magento_source_source_code_uniq
+msgid "That Magento source is already registered."
+msgstr "Ese source de Magento ya está registrado."
+
+#. module: artaza_magento_connect
+#: model:ir.model.constraint,message:artaza_magento_connect.constraint_artaza_magento_tax_class_magento_class_uniq
+msgid "That Magento tax class is already registered."
+msgstr "Esa clase de impuesto de Magento ya está registrada."
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/artaza_magento_client.py:0
+msgid ""
+"The Magento connection is not configured. Set the Magento URL and the "
+"integration token in Settings ▸ Magento Connect."
+msgstr ""
+"La conexión con Magento no está configurada. Define la URL de Magento y el "
+"token de integración en Ajustes ▸ Magento Connect."
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_artaza_magento_rma__sale_order_id
+msgid "The Odoo sales order this return belongs to, if it was imported."
+msgstr ""
+"La orden de venta de Odoo a la que pertenece esta devolución, si fue "
+"importada."
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/artaza_magento_rma.py:0
+msgid "The RMA has no customer email to issue the coupon to."
+msgstr "La RMA no tiene correo del cliente al que emitir el cupón."
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/artaza_magento_rma.py:0
+msgid "The RMA has no product matched in Odoo to ship."
+msgstr "La RMA no tiene ningún producto emparejado en Odoo para enviar."
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_artaza_magento_tax_class__magento_class_id
+msgid "The `class_id` in Magento. Sent in the tax-class push payload."
+msgstr ""
+"El `class_id` de Magento. Se envía en el payload de la clase de impuesto."
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_artaza_magento_source__code
+msgid "The `source_code` in Magento. Used in the stock push payload."
+msgstr "El `source_code` de Magento. Se usa en el payload de stock."
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/artaza_magento_rma.py:0
+msgid "The credit note could not be created."
+msgstr "No se pudo crear la nota de crédito."
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid ""
+"The cron imports paid orders (as a confirmed sale) and pending\n"
+"                                        offline orders (as a quotation to "
+"negotiate)."
+msgstr ""
+"El cron importa los pedidos pagados (como venta confirmada) y los pedidos "
+"offline pendientes (como presupuesto a negociar)."
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/sale_order.py:0
+msgid "The customer will see the agreed total in their order."
+msgstr "El cliente verá el total acordado en su orden."
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/artaza_magento_rma.py:0
+msgid ""
+"The delivery is available once the RMA is resolved as exchange or returned "
+"to the customer."
+msgstr ""
+"La entrega queda disponible una vez que la RMA se resuelve como cambio o "
+"como devolución al cliente."
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/wizard/artaza_magento_order_total_wizard.py:0
+msgid "The new total must be greater than zero."
+msgstr "El total nuevo debe ser mayor que cero."
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/wizard/artaza_magento_order_total_wizard.py:0
+msgid "The order has no priced lines to adjust."
+msgstr "El pedido no tiene líneas con precio para ajustar."
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_rma_approve_wizard_form
+msgid ""
+"The product passed inspection. <b>Does it go back to stock\n"
+"                    to be sold again?</b>"
+msgstr ""
+"El producto pasó la inspección. <b>¿Vuelve al almacén para la próxima venta?"
+"</b>"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_stock_picking__magento_shipment_done
+msgid "The shipment was already pushed to Magento (avoids duplicates)."
+msgstr "El envío ya se había enviado a Magento (evita duplicados)."
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/artaza_magento_rma.py:0
+msgid "This RMA has no Magento ID to update."
+msgstr "Este RMA no tiene ID de Magento para actualizar."
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/artaza_magento_rma.py:0
+msgid "This RMA has no customer to deliver to."
+msgstr "Esta RMA no tiene cliente al que entregar."
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/artaza_magento_sync_log.py:0
+msgid "This kind of run cannot be replayed automatically."
+msgstr "Este tipo de ejecución no se puede reintentar automáticamente."
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/sale_order.py:0
+msgid "This order does not come from Magento."
+msgstr "Esta orden no proviene de Magento."
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/wizard/artaza_magento_order_import_wizard.py:0
+msgid "This order is already in Odoo as %s."
+msgstr "Este pedido ya está en Odoo como %s."
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/artaza_magento_rma.py:0
+msgid ""
+"This order isn't invoiced yet, so there is no invoice for the credit note to "
+"reverse. Invoice the sale order first (Create Invoice → Confirm), then "
+"resolve this RMA as credit."
+msgstr ""
+"Esta orden todavía no está facturada, así que no hay factura para que la "
+"nota de crédito revierta. Factura primero la orden de venta (Crear factura → "
+"Confirmar) y después resuelve esta RMA como crédito."
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/artaza_magento_sync_log.py:0
+msgid "This run recorded no record number to re-import."
+msgstr "Esta ejecución no registró ningún número de registro para reimportar."
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid ""
+"Tick ONLY in local development, when the store is served\n"
+"                                            with a self-signed certificate. "
+"Leave it unticked in production."
+msgstr ""
+"Marcalo SOLO en desarrollo local, cuando la tienda se sirve con un "
+"certificado autofirmado. Dejalo sin marcar en producción."
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_res_config_settings__magento_skip_ssl_verify
+msgid ""
+"Tick ONLY in local development, when the store is served over HTTPS with a "
+"self-signed certificate. Leave it unticked in production."
+msgstr ""
+"Marcalo SOLO en desarrollo local, cuando la tienda se sirve por HTTPS con un "
+"certificado autofirmado. Dejalo sin marcar en producción."
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_artaza_magento_sync_log__resolved
+msgid ""
+"Tick to take an error off the pending list without deleting it. Errors are "
+"never purged automatically."
+msgstr ""
+"Márcalo para sacar un error de la lista de pendientes sin borrarlo. Los "
+"errores no se depuran nunca automáticamente."
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_sync_log_search
+msgid "Today"
+msgstr "Hoy"
+
+#. module: artaza_magento_connect
+#. odoo-javascript
+#: code:addons/artaza_magento_connect/static/src/stock_matrix/stock_matrix.xml:0
+msgid "Total"
+msgstr "Total"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_rma_form
+msgid "Total to refund"
+msgstr "Total a devolver"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__refund_amount_total
+msgid "Total to refund (ref.)"
+msgstr "Total a devolver (ref.)"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_artaza_magento_rma__odoo_reference
+msgid "Traceability reference sent to Magento (e.g. the credit note number)."
+msgstr ""
+"Referencia de trazabilidad enviada a Magento (ej. número de nota de crédito)."
+
+#. module: artaza_magento_connect
+#: model:ir.model,name:artaza_magento_connect.model_stock_picking
+msgid "Transfer"
+msgstr "Transferir"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_sync_log__trigger
+msgid "Triggered by"
+msgstr "Disparado por"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__rma_type
+msgid "Type"
+msgstr "Tipo"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_artaza_magento_rma__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr "Tipo de actividad de excepción en el registro."
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_res_config_settings__magento_log_error_count
+msgid "Unhandled sync problems"
+msgstr "Problemas de sincronización sin atender"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_res_config_settings__magento_cron_interval_type
+msgid "Unit"
+msgstr "Unidad"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma_line__price_unit
+msgid "Unit price paid"
+msgstr "Precio unitario pagado"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_artaza_magento_rma_line__price_unit
+msgid ""
+"Unit price the customer actually paid (tax included), taken from the posted "
+"Odoo invoice. Falls back to the sales order line."
+msgstr ""
+"Precio unitario que el cliente pagó realmente (con impuestos), tomado de la "
+"factura contabilizada de Odoo. Si no la hay, usa la línea del pedido de "
+"venta."
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__magento_updated_at
+msgid "Updated At"
+msgstr "Actualizada el"
+
+#. module: artaza_magento_connect
+#: model:res.groups,name:artaza_magento_connect.group_magento_user
+msgid "User"
+msgstr "Usuario"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_order_import_wizard_form
+msgid "View order in Odoo"
+msgstr "Ver pedido en Odoo"
+
+#. module: artaza_magento_connect
+#: model:ir.model,name:artaza_magento_connect.model_stock_warehouse
+msgid "Warehouse"
+msgstr "Almacén"
+
+#. module: artaza_magento_connect
+#. odoo-python
+#: code:addons/artaza_magento_connect/models/product_product.py:0
+msgid ""
+"Warehouse %s has no Magento source mapped, so its stock is not being sent. "
+"Map it in Settings ▸ Magento Connect ▸ Mapping."
+msgstr ""
+"El almacén %s no tiene un source de Magento asignado, así que su stock no se "
+"está enviando. Relációnalo en Ajustes ▸ Magento Connect ▸ Relaciones."
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_res_config_settings__magento_warehouse_ids
+msgid "Warehouses"
+msgstr "Almacenes"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "Warehouses → Sources"
+msgstr "Almacenes → Sources"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,field_description:artaza_magento_connect.field_artaza_magento_rma__website_message_ids
+msgid "Website Messages"
+msgstr "Mensajes del sitio web"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_artaza_magento_rma__website_message_ids
+msgid "Website communication history"
+msgstr "Historial de comunicación del sitio web"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields.selection,name:artaza_magento_connect.selection__res_config_settings__magento_cron_interval_type__weeks
+msgid "Weeks"
+msgstr "Semanas"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_sync_log_list
+msgid "When"
+msgstr "Cuándo"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_artaza_magento_order_total_wizard__reason
+msgid ""
+"Why the total changed (e.g. volume discount, surcharge for a 90-day cheque)."
+msgstr ""
+"Por qué cambió el total (p. ej. descuento por volumen, recargo por cheque a "
+"90 días)."
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_rma_form
+msgid ""
+"You are about to CREATE and POST a credit note reversing the invoice, "
+"generate the discount coupon and send it to Magento. This is a fiscal "
+"action. Confirm?"
+msgstr "Estás por CREAR y POSTEAR una nota de crédito que reversa la factura, generar el cupón de descuento y enviarlo a Magento. Esta acción es fiscal. ¿Confirmás?"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "checkmo, banktransfer"
+msgstr "checkmo, banktransfer"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_order_import_wizard_form
+msgid "e.g. 000000055"
+msgstr "p. ej. 000000055"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_rma_form
+msgid "e.g. credit note number"
+msgstr "ej. número de nota de crédito"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.view_magento_order_total_wizard_form
+msgid "e.g. volume discount / surcharge for a 90-day cheque"
+msgstr "p. ej. descuento por volumen / recargo por cheque a 90 días"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "https://www.mystore.com"
+msgstr "https://www.mystore.com"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "mercadopago_adbpayment_checkout_pro"
+msgstr "mercadopago_adbpayment_checkout_pro"
+
+#. module: artaza_magento_connect
+#. odoo-javascript
+#: code:addons/artaza_magento_connect/static/src/stock_matrix/stock_matrix.xml:0
+msgid "of"
+msgstr "de"
+
+#. module: artaza_magento_connect
+#: model:ir.model.fields,help:artaza_magento_connect.field_artaza_magento_rma_line__price_subtotal
+msgid "price paid x qty to return."
+msgstr "precio pagado x cant. a devolver."
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid "sync problem(s) waiting to be looked at."
+msgstr "problema(s) de sincronización esperando revisión."
+
+#. module: artaza_magento_connect
+#. odoo-javascript
+#: code:addons/artaza_magento_connect/static/src/stock_matrix/stock_matrix.xml:0
+msgid "‹ Previous"
+msgstr "‹ Anterior"
+
+#. module: artaza_magento_connect
+#: model_terms:ir.ui.view,arch_db:artaza_magento_connect.res_config_settings_view_form
+msgid ""
+"⚠️ <b>Tax-included price</b> must be ticked on every mapped tax:\n"
+"                                        Magento sends gross prices "
+"(<i>Catalog Prices = Including Tax</i>).\n"
+"                                        If it is off, imported orders add "
+"the tax <b>on top</b> and their\n"
+"                                        total stops matching Magento's."
+msgstr ""
+"⚠️ <b>Precio con impuesto incluido</b> debe estar marcado en todos los "
+"impuestos relacionados: Magento envía precios brutos (<i>Catalog Prices = "
+"Including Tax</i>). Si está desmarcado, los pedidos importados suman el "
+"impuesto <b>por encima</b> y su total deja de coincidir con el de Magento."
+
+#~ msgid ""
+#~ "Estás por CREAR y POSTEAR una Nota de Crédito que reversa la factura, "
+#~ "generar el cupón de descuento y enviarlo a Magento. Esta acción es "
+#~ "fiscal. ¿Confirmás?"
+#~ msgstr ""
+#~ "Vas a CREAR y CONTABILIZAR una Nota de Crédito que revierte la factura, "
+#~ "generar el cupón de descuento y enviarlo a Magento. Esta acción es "
+#~ "fiscal. ¿Confirmas?"
+
+#~ msgid "Cancelar"
+#~ msgstr "Cancelar"
+
+#~ msgid "No vuelve a depósito (dañado / descartado)"
+#~ msgstr "No vuelve al almacén (dañado / descartado)"
+
+#~ msgid ""
+#~ "Revendible: entra a stock para vender. Dañado/descartado: se recibe pero "
+#~ "va a descarte (no se vende)."
+#~ msgstr ""
+#~ "Revendible: entra a stock para vender. Dañado/descartado: se recibe pero "
+#~ "va a descarte (no se vende)."
+
+#~ msgid "Vuelve a depósito (revendible)"
+#~ msgstr "Vuelve al almacén (revendible)"
+
+#~ msgid "¿El producto vuelve a depósito?"
+#~ msgstr "¿El producto vuelve al almacén?"

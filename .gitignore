@@ -51,3 +51,10 @@ package.json
 /man/
 /share/
 /src/
+
+# local dev: dumps y filestore de produccion. Datos reales de clientes y este
+# repo es publico, asi que nunca deben commitearse.
+/odoo-prod-db.sql.gz
+/odoo-prod-filestore.tar.gz
+/from_server/
+/filestore-odoo/

@@ -5,11 +5,10 @@ class MagentoOrderImportWizard(models.TransientModel):
     """Import a single Magento order by number.
 
     Checks if it is already in Odoo; if so, offers a link to view it. If not, it
-    fetches that order from Magento (through the middleware, bypassing the cursor
-    and the payment-method gate) and imports it — reporting the middleware's
-    response when it cannot.
+    fetches that order from Magento (bypassing the cursor and the payment-method
+    gate) and imports it — reporting Magento's response when it cannot.
     """
-    _name = 'magento.order.import.wizard'
+    _name = 'artaza.magento.order.import.wizard'
     _description = 'Import a Magento order by number'
 
     order_number = fields.Char(string="Magento Order Number", required=True)
@@ -36,7 +35,7 @@ class MagentoOrderImportWizard(models.TransientModel):
         vals = {'state': status, 'sale_order_id': order.id if order else False}
         if status == 'exists':
             vals['message'] = self.env._(
-                "This order is already in Odoo as %s.", order.name
+                "This order is already in Odoo as %s.", order.name,
             )
         elif status == 'imported':
             vals['message'] = self.env._("Imported as %s.", order.name)

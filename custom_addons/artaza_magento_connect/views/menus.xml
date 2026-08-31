@@ -2,21 +2,16 @@
 <odoo>
     <menuitem id="menu_magento_root" name="Magento" sequence="90"/>
 
-    <menuitem id="menu_magento_cms" name="CMS"
-              parent="menu_magento_root" sequence="10"/>
-
-    <menuitem id="menu_cms_page" name="CMS Pages"
-              parent="menu_magento_cms" action="action_cms_page" sequence="10"/>
-
-    <menuitem id="menu_cms_block" name="CMS Blocks"
-              parent="menu_magento_cms" action="action_cms_block" sequence="20"/>
-
     <menuitem id="menu_magento_rma" name="Returns (RMA)"
               parent="menu_magento_root" action="action_magento_rma" sequence="30"/>
 
     <menuitem id="menu_magento_order_import" name="Import Order"
               parent="menu_magento_root" action="action_magento_order_import_wizard"
               sequence="40"/>
+
+    <menuitem id="menu_magento_sync_log" name="Sync History"
+              parent="menu_magento_root" action="action_magento_sync_log"
+              sequence="50"/>
 
     <menuitem id="menu_magento_config" name="Configuration"
               parent="menu_magento_root" sequence="90"

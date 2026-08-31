@@ -1,11 +1,16 @@
-from . import magento_connector
-from . import magento_cms_mixin
-from . import cms_page
-from . import cms_block
-from . import product_template
-from . import product_product
-from . import stock_quant
-from . import sale_order
-from . import stock_picking
-from . import magento_rma
-from . import res_config_settings
+from . import (
+    account_tax,
+    artaza_magento_client,
+    artaza_magento_rma,
+    artaza_magento_source,
+    artaza_magento_sync_log,
+    artaza_magento_tax_class,
+    magento_normalize,
+    product_product,
+    product_template,
+    res_config_settings,
+    sale_order,
+    stock_picking,
+    stock_quant,
+    stock_warehouse,
+)

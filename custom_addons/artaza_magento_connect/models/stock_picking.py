@@ -1,6 +1,8 @@
 import logging
 
-from odoo import fields, models
+from odoo import api, fields, models
+
+from .magento_normalize import is_fully_invoiced, is_fully_shipped
 
 _logger = logging.getLogger(__name__)
 
@@ -38,14 +40,37 @@ class StockPicking(models.Model):
         if not order or not order.magento_order_entity_id:
             return  # not a Magento order
 
+        log = self.env['artaza.magento.sync.log']
         try:
-            self.env['artaza.magento.connector'].call('POST', 'shipments', {
-                'order_id': order.magento_order_entity_id,
-                'notify': True,
-            })
-            self.magento_shipment_done = True
+            with log.track('shipment', 'out', 'cron') as tracker:
+                tracker.attempt(order.magento_order_id)
+                self._magento_ship_order(order.magento_order_entity_id)
+                tracker.ok(order.magento_order_id)
         except Exception as exc:  # noqa: BLE001 - never block the Odoo delivery
             _logger.warning(
                 "Magento shipment push failed for order %s: %s",
                 order.magento_order_id, exc,
             )
+            return
+        self.magento_shipment_done = True
+
+    @api.model
+    def _magento_ship_order(self, magento_order_id):
+        """Ship a Magento order in full, invoicing first if it is still pending.
+
+        Magento refuses to ship an order it has not invoiced, so the two steps
+        travel together. Both halves are idempotent: an already-invoiced or
+        already-shipped order is a no-op, which is what makes a retry safe.
+
+        The invoice raised here carries Magento's ORIGINAL total on purpose. The
+        fiscal document is the Odoo invoice with the negotiated total; this one
+        exists only so Magento will let the shipment through.
+        """
+        client = self.env['artaza.magento.client']
+        order = client.get_order(magento_order_id)
+        if not is_fully_invoiced(order):
+            client.create_invoice(magento_order_id, notify=False)
+            order = client.get_order(magento_order_id)  # refresh before shipping
+        if is_fully_shipped(order):
+            return 0
+        return client.create_shipment(magento_order_id, notify=True)

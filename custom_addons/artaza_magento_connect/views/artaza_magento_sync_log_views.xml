@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_magento_sync_log_list" model="ir.ui.view">
+        <field name="name">magento.sync.log.list</field>
+        <field name="model">artaza.magento.sync.log</field>
+        <field name="arch" type="xml">
+            <!-- Colour the row by outcome: a screen you can triage at a glance. -->
+            <list decoration-danger="state == 'error'"
+                  decoration-warning="state == 'partial'"
+                  decoration-muted="resolved"
+                  create="0">
+                <field name="create_date" string="When"/>
+                <field name="operation"/>
+                <field name="direction"/>
+                <field name="state"/>
+                <field name="count_ok" sum="OK"/>
+                <field name="count_error" sum="Failed"/>
+                <field name="error_message" optional="show"/>
+                <field name="trigger" optional="hide"/>
+                <field name="duration" optional="hide"/>
+                <field name="http_status" optional="hide"/>
+                <field name="resolved" optional="show" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_magento_sync_log_form" model="ir.ui.view">
+        <field name="name">magento.sync.log.form</field>
+        <field name="model">artaza.magento.sync.log</field>
+        <field name="arch" type="xml">
+            <form create="0">
+                <header>
+                    <!-- One method, two labels: an import is replayed on the spot,
+                         a push only gets re-queued for the next cron tick. -->
+                    <button name="action_retry" type="object" string="Re-import now"
+                            class="btn-primary" icon="fa-download"
+                            invisible="state == 'success' or operation not in ['order_pull', 'rma_pull']"/>
+                    <button name="action_retry" type="object" string="Re-queue the failed items"
+                            class="btn-primary" icon="fa-refresh"
+                            invisible="state == 'success' or operation in ['order_pull', 'rma_pull']"/>
+                    <button name="action_mark_resolved" type="object" string="Mark as handled"
+                            class="btn-secondary" icon="fa-check"
+                            invisible="state == 'success' or resolved"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="success,partial,error"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="display_name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="operation" readonly="1"/>
+                            <field name="direction" readonly="1"/>
+                            <field name="trigger" readonly="1"/>
+                            <field name="resolved"/>
+                        </group>
+                        <group>
+                            <field name="started_at" readonly="1"/>
+                            <field name="duration" readonly="1"/>
+                            <field name="count_ok" readonly="1"/>
+                            <field name="count_error" readonly="1"/>
+                            <field name="http_status" readonly="1"/>
+                        </group>
+                    </group>
+                    <field name="error_message" readonly="1" invisible="not error_message"/>
+                    <notebook>
+                        <page string="Failures" name="failures"
+                              invisible="not line_ids">
+                            <field name="line_ids" readonly="1">
+                                <list create="0" delete="0">
+                                    <field name="ref"/>
+                                    <field name="error_message"/>
+                                    <field name="res_model" optional="hide"/>
+                                    <button name="action_open_record" type="object"
+                                            string="Open" icon="fa-external-link"
+                                            invisible="not res_id"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Sent OK" name="ok" invisible="not ok_refs">
+                            <div class="text-muted mb8">
+                                One line per run, not per item — enough to answer
+                                "did this SKU go out in that batch?" without a row each.
+                            </div>
+                            <field name="ok_refs" readonly="1"/>
+                        </page>
+                        <page string="Request / response" name="payload"
+                              invisible="not request_payload and not response_body">
+                            <field name="request_payload" readonly="1"/>
+                            <field name="response_body" readonly="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_magento_sync_log_search" model="ir.ui.view">
+        <field name="name">magento.sync.log.search</field>
+        <field name="model">artaza.magento.sync.log</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="operation"/>
+                <field name="error_message"/>
+                <field name="ok_refs" string="Reference sent"/>
+                <filter name="problems" string="Problems"
+                        domain="[('state', 'in', ('error', 'partial'))]"/>
+                <filter name="unresolved" string="Not handled yet"
+                        domain="[('state', 'in', ('error', 'partial')), ('resolved', '=', False)]"/>
+                <separator/>
+                <filter name="out" string="Odoo → Magento" domain="[('direction', '=', 'out')]"/>
+                <filter name="in" string="Magento → Odoo" domain="[('direction', '=', 'in')]"/>
+                <separator/>
+                <filter name="today" string="Today"
+                        domain="[('create_date', '&gt;=', datetime.datetime.combine(context_today(), datetime.time(0,0,0)))]"/>
+                <group>
+                    <filter name="group_operation" string="Operation" domain="[]"
+                            context="{'group_by': 'operation'}"/>
+                    <filter name="group_state" string="Result" domain="[]"
+                            context="{'group_by': 'state'}"/>
+                    <filter name="group_day" string="Day" domain="[]"
+                            context="{'group_by': 'create_date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_magento_sync_log" model="ir.actions.act_window">
+        <field name="name">Sync history</field>
+        <field name="res_model">artaza.magento.sync.log</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_magento_sync_log_search"/>
+        <!-- Opens on the problems, which is the only reason to come here. -->
+        <field name="context">{'search_default_unresolved': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Nothing has failed.</p>
+            <p>
+                Every sync run that fails is recorded here — no need to read container
+                logs. Successful runs are kept for a while and then purged; errors are
+                never deleted automatically.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_magento_sync_log_all" model="ir.actions.act_window">
+        <field name="name">Sync history (all)</field>
+        <field name="res_model">artaza.magento.sync.log</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_magento_sync_log_search"/>
+    </record>
+</odoo>

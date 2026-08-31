@@ -2,7 +2,7 @@
 <odoo>
     <record id="view_magento_order_import_wizard_form" model="ir.ui.view">
         <field name="name">magento.order.import.wizard.form</field>
-        <field name="model">magento.order.import.wizard</field>
+        <field name="model">artaza.magento.order.import.wizard</field>
         <field name="arch" type="xml">
             <form string="Import a Magento order">
                 <group>
@@ -37,7 +37,7 @@
 
     <record id="action_magento_order_import_wizard" model="ir.actions.act_window">
         <field name="name">Import Order from Magento</field>
-        <field name="res_model">magento.order.import.wizard</field>
+        <field name="res_model">artaza.magento.order.import.wizard</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
     </record>

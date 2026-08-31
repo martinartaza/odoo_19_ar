@@ -1,0 +1,808 @@
+<section class="oe_container">
+<!--
+  SOURCE FILE - DO NOT SHIP THIS ONE. Edit here, then run:
+
+      python3 build_description.py
+
+  which regenerates index.html (the file the App Store actually reads).
+
+  Why a build step. The Odoo App Store sanitises the description before
+  serving it, and that has two consequences this page has to survive:
+
+    1. The stylesheet below is STRIPPED. Only inline style= attributes
+       survive. The builder therefore flattens every rule here into the
+       matching elements. Without it, screenshots render at their natural
+       2880px and the page scrolls sideways.
+    2. The file is read as latin-1, so any non-ASCII byte arrives corrupted
+       (an em dash showed up as a stray "a" with a circumflex). The builder
+       converts every non-ASCII character to an HTML entity, which is pure
+       ASCII and therefore immune to the encoding guess.
+
+  Because rules that depend on a stylesheet cannot be inlined, there is no
+  :target language switch: both languages render one after the other and the
+  buttons at the top are plain jump links.
+
+  KEEP THE TWO BLOCKS IN SYNC: every section exists once in .lang-en and once
+  in .lang-es, in the same order, sharing the same screenshots.
+-->
+<style>
+  .amc { font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+         color: #2b2b3a; line-height: 1.62; font-size: 15px; }
+  .amc * { box-sizing: border-box; }
+  .amc img { max-width: 100%; height: auto; display: block; }
+  /* Declared before the link rules below so those win on the elements they
+     target. Without it, body links fall back to the browser's default blue,
+     which is the one colour on the page that belongs to no palette. */
+  .amc a { color: #6a4fb0; }
+  .amc-sec { padding: 46px 32px; max-width: 1120px; margin: 0 auto; }
+  .amc-alt { background: #f6f6fb; }
+
+  /* -- language navigation ------------------------------------
+     Both links are jumps, not a toggle: the page carries the two languages in
+     full, one after the other. They are outlined rather than filled so neither
+     reads as "the selected one". */
+  .amc-switch { background: #151a33; text-align: center; padding: 13px 16px; }
+  .amc-switch a { display: inline-block; margin: 0 5px; padding: 6px 18px; font-size: 13.5px;
+                  border-radius: 999px; text-decoration: none;
+                  border: 1px solid rgba(255, 255, 255, .34);
+                  color: #e7e4f5; background: transparent; }
+
+  /* -- the seam between the two languages ---------------------- */
+  .amc-langbreak { background: #151a33; color: #fff; text-align: center; padding: 40px 32px; }
+  .amc-langbreak .label { display: block; font-size: 13px; font-weight: 700;
+                          letter-spacing: .18em; text-transform: uppercase; color: #b9b6d6; }
+  .amc-langbreak .title { display: block; font-size: 25px; font-weight: 700; margin: 9px 0 14px; }
+  .amc-langbreak a { color: #cfc7ee; font-size: 14px; text-decoration: none;
+                     border-bottom: 1px solid rgba(207, 199, 238, .45); padding-bottom: 2px; }
+
+  .amc-hero { background: linear-gradient(135deg, #1f2547 0%, #3c2a63 100%);
+              color: #fff; text-align: center; padding: 60px 32px; }
+  .amc-hero h1 { font-size: 41px; margin: 0 0 14px; font-weight: 700; letter-spacing: -.6px; color: #fff; }
+  .amc-hero p { font-size: 19px; margin: 0 auto 26px; max-width: 760px; opacity: .93; }
+  .amc-badges { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+  .amc-badge { border: 1px solid rgba(255,255,255,.4); border-radius: 999px;
+               padding: 5px 15px; font-size: 13px; }
+
+  .amc-sec h2 { font-size: 28px; margin: 0 0 10px; font-weight: 700; color: #1f2547; letter-spacing: -.3px; }
+  .amc-sec h3 { font-size: 18px; margin: 0 0 8px; font-weight: 700; color: #1f2547; }
+  .amc-lead { font-size: 17px; color: #565672; margin: 0 0 30px; max-width: 830px; }
+  .amc-kicker { display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: .09em;
+                text-transform: uppercase; color: #7a5cc4; margin-bottom: 8px; }
+
+  .amc-grid { display: flex; flex-wrap: wrap; gap: 20px; }
+  .amc-card { flex: 1 1 300px; border: 1px solid #e3e3ee; border-radius: 10px;
+              padding: 22px; background: #fff; }
+  .amc-card h3 { margin: 0 0 8px; font-size: 17px; }
+  .amc-card p { margin: 0; font-size: 14.5px; color: #565672; }
+
+  .amc-shot { border: 1px solid #d9d9e8; border-radius: 10px; overflow: hidden;
+              box-shadow: 0 6px 22px rgba(31,37,71,.10); background: #fff; margin: 0 0 10px; }
+  .amc-cap { font-size: 13px; color: #7c7c94; margin: 0 0 30px; text-align: center; }
+
+  .amc-split { display: flex; flex-wrap: wrap; gap: 34px; align-items: center; margin-bottom: 40px; }
+  .amc-split > div { flex: 1 1 380px; min-width: 0; }
+
+  .amc-quote { border-left: 4px solid #7a5cc4; padding: 4px 0 4px 18px; margin: 0 0 26px;
+               color: #444; font-size: 16px; }
+  .amc-note { border: 1px solid #e3d6a8; background: #fdf9ec; border-radius: 10px;
+              padding: 20px 22px; margin: 26px 0 0; }
+  .amc-note h3 { margin: 0 0 8px; font-size: 16.5px; color: #6b5312; }
+  .amc-note p { margin: 0 0 10px; font-size: 14.5px; color: #6b6146; }
+  .amc-note p:last-child { margin-bottom: 0; }
+
+  .amc-tbl { width: 100%; max-width: 100%; border-collapse: collapse; font-size: 14.5px; background: #fff; }
+  .amc-tbl th, .amc-tbl td { border: 1px solid #e3e3ee; padding: 10px 13px; text-align: left;
+                             vertical-align: top; overflow-wrap: break-word; word-break: break-word; }
+  .amc-tbl th { background: #f1f1f7; font-weight: 700; color: #1f2547; }
+  .amc-ok { color: #1c7c4a; font-weight: 700; }
+  .amc-need { color: #9a5b12; font-weight: 700; }
+  .amc-list { margin: 0; padding-left: 20px; color: #565672; }
+  .amc-list li { margin-bottom: 7px; }
+  .amc-foot { text-align: center; color: #7c7c94; font-size: 14px; padding: 34px 32px 46px; }
+  code { background: #f1f1f7; border-radius: 4px; padding: 1px 5px; font-size: 13.5px; color: #55306e; }
+</style>
+
+<div class="amc">
+
+  <div class="amc-switch">
+    <a href="#en" class="sw-en">English ↓</a>
+    <a href="#es" class="sw-es">Español ↓</a>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- ENGLISH                                                          -->
+  <!-- ================================================================ -->
+  <div class="lang lang-en" id="en">
+
+  <div class="amc-hero">
+    <h1>Magento&nbsp;2 Connector</h1>
+    <p>Odoo talks straight to your Magento&nbsp;2 store over its REST API. No middleware,
+       no extra service to deploy — and every synchronisation that fails is on a screen,
+       not in a log file.</p>
+    <div class="amc-badges">
+      <span class="amc-badge">Odoo 19.0</span>
+      <span class="amc-badge">Magento 2.4.x</span>
+      <span class="amc-badge">Direct REST — no middleware</span>
+      <span class="amc-badge">Stock · Price · Tax · Orders · Returns</span>
+      <span class="amc-badge">LGPL-3</span>
+    </div>
+  </div>
+
+  <div class="amc-sec">
+    <span class="amc-kicker">What it does</span>
+    <h2>One connector, both directions</h2>
+    <p class="amc-lead">Odoo owns stock, prices and the fiscal documents. Magento owns the
+       storefront and the orders. This module keeps the two in step — and tells you,
+       in Odoo, whenever it could not.</p>
+
+    <svg viewBox="0 0 1050 300" width="100%" role="img"
+         aria-label="Odoo pushes stock, price and tax class to Magento; Magento sends orders and returns back to Odoo">
+      <rect x="18" y="86" width="210" height="128" rx="12" fill="#f0edfa" stroke="#7a5cc4" stroke-width="2"/>
+      <text x="123" y="134" text-anchor="middle" font-size="21" font-weight="700" fill="#1f2547"
+            font-family="Helvetica, Arial, sans-serif">Odoo 19</text>
+      <text x="123" y="160" text-anchor="middle" font-size="13" fill="#565672"
+            font-family="Helvetica, Arial, sans-serif">stock · price · tax</text>
+      <text x="123" y="180" text-anchor="middle" font-size="13" fill="#565672"
+            font-family="Helvetica, Arial, sans-serif">invoices · credit notes</text>
+      <rect x="822" y="86" width="210" height="128" rx="12" fill="#fdf0e8" stroke="#e8703a" stroke-width="2"/>
+      <text x="927" y="134" text-anchor="middle" font-size="21" font-weight="700" fill="#1f2547"
+            font-family="Helvetica, Arial, sans-serif">Magento 2</text>
+      <text x="927" y="160" text-anchor="middle" font-size="13" fill="#565672"
+            font-family="Helvetica, Arial, sans-serif">storefront · catalogue</text>
+      <text x="927" y="180" text-anchor="middle" font-size="13" fill="#565672"
+            font-family="Helvetica, Arial, sans-serif">orders · returns</text>
+      <defs>
+        <marker id="ar" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#7a5cc4"/></marker>
+        <marker id="al" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#e8703a"/></marker>
+      </defs>
+      <line x1="238" y1="112" x2="812" y2="112" stroke="#7a5cc4" stroke-width="2" marker-end="url(#ar)"/>
+      <text x="525" y="102" text-anchor="middle" font-size="14" font-weight="700" fill="#55306e"
+            font-family="Helvetica, Arial, sans-serif">stock · price · tax class · invoice · shipment</text>
+      <line x1="812" y1="188" x2="238" y2="188" stroke="#e8703a" stroke-width="2" marker-end="url(#al)"/>
+      <text x="525" y="212" text-anchor="middle" font-size="14" font-weight="700" fill="#8a4318"
+            font-family="Helvetica, Arial, sans-serif">orders · customers · return requests (RMA)</text>
+      <text x="525" y="150" text-anchor="middle" font-size="13" fill="#7c7c94"
+            font-family="Helvetica, Arial, sans-serif">Magento REST · Bearer token of a Magento integration</text>
+      <text x="525" y="262" text-anchor="middle" font-size="13" fill="#7c7c94"
+            font-family="Helvetica, Arial, sans-serif">Every call, successful or not, is recorded in Odoo's sync history</text>
+    </svg>
+  </div>
+
+  <div class="amc-sec amc-alt">
+    <span class="amc-kicker">Setup</span>
+    <h2>A URL and a token. That is the whole connection.</h2>
+    <p class="amc-lead">Paste the store URL and the access token of a Magento integration,
+       press <b>Test Magento connection</b>, and Odoo answers with the store views it found.
+       There is nothing else to install or host.</p>
+    <div class="amc-shot"><img src="assets/01-connection.png" alt="Magento connection settings in Odoo"/></div>
+    <p class="amc-cap">Settings ▸ Magento Connect — the connection block.</p>
+  </div>
+
+  <div class="amc-sec">
+    <span class="amc-kicker">Configuration</span>
+    <h2>Names, never ids</h2>
+    <p class="amc-lead">The two systems name the same things differently, and their internal
+       ids are not portable — the id of a tax in your test database is not the id in
+       production. So the module never asks you to type one. You pick from lists that
+       Magento's own API fills in.</p>
+
+    <div class="amc-split">
+      <div>
+        <h3>Warehouses → inventory sources</h3>
+        <p style="color:#565672;margin:0 0 14px">Each Odoo warehouse pushes its stock to one
+           Magento MSI source. Warehouses that share a source are summed. A warehouse with no
+           source is simply not synced — never guessed.</p>
+        <div class="amc-shot"><img src="assets/02-map-warehouses.png" alt="Warehouse to Magento source mapping"/></div>
+      </div>
+      <div>
+        <h3>Taxes → product tax classes</h3>
+        <p style="color:#565672;margin:0 0 14px">Press <b>Auto-match by rate</b> and the module reads
+           Magento's tax rules and rates and pairs each Odoo tax with the class that applies the
+           same percentage. It only matches when the answer is unambiguous; anything else waits
+           for a human.</p>
+        <div class="amc-shot"><img src="assets/03-map-taxes.png" alt="Tax to Magento tax class mapping"/></div>
+      </div>
+    </div>
+
+    <div class="amc-note">
+      <h3>⚠ Before you map: the taxes must already exist on both sides</h3>
+      <p><b>This module does not create taxes.</b> It does not add a tax in Odoo, and it does not
+         create a product tax class in Magento. It only <i>relates</i> what already exists — so
+         every rate you sell at has to be set up in <b>both</b> systems first, with the
+         <b>same percentage</b>: an <code>IVA 21%</code> in Odoo and a Magento product tax class
+         whose tax rules apply 21%.</p>
+      <p>That is exactly what makes the match automatic: the rate is the only thing both systems
+         agree on. If a rate exists in Odoo but no Magento class applies it, the tax simply stays
+         <b>pending</b> — and the products carrying it never get their tax class pushed. It is
+         reported, never guessed.</p>
+      <p>Two more things the rate matching needs: a Magento class that applies <b>one</b> rate
+         (a class charging two different rates cannot be matched automatically and must be chosen
+         by hand), and the Odoo tax marked <b>Included in Price</b>, because Magento sends gross
+         prices.</p>
+    </div>
+  </div>
+
+  <div class="amc-sec amc-alt">
+    <span class="amc-kicker">The part most connectors skip</span>
+    <h2>When a sync fails, Odoo says so</h2>
+    <p class="amc-quote">An integration is not judged by whether the happy path works — that is
+       solved in a day. It is judged by how long it takes a human to understand why it
+       <i>didn't</i> work.</p>
+    <p class="amc-lead">Every run is recorded: what was sent, what came back, which records went
+       through and which did not. Failures keep the detail per item and are <b>never purged
+       automatically</b>; successes collapse to one line and are cleaned up after N days.
+       No container logs, no commands.</p>
+
+    <div class="amc-shot"><img src="assets/10b-history-all.png" alt="Sync history list showing successes and failures"/></div>
+    <p class="amc-cap">The history: one row per run, with the counts that matter.</p>
+    <div class="amc-shot"><img src="assets/11-history-error.png" alt="A failed order import with per-record reasons and a re-import button"/></div>
+    <p class="amc-cap">A failed import, with the exact reason per order — and one button to replay it.</p>
+
+    <div class="amc-grid">
+      <div class="amc-card"><h3>Reasons, not stack traces</h3>
+        <p>Each failed record carries the message Magento or Odoo actually returned, in
+           language an operator can act on.</p></div>
+      <div class="amc-card"><h3>Fix it, then retry</h3>
+        <p>Pushes are re-queued for the next run. Failed imports are re-fetched on the spot,
+           by their Magento number.</p></div>
+      <div class="amc-card"><h3>Survives the rollback</h3>
+        <p>The history row is written on its own database transaction, so a failure that
+           rolls everything back cannot erase its own trace.</p></div>
+    </div>
+  </div>
+
+  <div class="amc-sec">
+    <span class="amc-kicker">Magento → Odoo</span>
+    <h2>Orders arrive as the right document</h2>
+    <p class="amc-lead">Paid orders come in as a <b>confirmed sale</b>. Offline orders still
+       awaiting payment come in as a <b>quotation</b> you can negotiate — adjust the total in
+       Odoo and push the agreed figure back for the customer to see, without ever touching
+       Magento's balances.</p>
+
+    <div class="amc-grid" style="margin-bottom:28px">
+      <div class="amc-card"><h3>A cursor you control</h3>
+        <p>The import reads everything updated since a moment you can see and change. Move it
+           back to re-read a period; orders already in Odoo are skipped, never duplicated.</p></div>
+      <div class="amc-card"><h3>All or nothing</h3>
+        <p>If a SKU on the order does not exist in Odoo, the order is <b>not</b> imported half
+           complete with a total that no longer matches Magento. It is refused, and the reason
+           names the missing reference.</p></div>
+      <div class="amc-card"><h3>One order, by number</h3>
+        <p>A small dialog fetches a single order whatever the cursor says — the escape hatch
+           for anything that needs to come in right now.</p></div>
+    </div>
+
+    <div class="amc-shot"><img src="assets/05-orders.png" alt="Order import settings including the import-from cursor"/></div>
+    <p class="amc-cap">Order import settings: payment-method routing, shipping tax, and the cursor.</p>
+    <div class="amc-shot" style="max-width:620px;margin-left:auto;margin-right:auto">
+      <img src="assets/14-import-wizard.png" alt="Import one order by number dialog"/></div>
+    <p class="amc-cap">Import one order by its Magento number.</p>
+  </div>
+
+  <div class="amc-sec amc-alt">
+    <span class="amc-kicker">Negotiation</span>
+    <h2>Type the total you agreed on. Odoo works out the rest.</h2>
+    <p class="amc-lead">B2B prices get negotiated on the phone, not in a checkout. But Odoo
+       only computes <b>forward</b> — unit price × quantity, minus a discount, gives a total —
+       so there is no native way to say <i>"this order is 95,000"</i>. You end up reverse-engineering
+       a discount percentage per line and landing a few pesos off.</p>
+
+    <div class="amc-split">
+      <div>
+        <h3>The problem with a discount %</h3>
+        <p style="color:#565672;margin:0 0 12px">A uniform percentage rounds to two decimals on
+           every line. On an order of 97,000 that lands near 95,000 — but not <i>on</i> it, and
+           the customer was quoted a round number.</p>
+        <h3>What this does instead</h3>
+        <p style="color:#565672;margin:0">It scales each line's tax-included unit price by the
+           ratio you asked for, then <b>absorbs the rounding residual on the last line</b>, so the
+           order total lands on <b>exactly</b> the figure you typed. A factor below 1 is a
+           discount; above 1 is a surcharge — a fee for a 90-day cheque uses the same box.</p>
+      </div>
+      <div>
+        <div class="amc-shot"><img src="assets/21-negotiation-wizard.png"
+             alt="Adjust total dialog: current total 97,000, new total 95,000, and a reason"/></div>
+        <p class="amc-cap" style="margin-bottom:0">One dialog: the agreed figure and why.</p>
+      </div>
+    </div>
+
+    <div class="amc-shot"><img src="assets/20-negotiation-before.png"
+         alt="A Magento order imported as a quotation, totalling 97,000"/></div>
+    <p class="amc-cap"><b>Before</b> — the order arrives from Magento as a quotation. Round unit
+       prices, total 97,000.</p>
+    <div class="amc-shot"><img src="assets/22-negotiation-after.png"
+         alt="The same quotation after adjusting: prorated unit prices and a total of exactly 95,000"/></div>
+    <p class="amc-cap"><b>After</b> — the discount is spread across every line and the total is
+       <b>exactly</b> 95,000. The reason is stored on the order.</p>
+
+    <div class="amc-grid">
+      <div class="amc-card"><h3>Magento shows it, and nothing more</h3>
+        <p>The agreed total and your reason are pushed to the storefront so the customer sees
+           what was arranged. They are informational fields: Magento's own balances are never
+           touched, and the fiscal document is the Odoo invoice.</p></div>
+      <div class="amc-card"><h3>Only where it makes sense</h3>
+        <p>The buttons appear on orders that came from Magento, and orders still awaiting an
+           offline payment arrive as quotations precisely so they can be negotiated before
+           being confirmed.</p></div>
+      <div class="amc-card"><h3>Reversible, and on the record</h3>
+        <p>It rewrites unit prices on the sales order, so you can adjust again before
+           confirming. Odoo's own tracking logs every change of total.</p></div>
+    </div>
+  </div>
+
+  <div class="amc-sec">
+    <span class="amc-kicker">Odoo → Magento</span>
+    <h2>Stock, price and tax class</h2>
+    <p class="amc-lead">Change a quantity, a price or a tax rate in Odoo and the product is
+       flagged; the next run sends it. Prices go over tax-included, matching a store configured
+       with <code>Catalog Prices = Including Tax</code>.</p>
+    <div class="amc-shot"><img src="assets/15-products-stock.png" alt="Per-warehouse stock overview with a sync button per SKU"/></div>
+    <p class="amc-cap">Stock per warehouse, per SKU — with a button to push one product on its own.</p>
+  </div>
+
+  <div class="amc-sec amc-alt">
+    <span class="amc-kicker">Returns</span>
+    <h2>The customer asks in Magento. The decision is made in Odoo.</h2>
+    <p class="amc-lead">Return requests are pulled into Odoo as records with their own state
+       machine. Every transition pushes the new status — and the message you wrote — back to
+       the storefront, so the customer always sees where their return stands. Magento decides
+       nothing and calculates no money.</p>
+    <div class="amc-shot"><img src="assets/13-rma-form.png" alt="A return in Odoo with its state machine and decision fields"/></div>
+    <p class="amc-cap">Accept, reject with a reason, inspect, approve, resolve — each step visible to the customer.</p>
+
+    <div class="amc-grid">
+      <div class="amc-card"><h3>Back to stock, or to scrap</h3>
+        <p>On approval a short dialog asks whether the goods are sellable again or a write-off,
+           and Odoo creates and validates the incoming picking for you.</p></div>
+      <div class="amc-card"><h3>Credit note, correctly issued</h3>
+        <p>Resolving as credit issues the reversal through Odoo's native reversal wizard, so
+           localisations that number credit notes separately get the right document type. Partial
+           returns credit only what came back.</p></div>
+      <div class="amc-card"><h3>A coupon the customer can spend</h3>
+        <p>The credit is mirrored into Magento as a native single-use cart price rule. One coupon
+           per return, idempotent — a retry never issues a second one.</p></div>
+    </div>
+  </div>
+
+  <div class="amc-sec">
+    <span class="amc-kicker">Before you install</span>
+    <h2>What works out of the box, and what needs a Magento-side module</h2>
+    <p class="amc-lead">Most of the connector speaks Magento's <b>native</b> REST API and needs
+       nothing installed on the store. Four features call endpoints that Magento Community does
+       not provide, and require the companion Magento modules — both free, open source and
+       installable with Composer.</p>
+
+    <div class="amc-note" style="margin:0 0 26px">
+      <h3>The companion modules</h3>
+      <p>Published under <b>OSL-3.0</b>, the same license as the Magento core:</p>
+      <p style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13.5px;
+                background:#fff;border:1px solid #e8dcb0;border-radius:6px;padding:12px 14px">
+        composer require artaza/module-odoo-integration<br/>
+        composer require artaza/module-rma
+      </p>
+      <p><b>artaza/module-odoo-integration</b> — the tax-class and negotiation endpoints ·
+        <a href="https://packagist.org/packages/artaza/module-odoo-integration">Packagist</a> ·
+        <a href="https://github.com/martinartaza/magento_odoo_integration">GitHub</a><br/>
+        <b>artaza/module-rma</b> — returns for Magento Open Source, which has no native RMA ·
+        <a href="https://packagist.org/packages/artaza/module-rma">Packagist</a> ·
+        <a href="https://github.com/martinartaza/magento_rma">GitHub</a></p>
+      <p>You only need the one that covers what you use: stock, prices, orders, invoices and
+        shipments work with a stock Magento install.</p>
+    </div>
+
+    <table class="amc-tbl">
+      <tr><th style="width:34%">Feature</th><th style="width:33%">Magento endpoint</th><th>Requires</th></tr>
+      <tr><td>Stock per source (MSI)</td><td><code>inventory/source-items</code></td><td class="amc-ok">Native Magento</td></tr>
+      <tr><td>Base price</td><td><code>products/base-prices</code></td><td class="amc-ok">Native Magento</td></tr>
+      <tr><td>Order import</td><td><code>orders</code> + searchCriteria</td><td class="amc-ok">Native Magento</td></tr>
+      <tr><td>Invoice &amp; shipment</td><td><code>order/{id}/invoice</code>, <code>/ship</code></td><td class="amc-ok">Native Magento</td></tr>
+      <tr><td>Credit coupon</td><td><code>salesRules</code> + <code>coupons</code></td><td class="amc-ok">Native Magento</td></tr>
+      <tr><td>Tax class auto-match</td><td><code>taxClasses</code>, <code>taxRules</code>, <code>taxRates</code></td><td class="amc-ok">Native Magento</td></tr>
+      <tr><td>Push the product tax class</td><td><code>products/tax-class</code></td><td class="amc-need">module-odoo-integration</td></tr>
+      <tr><td>Negotiated total on the order</td><td><code>orders/{id}/negotiation</code></td><td class="amc-need">module-odoo-integration</td></tr>
+      <tr><td>Return requests (RMA)</td><td><code>rma</code></td><td class="amc-need">module-rma</td></tr>
+      <tr><td>Return status push</td><td><code>rma/{id}/status</code></td><td class="amc-need">module-rma</td></tr>
+    </table>
+
+    <div style="margin-top:26px">
+      <h3>Requirements</h3>
+      <ul class="amc-list">
+        <li>Odoo <b>19.0</b>, with <code>sale</code>, <code>stock</code>, <code>sale_stock</code> and <code>account</code>.</li>
+        <li>Magento <b>2.4.x</b> with an <b>integration</b> whose ACL covers what you sync. After
+            adding a new endpoint, reauthorize the integration or its calls come back <code>401</code>.</li>
+        <li><b>The same taxes on both sides.</b> Every rate you sell at must exist in Odoo
+            <i>and</i> as a Magento product tax class charging that same percentage — the module
+            relates them, it never creates them. Each Magento class should apply a single rate,
+            or it cannot be matched automatically.</li>
+        <li>Magento set to <b>Catalog Prices = Including Tax</b>, and the matching Odoo taxes marked
+            <b>Included in Price</b> — otherwise imported totals will not match the store's.</li>
+        <li>Products are matched by SKU: the Magento <code>sku</code> must equal the Odoo
+            <b>Internal Reference</b>.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="amc-sec amc-alt">
+    <h2>Everything in one place</h2>
+    <div class="amc-grid">
+      <div class="amc-card"><h3>Stock</h3><p>Per warehouse, mapped to MSI sources, in batches you size.</p></div>
+      <div class="amc-card"><h3>Prices</h3><p>Tax-included base price, pushed when it changes.</p></div>
+      <div class="amc-card"><h3>Tax class</h3><p>Auto-matched by rate; only asks when genuinely ambiguous.</p></div>
+      <div class="amc-card"><h3>Orders</h3><p>Cursor-based, paid vs pending routing, customer upserted.</p></div>
+      <div class="amc-card"><h3>Negotiation</h3><p>Type the agreed total; the discount is prorated across the lines and shown to the customer.</p></div>
+      <div class="amc-card"><h3>Fulfillment</h3><p>Validate the delivery in Odoo; Magento invoices and ships.</p></div>
+      <div class="amc-card"><h3>Returns</h3><p>State machine, restock decision, credit note, coupon.</p></div>
+      <div class="amc-card"><h3>Sync history</h3><p>Every failure on screen, with retry and retention.</p></div>
+      <div class="amc-card"><h3>Scheduling</h3><p>Each import and push has its own cron and frequency.</p></div>
+    </div>
+  </div>
+
+  <div class="amc-foot">
+    Built and maintained by Sebastian Martin Artaza Saade ·
+    <a href="https://www.artaza.net" style="color:#7a5cc4">artaza.net</a><br/>
+    Support: martin.artaza@gmail.com · Licensed under LGPL-3
+  </div>
+
+  </div><!-- /lang-en -->
+
+  <!-- ================================================================ -->
+  <!-- SPANISH                                                          -->
+  <!-- ================================================================ -->
+
+  <!-- The anchor sits on the divider rather than on the block itself, so a
+       reader who clicks "Español" lands on the explanation of what follows
+       instead of halfway into a second, seemingly duplicated hero. -->
+  <div class="amc-langbreak" id="es">
+    <span class="label">Español</span>
+    <span class="title">La misma página, en español</span>
+    <a href="#en">↑ Read this page in English</a>
+  </div>
+
+  <div class="lang lang-es">
+
+  <div class="amc-hero">
+    <h1>Magento&nbsp;2 Connector</h1>
+    <p>Odoo habla directo con tu tienda Magento&nbsp;2 por su API REST. Sin middleware,
+       sin un servicio extra para desplegar — y cada sincronización que falla queda en una
+       pantalla, no en un archivo de log.</p>
+    <div class="amc-badges">
+      <span class="amc-badge">Odoo 19.0</span>
+      <span class="amc-badge">Magento 2.4.x</span>
+      <span class="amc-badge">REST directo — sin middleware</span>
+      <span class="amc-badge">Stock · Precios · Impuestos · Pedidos · Devoluciones</span>
+      <span class="amc-badge">LGPL-3</span>
+    </div>
+  </div>
+
+  <div class="amc-sec">
+    <span class="amc-kicker">Qué hace</span>
+    <h2>Un conector, las dos direcciones</h2>
+    <p class="amc-lead">Odoo es dueño del stock, los precios y los documentos fiscales. Magento
+       es dueño de la tienda y los pedidos. Este módulo mantiene a los dos en sintonía — y te
+       avisa, dentro de Odoo, cada vez que no pudo.</p>
+
+    <svg viewBox="0 0 1050 300" width="100%" role="img"
+         aria-label="Odoo envía stock, precio y clase de impuesto a Magento; Magento manda pedidos y devoluciones a Odoo">
+      <rect x="18" y="86" width="210" height="128" rx="12" fill="#f0edfa" stroke="#7a5cc4" stroke-width="2"/>
+      <text x="123" y="134" text-anchor="middle" font-size="21" font-weight="700" fill="#1f2547"
+            font-family="Helvetica, Arial, sans-serif">Odoo 19</text>
+      <text x="123" y="160" text-anchor="middle" font-size="13" fill="#565672"
+            font-family="Helvetica, Arial, sans-serif">stock · precio · impuesto</text>
+      <text x="123" y="180" text-anchor="middle" font-size="13" fill="#565672"
+            font-family="Helvetica, Arial, sans-serif">facturas · notas de crédito</text>
+      <rect x="822" y="86" width="210" height="128" rx="12" fill="#fdf0e8" stroke="#e8703a" stroke-width="2"/>
+      <text x="927" y="134" text-anchor="middle" font-size="21" font-weight="700" fill="#1f2547"
+            font-family="Helvetica, Arial, sans-serif">Magento 2</text>
+      <text x="927" y="160" text-anchor="middle" font-size="13" fill="#565672"
+            font-family="Helvetica, Arial, sans-serif">tienda · catálogo</text>
+      <text x="927" y="180" text-anchor="middle" font-size="13" fill="#565672"
+            font-family="Helvetica, Arial, sans-serif">pedidos · devoluciones</text>
+      <defs>
+        <marker id="ar-es" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#7a5cc4"/></marker>
+        <marker id="al-es" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#e8703a"/></marker>
+      </defs>
+      <line x1="238" y1="112" x2="812" y2="112" stroke="#7a5cc4" stroke-width="2" marker-end="url(#ar-es)"/>
+      <text x="525" y="102" text-anchor="middle" font-size="14" font-weight="700" fill="#55306e"
+            font-family="Helvetica, Arial, sans-serif">stock · precio · clase de impuesto · factura · remito</text>
+      <line x1="812" y1="188" x2="238" y2="188" stroke="#e8703a" stroke-width="2" marker-end="url(#al-es)"/>
+      <text x="525" y="212" text-anchor="middle" font-size="14" font-weight="700" fill="#8a4318"
+            font-family="Helvetica, Arial, sans-serif">pedidos · clientes · solicitudes de devolución (RMA)</text>
+      <text x="525" y="150" text-anchor="middle" font-size="13" fill="#7c7c94"
+            font-family="Helvetica, Arial, sans-serif">REST de Magento · token de una integración de Magento</text>
+      <text x="525" y="262" text-anchor="middle" font-size="13" fill="#7c7c94"
+            font-family="Helvetica, Arial, sans-serif">Cada llamada, exitosa o no, queda en el historial de sincronización de Odoo</text>
+    </svg>
+  </div>
+
+  <div class="amc-sec amc-alt">
+    <span class="amc-kicker">Puesta en marcha</span>
+    <h2>Una URL y un token. Eso es toda la conexión.</h2>
+    <p class="amc-lead">Pegá la URL de la tienda y el token de acceso de una integración de
+       Magento, apretá <b>Probar conexión</b> y Odoo te responde con las vistas de tienda que
+       encontró. No hay nada más para instalar ni para hostear.</p>
+    <div class="amc-shot"><img src="assets/01-connection.png" alt="Configuración de la conexión a Magento en Odoo"/></div>
+    <p class="amc-cap">Ajustes ▸ Magento Connect — el bloque de conexión.</p>
+  </div>
+
+  <div class="amc-sec">
+    <span class="amc-kicker">Configuración</span>
+    <h2>Nombres, nunca ids</h2>
+    <p class="amc-lead">Los dos sistemas le ponen nombres distintos a las mismas cosas, y sus ids
+       internos no son portables — el id de un impuesto en tu base de prueba no es el id en
+       producción. Por eso el módulo nunca te pide escribir uno: elegís de listas que llena la
+       propia API de Magento.</p>
+
+    <div class="amc-split">
+      <div>
+        <h3>Bodegas → inventory sources</h3>
+        <p style="color:#565672;margin:0 0 14px">Cada bodega de Odoo envía su stock a un
+           <i>source</i> MSI de Magento. Las bodegas que comparten source se suman. Una bodega
+           sin source no se sincroniza — jamás se adivina.</p>
+        <div class="amc-shot"><img src="assets/02-map-warehouses.png" alt="Relación entre bodega y source de Magento"/></div>
+      </div>
+      <div>
+        <h3>Impuestos → clases de impuesto</h3>
+        <p style="color:#565672;margin:0 0 14px">Apretá <b>Auto-relacionar por alícuota</b>: el
+           módulo lee las reglas y tasas de impuesto de Magento y empareja cada impuesto de Odoo
+           con la clase que aplica ese mismo porcentaje. Solo relaciona cuando la respuesta es
+           inequívoca; el resto espera a una persona.</p>
+        <div class="amc-shot"><img src="assets/03-map-taxes.png" alt="Relación entre impuesto de Odoo y clase de impuesto de Magento"/></div>
+      </div>
+    </div>
+
+    <div class="amc-note">
+      <h3>⚠ Antes de relacionar: los impuestos ya tienen que existir de los dos lados</h3>
+      <p><b>Este módulo no crea impuestos.</b> No da de alta un impuesto en Odoo ni crea una clase
+         de impuesto de producto en Magento. Solo <i>relaciona</i> lo que ya existe — así que cada
+         alícuota con la que vendés tiene que estar configurada primero en <b>los dos</b> sistemas,
+         con el <b>mismo porcentaje</b>: un <code>IVA 21%</code> en Odoo y una clase de impuesto de
+         Magento cuyas reglas apliquen 21%.</p>
+      <p>Eso es justamente lo que hace automática la relación: la alícuota es lo único en lo que
+         los dos sistemas coinciden. Si una alícuota existe en Odoo pero ninguna clase de Magento
+         la aplica, el impuesto queda <b>pendiente</b> — y los productos que lo llevan nunca envían
+         su clase de impuesto. Se reporta, no se adivina.</p>
+      <p>Dos cosas más que necesita el matcheo por alícuota: una clase de Magento que aplique
+         <b>una sola</b> tasa (una clase que cobre dos tasas distintas no se puede auto-relacionar
+         y hay que elegirla a mano), y el impuesto de Odoo marcado <b>Incluido en el precio</b>,
+         porque Magento manda precios con impuesto incluido.</p>
+    </div>
+  </div>
+
+  <div class="amc-sec amc-alt">
+    <span class="amc-kicker">Lo que casi ningún conector hace</span>
+    <h2>Cuando una sincronización falla, Odoo lo dice</h2>
+    <p class="amc-quote">Una integración no se juzga por si el camino feliz funciona — eso se
+       resuelve en un día. Se juzga por <i>cuánto tarda una persona en entender por qué no
+       funcionó</i>.</p>
+    <p class="amc-lead">Cada ejecución queda registrada: qué se mandó, qué respondió, qué
+       registros pasaron y cuáles no. Los fallos guardan el detalle por ítem y <b>nunca se
+       purgan automáticamente</b>; los éxitos se resumen en una línea y se limpian a los N días.
+       Sin logs de contenedor, sin comandos.</p>
+
+    <div class="amc-shot"><img src="assets/10b-history-all.png" alt="Historial de sincronización con éxitos y fallos"/></div>
+    <p class="amc-cap">El historial: una fila por ejecución, con los números que importan.</p>
+    <div class="amc-shot"><img src="assets/11-history-error.png" alt="Una importación fallida con el motivo por registro y un botón para reimportar"/></div>
+    <p class="amc-cap">Una importación fallida, con el motivo exacto por pedido — y un botón para reintentarla.</p>
+
+    <div class="amc-grid">
+      <div class="amc-card"><h3>Motivos, no stack traces</h3>
+        <p>Cada registro fallido lleva el mensaje que devolvió realmente Magento u Odoo, en un
+           lenguaje sobre el que un operador puede actuar.</p></div>
+      <div class="amc-card"><h3>Arreglalo y reintentá</h3>
+        <p>Los envíos se vuelven a encolar para la próxima corrida. Las importaciones fallidas se
+           traen en el acto, por su número de Magento.</p></div>
+      <div class="amc-card"><h3>Sobrevive al rollback</h3>
+        <p>La fila del historial se escribe en una transacción propia, así un fallo que revierte
+           todo no puede borrar su propio rastro.</p></div>
+    </div>
+  </div>
+
+  <div class="amc-sec">
+    <span class="amc-kicker">Magento → Odoo</span>
+    <h2>Los pedidos entran como el documento correcto</h2>
+    <p class="amc-lead">Los pedidos pagados entran como <b>venta confirmada</b>. Los pedidos
+       offline que todavía esperan el pago entran como <b>cotización</b> negociable — ajustás el
+       total en Odoo y le mandás la cifra acordada al cliente, sin tocar nunca los balances de
+       Magento.</p>
+
+    <div class="amc-grid" style="margin-bottom:28px">
+      <div class="amc-card"><h3>Un cursor que controlás</h3>
+        <p>La importación lee todo lo actualizado desde un momento que podés ver y cambiar.
+           Movelo hacia atrás para releer un período; los pedidos que ya están en Odoo se
+           saltean, nunca se duplican.</p></div>
+      <div class="amc-card"><h3>Todo o nada</h3>
+        <p>Si un SKU del pedido no existe en Odoo, el pedido <b>no</b> entra a medias con un total
+           que ya no coincide con Magento. Se rechaza, y el motivo nombra la referencia que
+           falta.</p></div>
+      <div class="amc-card"><h3>Un pedido, por número</h3>
+        <p>Una ventana chica trae un pedido puntual sin importar lo que diga el cursor — la
+           válvula de escape para lo que tiene que entrar ahora.</p></div>
+    </div>
+
+    <div class="amc-shot"><img src="assets/05-orders.png" alt="Configuración de importación de pedidos, con el cursor"/></div>
+    <p class="amc-cap">Importación de pedidos: métodos de pago, impuesto del envío y el cursor.</p>
+    <div class="amc-shot" style="max-width:620px;margin-left:auto;margin-right:auto">
+      <img src="assets/14-import-wizard.png" alt="Ventana para importar un pedido por número"/></div>
+    <p class="amc-cap">Importar un pedido por su número de Magento.</p>
+  </div>
+
+  <div class="amc-sec amc-alt">
+    <span class="amc-kicker">Negociación</span>
+    <h2>Escribí el total que acordaste. Odoo resuelve el resto.</h2>
+    <p class="amc-lead">En B2B el precio se negocia por teléfono, no en un checkout. Pero Odoo
+       calcula solo <b>hacia adelante</b> — precio unitario × cantidad, menos descuento, da el
+       total — así que no hay forma nativa de decir <i>"este pedido es 95.000"</i>. Terminás
+       buscando a mano un porcentaje de descuento por línea y cayendo unos pesos al lado.</p>
+
+    <div class="amc-split">
+      <div>
+        <h3>El problema con un % de descuento</h3>
+        <p style="color:#565672;margin:0 0 12px">Un porcentaje uniforme redondea a dos decimales
+           en cada línea. En un pedido de 97.000 caés <i>cerca</i> de 95.000 — pero no en 95.000,
+           que es el número redondo que le cotizaste al cliente.</p>
+        <h3>Qué hace en su lugar</h3>
+        <p style="color:#565672;margin:0">Escala el precio unitario con impuesto incluido de cada
+           línea por la razón que pediste y después <b>absorbe el residuo de redondeo en la última
+           línea</b>, así el total del pedido cae <b>exactamente</b> en la cifra que escribiste. Un
+           factor menor a 1 es descuento; mayor a 1 es recargo — el interés por un cheque a 90 días
+           usa el mismo campo.</p>
+      </div>
+      <div>
+        <div class="amc-shot"><img src="assets/21-negotiation-wizard.png"
+             alt="Ventana Ajustar total: total actual 97.000, nuevo total 95.000 y un motivo"/></div>
+        <p class="amc-cap" style="margin-bottom:0">Una ventana: la cifra acordada y por qué.</p>
+      </div>
+    </div>
+
+    <div class="amc-shot"><img src="assets/20-negotiation-before.png"
+         alt="Un pedido de Magento importado como cotización, con total 97.000"/></div>
+    <p class="amc-cap"><b>Antes</b> — el pedido llega de Magento como cotización. Precios
+       unitarios redondos, total 97.000.</p>
+    <div class="amc-shot"><img src="assets/22-negotiation-after.png"
+         alt="La misma cotización ajustada: precios prorrateados y total exactamente 95.000"/></div>
+    <p class="amc-cap"><b>Después</b> — el descuento se prorratea entre todas las líneas y el total
+       queda <b>exactamente</b> en 95.000. El motivo queda guardado en el pedido.</p>
+
+    <div class="amc-grid">
+      <div class="amc-card"><h3>Magento lo muestra, nada más</h3>
+        <p>El total acordado y tu motivo se envían a la tienda para que el cliente vea lo que se
+           arregló. Son campos informativos: los balances de Magento no se tocan, y el comprobante
+           fiscal es la factura de Odoo.</p></div>
+      <div class="amc-card"><h3>Solo donde tiene sentido</h3>
+        <p>Los botones aparecen en pedidos que vinieron de Magento, y los pedidos con pago offline
+           pendiente entran como cotización justamente para poder negociarlos antes de
+           confirmarlos.</p></div>
+      <div class="amc-card"><h3>Reversible y registrado</h3>
+        <p>Reescribe los precios unitarios del pedido, así que podés volver a ajustarlo antes de
+           confirmar. El seguimiento propio de Odoo registra cada cambio de total.</p></div>
+    </div>
+  </div>
+
+  <div class="amc-sec">
+    <span class="amc-kicker">Odoo → Magento</span>
+    <h2>Stock, precio y clase de impuesto</h2>
+    <p class="amc-lead">Cambiás una cantidad, un precio o una alícuota en Odoo y el producto queda
+       marcado; la próxima corrida lo envía. Los precios viajan con impuesto incluido, como
+       corresponde a una tienda configurada con <code>Catalog Prices = Including Tax</code>.</p>
+    <div class="amc-shot"><img src="assets/15-products-stock.png" alt="Stock por bodega con un botón de sincronización por SKU"/></div>
+    <p class="amc-cap">Stock por bodega y por SKU — con un botón para enviar un producto suelto.</p>
+  </div>
+
+  <div class="amc-sec amc-alt">
+    <span class="amc-kicker">Devoluciones</span>
+    <h2>El cliente pide en Magento. La decisión se toma en Odoo.</h2>
+    <p class="amc-lead">Las solicitudes de devolución entran a Odoo como registros con su propia
+       máquina de estados. Cada transición manda el nuevo estado —y el mensaje que escribiste— de
+       vuelta a la tienda, así el cliente siempre ve en qué anda su devolución. Magento no decide
+       nada ni calcula plata.</p>
+    <div class="amc-shot"><img src="assets/13-rma-form.png" alt="Una devolución en Odoo con su máquina de estados"/></div>
+    <p class="amc-cap">Aceptar, rechazar con motivo, inspeccionar, aprobar, resolver — cada paso visible para el cliente.</p>
+
+    <div class="amc-grid">
+      <div class="amc-card"><h3>Vuelve a stock, o a descarte</h3>
+        <p>Al aprobar, una ventana corta pregunta si la mercadería vuelve a ser vendible o es
+           merma, y Odoo crea y valida la recepción por vos.</p></div>
+      <div class="amc-card"><h3>Nota de crédito bien emitida</h3>
+        <p>Resolver como crédito emite la reversión con el asistente nativo de Odoo, así las
+           localizaciones que numeran las notas de crédito aparte toman el tipo de documento
+           correcto. Una devolución parcial acredita solo lo que volvió.</p></div>
+      <div class="amc-card"><h3>Un cupón que el cliente puede gastar</h3>
+        <p>El crédito se espeja en Magento como una cart price rule nativa de un solo uso. Un
+           cupón por devolución, idempotente — un reintento nunca emite un segundo.</p></div>
+    </div>
+  </div>
+
+  <div class="amc-sec">
+    <span class="amc-kicker">Antes de instalar</span>
+    <h2>Qué funciona solo, y qué necesita un módulo del lado Magento</h2>
+    <p class="amc-lead">Casi todo el conector habla la API REST <b>nativa</b> de Magento y no
+       necesita nada instalado en la tienda. Cuatro funciones llaman a endpoints que Magento
+       Community no provee y requieren los módulos Magento acompañantes — los dos gratuitos,
+       de código abierto e instalables con Composer.</p>
+
+    <div class="amc-note" style="margin:0 0 26px">
+      <h3>Los módulos acompañantes</h3>
+      <p>Publicados bajo <b>OSL-3.0</b>, la misma licencia que el core de Magento:</p>
+      <p style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13.5px;
+                background:#fff;border:1px solid #e8dcb0;border-radius:6px;padding:12px 14px">
+        composer require artaza/module-odoo-integration<br/>
+        composer require artaza/module-rma
+      </p>
+      <p><b>artaza/module-odoo-integration</b> — los endpoints de clase de impuesto y negociación ·
+        <a href="https://packagist.org/packages/artaza/module-odoo-integration">Packagist</a> ·
+        <a href="https://github.com/martinartaza/magento_odoo_integration">GitHub</a><br/>
+        <b>artaza/module-rma</b> — devoluciones para Magento Open Source, que no tiene RMA nativo ·
+        <a href="https://packagist.org/packages/artaza/module-rma">Packagist</a> ·
+        <a href="https://github.com/martinartaza/magento_rma">GitHub</a></p>
+      <p>Solo necesitás el que cubra lo que uses: stock, precios, pedidos, facturas y remitos
+        funcionan con un Magento sin agregados.</p>
+    </div>
+
+    <table class="amc-tbl">
+      <tr><th style="width:34%">Función</th><th style="width:33%">Endpoint de Magento</th><th>Requiere</th></tr>
+      <tr><td>Stock por source (MSI)</td><td><code>inventory/source-items</code></td><td class="amc-ok">Magento nativo</td></tr>
+      <tr><td>Precio base</td><td><code>products/base-prices</code></td><td class="amc-ok">Magento nativo</td></tr>
+      <tr><td>Importación de pedidos</td><td><code>orders</code> + searchCriteria</td><td class="amc-ok">Magento nativo</td></tr>
+      <tr><td>Factura y remito</td><td><code>order/{id}/invoice</code>, <code>/ship</code></td><td class="amc-ok">Magento nativo</td></tr>
+      <tr><td>Cupón de crédito</td><td><code>salesRules</code> + <code>coupons</code></td><td class="amc-ok">Magento nativo</td></tr>
+      <tr><td>Auto-match de clases de impuesto</td><td><code>taxClasses</code>, <code>taxRules</code>, <code>taxRates</code></td><td class="amc-ok">Magento nativo</td></tr>
+      <tr><td>Enviar la clase de impuesto del producto</td><td><code>products/tax-class</code></td><td class="amc-need">module-odoo-integration</td></tr>
+      <tr><td>Total negociado en el pedido</td><td><code>orders/{id}/negotiation</code></td><td class="amc-need">module-odoo-integration</td></tr>
+      <tr><td>Solicitudes de devolución (RMA)</td><td><code>rma</code></td><td class="amc-need">module-rma</td></tr>
+      <tr><td>Envío del estado de la devolución</td><td><code>rma/{id}/status</code></td><td class="amc-need">module-rma</td></tr>
+    </table>
+
+    <div style="margin-top:26px">
+      <h3>Requisitos</h3>
+      <ul class="amc-list">
+        <li>Odoo <b>19.0</b>, con <code>sale</code>, <code>stock</code>, <code>sale_stock</code> y <code>account</code>.</li>
+        <li>Magento <b>2.4.x</b> con una <b>integración</b> cuyo ACL cubra todo lo que sincronices.
+            Después de agregar un endpoint nuevo hay que <b>reautorizar</b> la integración o sus
+            llamadas vuelven <code>401</code>.</li>
+        <li><b>Los mismos impuestos de los dos lados.</b> Cada alícuota con la que vendés tiene que
+            existir en Odoo <i>y</i> como clase de impuesto de producto en Magento cobrando ese
+            mismo porcentaje — el módulo los relaciona, nunca los crea. Cada clase de Magento
+            debería aplicar una sola tasa, o no se puede relacionar automáticamente.</li>
+        <li>Magento en <b>Catalog Prices = Including Tax</b>, y los impuestos de Odoo
+            correspondientes marcados <b>Incluido en el precio</b> — si no, los totales importados
+            no van a coincidir con los de la tienda.</li>
+        <li>Los productos se matchean por SKU: el <code>sku</code> de Magento tiene que ser igual a
+            la <b>referencia interna</b> de Odoo.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="amc-sec amc-alt">
+    <h2>Todo en un solo lugar</h2>
+    <div class="amc-grid">
+      <div class="amc-card"><h3>Stock</h3><p>Por bodega, mapeado a sources MSI, en lotes que vos definís.</p></div>
+      <div class="amc-card"><h3>Precios</h3><p>Precio base con impuesto incluido, enviado cuando cambia.</p></div>
+      <div class="amc-card"><h3>Clase de impuesto</h3><p>Auto-relacionada por alícuota; solo pregunta cuando es realmente ambiguo.</p></div>
+      <div class="amc-card"><h3>Pedidos</h3><p>Por cursor, ruteo pagado vs pendiente, cliente actualizado.</p></div>
+      <div class="amc-card"><h3>Negociación</h3><p>Escribís el total acordado; el descuento se prorratea y se le muestra al cliente.</p></div>
+      <div class="amc-card"><h3>Fulfillment</h3><p>Validás la entrega en Odoo; Magento factura y despacha.</p></div>
+      <div class="amc-card"><h3>Devoluciones</h3><p>Máquina de estados, decisión de restock, nota de crédito, cupón.</p></div>
+      <div class="amc-card"><h3>Historial</h3><p>Cada fallo en pantalla, con reintento y retención.</p></div>
+      <div class="amc-card"><h3>Programación</h3><p>Cada importación y envío tiene su propio cron y frecuencia.</p></div>
+    </div>
+  </div>
+
+  <div class="amc-foot">
+    Desarrollado y mantenido por Sebastian Martin Artaza Saade ·
+    <a href="https://www.artaza.net" style="color:#7a5cc4">artaza.net</a><br/>
+    Soporte: martin.artaza@gmail.com · Licencia LGPL-3
+  </div>
+
+  </div><!-- /lang-es -->
+
+  <!-- The page carries both languages in full, so the end of it is a long way
+       from the top. -->
+  <div class="amc-langbreak" style="padding:24px 32px">
+    <a href="#en">↑ Volver al principio</a>
+  </div>
+</div>
+</section>

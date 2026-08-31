@@ -1,3 +1,5 @@
-from . import set_order_total_wizard
-from . import magento_order_import_wizard
-from . import magento_rma_approve_wizard
+from . import (
+    artaza_magento_order_import_wizard,
+    artaza_magento_order_total_wizard,
+    artaza_magento_rma_approve_wizard,
+)

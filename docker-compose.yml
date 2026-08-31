@@ -6,8 +6,15 @@ services:
       - db
     env_file:
       - .env
+    ports:
+      - "8069:8069"
     volumes:
       - ./custom_addons:/opt/odoo/custom_addons
+    # Local dev only: reach Warden's Magento (https://app.ituc.test), which is
+    # served by the host's Traefik. Harmless in prod, where the DNS resolves.
+    extra_hosts:
+      - "app.ituc.test:host-gateway"
+      - "app.alcivet.test:host-gateway"
     networks:
       - traefik
       - internal
@@ -24,6 +31,8 @@ services:
       - POSTGRES_DB=${DB_NAME}
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
+    ports:
+      - "5434:5432"
     volumes:
       - odoo-db-data:/var/lib/postgresql/data
     networks:

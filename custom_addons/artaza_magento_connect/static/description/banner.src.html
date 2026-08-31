@@ -1,0 +1,124 @@
+<!doctype html>
+<!--
+  Source of banner.png (the artwork the App Store shows beside the module name).
+
+  Rendered, not hand-drawn, so it can be changed by editing text instead of
+  reopening an image editor. To regenerate:
+
+      python3 build_banner.py
+
+  It serves this directory, loads this file in a headless browser sized to the
+  banner's exact pixel dimensions and writes the screenshot to banner.png.
+
+  The canvas is 2400x1200 -- twice the 1200x600 the store displays -- so every
+  length below is already doubled and the result stays sharp on a retina panel.
+-->
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>banner</title>
+<style>
+  html, body { margin: 0; padding: 0; }
+  body { width: 2400px; height: 1200px; overflow: hidden; }
+
+  .banner {
+    width: 2400px; height: 1200px; box-sizing: border-box;
+    padding: 84px 120px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, #1f2547 0%, #3c2a63 100%);
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #fff; text-align: center;
+  }
+
+  /* the two products, facing each other */
+  .pair { display: flex; align-items: center; justify-content: center; gap: 64px; margin-bottom: 60px; }
+  .side { display: flex; flex-direction: column; align-items: center; gap: 22px; }
+  .plate {
+    background: #fff; border-radius: 34px; padding: 40px 56px;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 18px 54px rgba(0, 0, 0, .30);
+  }
+  .plate img { display: block; }
+  .plate-odoo img { height: 132px; }
+  .plate-magento img { height: 168px; }
+  /* Capitals are written out rather than applied with text-transform, which
+     would turn the "x" of 2.4.x into a capital and read as a typo. */
+  .version {
+    font-size: 32px; font-weight: 700; letter-spacing: .10em;
+    color: rgba(255, 255, 255, .62);
+  }
+
+  /* the arrow stack sits between the plates, so it lines up with the logos
+     rather than with the version labels underneath them */
+  .exchange { display: flex; flex-direction: column; gap: 24px; margin-bottom: 54px; }
+  .exchange .caption {
+    font-size: 34px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+  }
+  .caption-out { color: #b9a6e8; }
+  .caption-in  { color: #f0a077; }
+
+  h1 { font-size: 132px; font-weight: 700; letter-spacing: -3px; margin: 0 0 26px; }
+  .lead {
+    font-size: 46px; line-height: 1.42; margin: 0 0 60px; max-width: 1780px;
+    color: rgba(255, 255, 255, .93);
+  }
+
+  .pills { display: flex; flex-wrap: wrap; gap: 22px; justify-content: center; }
+  .pill {
+    border: 3px solid rgba(255, 255, 255, .46); border-radius: 999px;
+    padding: 20px 46px; font-size: 46px; font-weight: 600; letter-spacing: -.2px;
+  }
+</style>
+</head>
+<body>
+  <div class="banner">
+
+    <div class="pair">
+      <div class="side">
+        <div class="plate plate-odoo"><img src="assets/logo-odoo.png" alt="Odoo"/></div>
+        <span class="version">ODOO 19</span>
+      </div>
+
+      <div class="exchange">
+        <div class="caption caption-out">stock &middot; prices &middot; tax</div>
+        <!-- two arrows rather than one double-headed one: each direction
+             carries different data, and the banner says so. -->
+        <svg width="470" height="104" viewBox="0 0 470 104">
+          <defs>
+            <marker id="head-right" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L9,3 z" fill="#a78bde"/>
+            </marker>
+            <marker id="head-left" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L9,3 z" fill="#e8703a"/>
+            </marker>
+          </defs>
+          <line x1="6" y1="30" x2="452" y2="30" stroke="#a78bde" stroke-width="9"
+                stroke-linecap="round" marker-end="url(#head-right)"/>
+          <line x1="464" y1="74" x2="18" y2="74" stroke="#e8703a" stroke-width="9"
+                stroke-linecap="round" marker-end="url(#head-left)"/>
+        </svg>
+        <div class="caption caption-in">orders &middot; returns</div>
+      </div>
+
+      <div class="side">
+        <div class="plate plate-magento"><img src="assets/logo-magento.png" alt="Magento 2"/></div>
+        <span class="version">MAGENTO 2.4.x</span>
+      </div>
+    </div>
+
+    <h1>Magento 2 Connector</h1>
+    <p class="lead">Direct REST. No middleware to deploy &mdash;<br/>
+       and every failed sync on a screen, not in a log file.</p>
+
+    <div class="pills">
+      <span class="pill">Stock</span>
+      <span class="pill">Prices</span>
+      <span class="pill">Tax class</span>
+      <span class="pill">Orders</span>
+      <span class="pill">Returns</span>
+      <span class="pill">Sync history</span>
+    </div>
+
+  </div>
+</body>
+</html>

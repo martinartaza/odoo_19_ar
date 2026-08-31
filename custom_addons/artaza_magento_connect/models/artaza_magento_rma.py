@@ -1,8 +1,12 @@
 import logging
-from urllib.parse import quote
+import re
+import secrets
+from datetime import date
 
 from odoo import api, fields, models
 from odoo.exceptions import UserError
+
+from .magento_normalize import normalize_rma
 
 _logger = logging.getLogger(__name__)
 
@@ -27,6 +31,32 @@ STATES = [
 ]
 VALID_STATES = {code for code, _label in STATES}
 
+# Unambiguous alphabet (no 0/o/1/l/i) for the random suffix of a coupon code.
+_CODE_ALPHABET = 'abcdefghjkmnpqrstuvwxyz23456789'
+
+
+def _email_slug(email):
+    """Local part of the email, reduced to [a-z0-9._-].
+
+    Dots survive (juan.perez stays juan.perez); '+', spaces and unicode do not.
+    The point is a coupon an operator can *search for* in the Magento admin.
+    """
+    local = (email or '').split('@', 1)[0].lower()
+    slug = re.sub(r'[^a-z0-9._-]', '', local).strip('._-')
+    return slug[:30] or 'cliente'
+
+
+def _order_short(order_increment_id):
+    """000000031 -> 31. Non-numeric ids are kept, stripped of punctuation."""
+    value = (order_increment_id or '').strip()
+    if value.isdigit():
+        return str(int(value))
+    return re.sub(r'[^A-Za-z0-9]', '', value) or '0'
+
+
+def _random_suffix(length=6):
+    return ''.join(secrets.choice(_CODE_ALPHABET) for _ in range(length))
+
 
 class MagentoRma(models.Model):
     """Return request produced in Magento (Artaza_Rma), pulled into Odoo.
@@ -37,7 +67,7 @@ class MagentoRma(models.Model):
     decision is pushed back later. Create-once by ``magento_increment_id``:
     Odoo owns the record after import (integration_v3.md §7.4).
     """
-    _name = 'magento.rma'
+    _name = 'artaza.magento.rma'
     _description = 'Magento RMA (return request)'
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _rec_name = 'magento_increment_id'
@@ -113,13 +143,13 @@ class MagentoRma(models.Model):
     magento_created_at = fields.Char(string="Requested At", copy=False, readonly=True)
     magento_updated_at = fields.Char(string="Updated At", copy=False, readonly=True)
     line_ids = fields.One2many(
-        'magento.rma.line', 'rma_id', string="Lines", readonly=True,
+        'artaza.magento.rma.line', 'rma_id', string="Lines", readonly=True,
     )
 
-    _sql_constraints = [
-        ('magento_increment_id_uniq', 'unique(magento_increment_id)',
-         "A Magento RMA with that number already exists."),
-    ]
+    _magento_increment_id_uniq = models.Constraint(
+        'unique(magento_increment_id)',
+        "A Magento RMA with that number already exists.",
+    )
 
     # ── Refund reference amounts (from the Odoo invoice) ───────
     @api.depends('sale_order_id', 'sale_order_id.currency_id')
@@ -146,33 +176,74 @@ class MagentoRma(models.Model):
         """Pull new/updated RMAs from Magento (cursor-based). Returns the count
         of newly created records (used by the manual "Import now" button)."""
         icp = self.env['ir.config_parameter'].sudo()
-        connector = self.env['artaza.magento.connector']
+        client = self.env['artaza.magento.client']
         created = 0
 
+        log = self.env['artaza.magento.sync.log']
         for _page in range(1000):  # guard against an infinite loop
             cursor = icp.get_param(CURSOR_PARAM) or DEFAULT_CURSOR
-            endpoint = 'rma?updated_since=%s&page_size=%s' % (quote(cursor), PAGE_SIZE)
-            result = connector.call('GET', endpoint)
-            rmas = result.get('rmas', [])
-            if not rmas:
-                break
+            with log.track('rma_pull', 'in', 'cron') as tracker:
+                tracker.request_payload = 'updated_at >= %s | page_size=%s' % (
+                    cursor, PAGE_SIZE)
+                rmas = [normalize_rma(raw)
+                        for raw in client.fetch_rmas(cursor, PAGE_SIZE)]
+                if not rmas:
+                    break
 
-            for rma in rmas:
-                try:
-                    if self._magento_absorb_rma(rma):
-                        created += 1
-                except Exception as exc:  # noqa: BLE001 - log and continue with the next one
-                    _logger.warning(
-                        "Magento RMA %s failed: %s", rma.get('increment_id'), exc,
-                    )
-                # advance the cursor even if one failed (create-once is idempotent)
-                if rma.get('updated_at'):
-                    icp.set_param(CURSOR_PARAM, rma['updated_at'])
+                for rma in rmas:
+                    increment_id = rma.get('increment_id')
+                    try:
+                        if self._magento_absorb_rma(rma):
+                            created += 1
+                        tracker.ok(increment_id)
+                    except Exception as exc:  # noqa: BLE001 - continue with the next one
+                        # The cursor moves past it, so an unrecorded failure is
+                        # a return that silently never arrives.
+                        _logger.warning(
+                            "Magento RMA %s failed: %s", increment_id, exc,
+                        )
+                        tracker.fail(increment_id, exc)
+                    # advance the cursor even if one failed (create-once is idempotent)
+                    if rma.get('updated_at'):
+                        icp.set_param(CURSOR_PARAM, rma['updated_at'])
 
             if len(rmas) < PAGE_SIZE:
                 break
 
         return created
+
+    # ── Manual import of one RMA by number (bypasses the cursor) ──
+    @api.model
+    def _magento_import_one(self, increment_id):
+        """Import a single Magento return by its number, ignoring the cursor.
+
+        Same contract as ``sale.order._magento_import_one`` on purpose: the sync
+        history replays a failed import through one code path, whichever kind it
+        was. Returns {status: exists|imported|not_found|error, record?, message?}.
+        """
+        increment_id = (increment_id or '').strip()
+        if not increment_id:
+            return {'status': 'error', 'message': self.env._("Enter a return number.")}
+
+        existing = self.search([('magento_increment_id', '=', increment_id)], limit=1)
+        if existing:
+            return {'status': 'exists', 'record': existing}
+
+        try:
+            raw = self.env['artaza.magento.client'].fetch_rma_by_increment(increment_id)
+        except Exception as exc:  # noqa: BLE001 - surface the Magento message
+            return {'status': 'error', 'message': str(exc)}
+
+        rma = normalize_rma(raw) if raw else None
+        if not rma:
+            return {'status': 'not_found',
+                    'message': self.env._("Magento returned no return %s.", increment_id)}
+
+        try:
+            record = self._magento_absorb_rma(rma)
+        except Exception as exc:  # noqa: BLE001 - surface any absorption error
+            return {'status': 'error', 'message': str(exc)}
+        return {'status': 'imported', 'record': record}
 
     # ── Absorb a single RMA ────────────────────────────────────
     @api.model
@@ -236,7 +307,7 @@ class MagentoRma(models.Model):
     # ── Workflow: decide and push the status back to Magento ───
     def _push_status(self, status, resolution=None, admin_message=None,
                      credit_amount=None, coupon_code=None):
-        """Push a status update to Magento (through the middleware) and advance
+        """Push a status update to Magento and advance
         the local workflow. Nothing is written if the push fails."""
         self.ensure_one()
         if not self.magento_rma_id:
@@ -249,9 +320,19 @@ class MagentoRma(models.Model):
             'coupon_code': coupon_code or None,
             'odoo_reference': self.odoo_reference or None,
         }
-        self.env['artaza.magento.connector'].call(
-            'POST', 'rma/%s/status' % self.magento_rma_id, payload,
-        )
+        log = self.env['artaza.magento.sync.log']
+        with log.track('rma_status', 'out', 'ui') as tracker:
+            tracker.attempt(self.magento_increment_id)
+            self.env['artaza.magento.client'].write_rma_status(
+                self.magento_rma_id,
+                status,
+                admin_message=payload['admin_message'],
+                resolution=payload['resolution'],
+                credit_amount=payload['credit_amount'],
+                coupon_code=payload['coupon_code'],
+                odoo_reference=payload['odoo_reference'],
+            )
+            tracker.ok(self.magento_increment_id)
         vals = {'state': status, 'magento_status': status}
         if resolution:
             vals['resolution'] = resolution
@@ -267,7 +348,7 @@ class MagentoRma(models.Model):
         if not self.admin_message:
             raise UserError(self.env._(
                 "Fill in 'Message to customer' with the rejection reason before "
-                "rejecting. The customer sees it in Magento."
+                "rejecting. The customer sees it in Magento.",
             ))
         self._push_status('rejected', admin_message=self.admin_message)
 
@@ -285,7 +366,7 @@ class MagentoRma(models.Model):
         return {
             'type': 'ir.actions.act_window',
             'name': self.env._("Approve product"),
-            'res_model': 'magento.rma.approve.wizard',
+            'res_model': 'artaza.magento.rma.approve.wizard',
             'view_mode': 'form',
             'target': 'new',
             'context': {'default_rma_id': self.id},
@@ -371,7 +452,7 @@ class MagentoRma(models.Model):
 
     def action_resolve_credit(self):
         """Resolve as credit — in one action:
-          1. create + post the AR **Nota de Crédito** that reverses the invoice
+          1. create + post the **credit note** that reverses the invoice
              (fiscal backing), recording its number in odoo_reference;
           2. generate the Magento **coupon** for the credit amount (how the
              customer redeems it) and push the resolution to Magento.
@@ -382,7 +463,7 @@ class MagentoRma(models.Model):
         self.ensure_one()
         if self.credit_amount <= 0:
             raise UserError(self.env._(
-                "Enter the 'Credit Amount' before resolving as credit."
+                "Enter the 'Credit Amount' before resolving as credit.",
             ))
         if not self.odoo_reference:
             self._create_credit_note()
@@ -405,13 +486,13 @@ class MagentoRma(models.Model):
         self.ensure_one()
         order = self.sale_order_id
         invoice = order.invoice_ids.filtered(
-            lambda m: m.move_type == 'out_invoice' and m.state == 'posted'
+            lambda m: m.move_type == 'out_invoice' and m.state == 'posted',
         )[:1]
         if not invoice:
             raise UserError(self.env._(
                 "This order isn't invoiced yet, so there is no invoice for the credit "
                 "note to reverse. Invoice the sale order first (Create Invoice → "
-                "Confirm), then resolve this RMA as credit."
+                "Confirm), then resolve this RMA as credit.",
             ))
         # Returned quantity per product (0 = product not in this return).
         returned = {}
@@ -453,11 +534,11 @@ class MagentoRma(models.Model):
         to_unlink.unlink()
 
         if not credit_note.invoice_line_ids.filtered(
-            lambda l: l.product_id and l.display_type not in ('line_section', 'line_note')
+            lambda line: line.product_id and line.display_type not in ('line_section', 'line_note'),
         ):
             credit_note.unlink()
             raise UserError(self.env._(
-                "No returned line matches the invoice; cannot build the credit note."
+                "No returned line matches the invoice; cannot build the credit note.",
             ))
 
         credit_note.action_post()
@@ -465,27 +546,82 @@ class MagentoRma(models.Model):
         self.message_post(body=self.env._("Credit note created: %s", credit_note.name))
 
     def _generate_coupon(self):
-        """Ask the middleware to create a single-use Magento coupon for this RMA's
-        credit and store the returned code. Store scope is left to the middleware
-        (connection's default store — Odoo is single-store for now)."""
+        """Create the single-use Magento coupon backing this RMA's credit.
+
+        **Idempotency lives on the record:** the RMA itself holds
+        the code. If `coupon_code` is already set, the coupon exists and this is
+        a retry — return instead of minting a second one. That is the same
+        guarantee the `coupons` table gave, using the record that was already
+        the natural key (the RMA number).
+        """
         self.ensure_one()
+        if self.coupon_code:
+            return  # already issued — a retry must never mint a second coupon
         email = self.customer_email or self.partner_id.email
         if not email:
             raise UserError(self.env._(
-                "The RMA has no customer email to issue the coupon to."
+                "The RMA has no customer email to issue the coupon to.",
             ))
-        result = self.env['artaza.magento.connector'].call('POST', 'coupons', {
-            'source_ref': self.magento_increment_id,
-            'customer_email': email,
-            'order_increment_id': self.magento_order_increment_id or '',
-            'amount': self.credit_amount,
-            'reason': 'rma_credit',
-        })
-        code = result.get('coupon_code')
-        if not code:
-            raise UserError(self.env._("The middleware did not return a coupon code."))
+
+        client = self.env['artaza.magento.client']
+        website_id = self._magento_coupon_website(client)
+        rule_name = '%s-%s' % (
+            _email_slug(email), _order_short(self.magento_order_increment_id))
+        code = '%s-%s' % (rule_name, _random_suffix())
+
+        log = self.env['artaza.magento.sync.log']
+        with log.track('coupon', 'out', 'ui') as tracker:
+            tracker.attempt(self.magento_increment_id)
+            rule_id = client.create_cart_price_rule({
+                'name': rule_name,
+                'description': 'Store credit (rma_credit) · %s' % self.magento_increment_id,
+                'website_ids': [website_id],
+                # Every group plus guest: the customer may redeem it either way.
+                'customer_group_ids': client.fetch_customer_group_ids(),
+                'coupon_type': 'SPECIFIC_COUPON',
+                'use_auto_generation': False,
+                'uses_per_coupon': 1,
+                'uses_per_customer': 1,
+                'is_active': True,
+                'stop_rules_processing': True,
+                'is_advanced': True,
+                'simple_action': 'cart_fixed',
+                'discount_amount': self.credit_amount,
+                'discount_step': 0,
+                'apply_to_shipping': False,
+                'from_date': date.today().isoformat(),
+                'to_date': None,
+            })
+            client.create_specific_coupon(rule_id, code)
+            tracker.ok(self.magento_increment_id)
+
+        # Written immediately: if anything later in the flow fails, the retry
+        # must find the code and not issue a second coupon.
         self.coupon_code = code
         self.message_post(body=self.env._("Discount coupon generated: %s", code))
+
+    def _magento_coupon_website(self, client):
+        """Website the coupon is valid in.
+
+        Resolved from the ORDER's store view, so the credit is redeemable in the
+        same store the purchase was made in — without Odoo having to know any
+        Magento store code. Falls back to the first active store view.
+        """
+        self.ensure_one()
+        views = client.fetch_store_views()
+        if self.magento_order_entity_id:
+            order = client.get_order(self.magento_order_entity_id)
+            store_id = order.get('store_id')
+            if store_id is not None:
+                for view in views:
+                    if int(view.get('id') or -1) == int(store_id) and view.get('website_id'):
+                        return int(view['website_id'])
+        for view in views:
+            if view.get('website_id'):
+                return int(view['website_id'])
+        raise UserError(self.env._(
+            "Could not work out which Magento website this coupon belongs to.",
+        ))
 
     # ── Outgoing delivery to the customer ──────────────────────
     # Reused by two flows that both ship a product to the customer:
@@ -499,7 +635,7 @@ class MagentoRma(models.Model):
         if self.state not in ('resolved_exchange', 'returned'):
             raise UserError(self.env._(
                 "The delivery is available once the RMA is resolved as exchange "
-                "or returned to the customer."
+                "or returned to the customer.",
             ))
         partner = self.partner_id or self.sale_order_id.partner_id
         if not partner:
@@ -563,11 +699,11 @@ class MagentoRma(models.Model):
 
 
 class MagentoRmaLine(models.Model):
-    _name = 'magento.rma.line'
+    _name = 'artaza.magento.rma.line'
     _description = 'Magento RMA line'
 
     rma_id = fields.Many2one(
-        'magento.rma', string="RMA", required=True, ondelete='cascade', index=True,
+        'artaza.magento.rma', string="RMA", required=True, ondelete='cascade', index=True,
     )
     sku = fields.Char(string="SKU", readonly=True)
     product_id = fields.Many2one('product.product', string="Product", readonly=True)
@@ -605,15 +741,15 @@ class MagentoRmaLine(models.Model):
         if not self.product_id or not order:
             return 0.0
         for move in order.invoice_ids.filtered(
-            lambda m: m.move_type == 'out_invoice' and m.state == 'posted'
+            lambda m: m.move_type == 'out_invoice' and m.state == 'posted',
         ):
             inv_line = move.invoice_line_ids.filtered(
-                lambda l: l.product_id == self.product_id and not l.display_type
+                lambda line: line.product_id == self.product_id and not line.display_type,
             )[:1]
             if inv_line and inv_line.quantity:
                 return inv_line.price_total / inv_line.quantity
         so_line = order.order_line.filtered(
-            lambda l: l.product_id == self.product_id and not l.display_type
+            lambda line: line.product_id == self.product_id and not line.display_type,
         )[:1]
         if so_line and so_line.product_uom_qty:
             return so_line.price_total / so_line.product_uom_qty

@@ -1,0 +1,3 @@
+# macOS Finder metadata. Applies from the repository root down, which the
+# module's own .gitignore cannot do.
+.DS_Store

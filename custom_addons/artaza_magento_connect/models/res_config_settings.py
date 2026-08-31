@@ -1,9 +1,14 @@
 from odoo import api, fields, models
 
-from .magento_connector import (
-    PARAM_API_KEY,
-    PARAM_BASE_URL,
+from .artaza_magento_client import (
+    PARAM_MAGENTO_SKIP_SSL,
+    PARAM_MAGENTO_TOKEN,
+    PARAM_MAGENTO_URL,
 )
+from .artaza_magento_rma import CURSOR_PARAM as RMAS_CURSOR_PARAM
+from .artaza_magento_rma import DEFAULT_CURSOR as RMAS_DEFAULT_CURSOR
+from .sale_order import CURSOR_PARAM as ORDERS_CURSOR_PARAM
+from .sale_order import DEFAULT_CURSOR as ORDERS_DEFAULT_CURSOR
 
 CRON_XMLID = 'artaza_magento_connect.ir_cron_magento_stock_sync'
 ORDERS_CRON_XMLID = 'artaza_magento_connect.ir_cron_magento_pull_orders'
@@ -13,19 +18,53 @@ RMAS_CRON_XMLID = 'artaza_magento_connect.ir_cron_magento_pull_rmas'
 class ResConfigSettings(models.TransientModel):
     _inherit = 'res.config.settings'
 
-    magento_middleware_base_url = fields.Char(
-        string="Middleware URL",
-        config_parameter=PARAM_BASE_URL,
-        help="Base URL of the FastAPI middleware API, "
-             "e.g. https://www.artaza.net/api/v1",
+    # ── Magento connection ─────────────────────────────────────
+    magento_base_url = fields.Char(
+        string="Magento URL",
+        config_parameter=PARAM_MAGENTO_URL,
+        help="Base URL of the Magento store, with no trailing slash, "
+             "e.g. https://www.mystore.com. The REST paths are added by Odoo.",
     )
-    magento_api_key = fields.Char(
-        string="API key",
-        config_parameter=PARAM_API_KEY,
-        help="API key generated in the middleware panel. "
-             "Sent as 'Authorization: Bearer <key>'.",
+    magento_token = fields.Char(
+        string="Integration token",
+        config_parameter=PARAM_MAGENTO_TOKEN,
+        help="Access token of the Magento integration "
+             "(System ▸ Extensions ▸ Integrations). Sent as "
+             "'Authorization: Bearer <token>'.",
+    )
+    magento_skip_ssl_verify = fields.Boolean(
+        string="Do not verify the SSL certificate",
+        config_parameter=PARAM_MAGENTO_SKIP_SSL,
+        help="Tick ONLY in local development, when the store is served over "
+             "HTTPS with a self-signed certificate. Leave it unticked in "
+             "production.",
     )
 
+    # ── Mapping screens (Odoo ⇄ Magento, by name) ──────────────
+    # Plain Many2many on the transient record: the rows are the REAL warehouses
+    # and taxes, so editing the mapping column inline writes straight to them.
+    magento_warehouse_ids = fields.Many2many(
+        'stock.warehouse',
+        'artaza_magento_config_warehouse_rel', 'config_id', 'warehouse_id',
+        string="Warehouses",
+    )
+    magento_sale_tax_ids = fields.Many2many(
+        'account.tax',
+        'artaza_magento_config_tax_rel', 'config_id', 'tax_id',
+        string="Sale taxes",
+    )
+    # ── Sync history (v4 objective 2) ──────────────────────────
+    magento_log_retention_days = fields.Integer(
+        string="Keep successful runs for (days)",
+        config_parameter='artaza_magento_connect.log_retention_days',
+        default=30,
+        help="A daily cron deletes SUCCESSFUL runs older than this. Failures are "
+             "never deleted automatically — an old error is usually the one that "
+             "explains today's problem. 0 = never purge anything.",
+    )
+    magento_log_error_count = fields.Integer(
+        string="Unhandled sync problems", compute='_compute_magento_log_error_count',
+    )
     # ── Stock cron ─────────────────────────────────────────────
     magento_stock_batch_size = fields.Integer(
         string="Products per batch",
@@ -66,7 +105,7 @@ class ResConfigSettings(models.TransientModel):
              "adjust the price and inform Magento. E.g.: checkmo, banktransfer",
     )
     # Tax applied to the shipping line of imported orders. The freight's IVA is a
-    # fiscal decision (usually 21%, its own rate) — NOT the product's alícuota.
+    # fiscal decision (usually 21%, its own rate) — NOT the product's rate.
     magento_shipping_tax_id = fields.Many2one(
         'account.tax',
         string="Shipping tax",
@@ -76,6 +115,17 @@ class ResConfigSettings(models.TransientModel):
              "your accountant uses for freight (usually IVA 21%). Leave empty to "
              "mirror the products' tax (fine only if all your products share the "
              "same rate).",
+    )
+    # The pull cursor, on screen. It is a plain watermark: the import asks Magento
+    # for everything updated at or after it. Moving it BACK re-reads that window,
+    # which is safe — orders are create-once by their Magento number, so anything
+    # already in Odoo is skipped and only what is missing comes in.
+    magento_orders_cursor = fields.Datetime(
+        string="Import orders updated since",
+        help="Only orders updated at or after this moment are imported. It moves "
+             "forward on its own as orders come in. Move it back to re-read a "
+             "period (orders already in Odoo are skipped, never duplicated); "
+             "move it forward to ignore history when connecting an existing store.",
     )
     magento_orders_cron_active = fields.Boolean(string="Import orders automatically")
     magento_orders_interval_number = fields.Integer(string="Orders frequency", default=15)
@@ -90,6 +140,11 @@ class ResConfigSettings(models.TransientModel):
     )
 
     # ── Return (RMA) import (Magento → Odoo) ───────────────────
+    magento_rmas_cursor = fields.Datetime(
+        string="Import returns updated since",
+        help="Same watermark as the orders one, for returns (RMA). Returns are "
+             "create-once too, so moving it back re-reads without duplicating.",
+    )
     magento_rmas_cron_active = fields.Boolean(string="Import RMAs automatically")
     magento_rmas_interval_number = fields.Integer(string="RMAs frequency", default=15)
     magento_rmas_interval_type = fields.Selection(
@@ -101,6 +156,20 @@ class ResConfigSettings(models.TransientModel):
         string="RMAs unit",
         default='minutes',
     )
+
+    def _compute_magento_log_error_count(self):
+        count = self.env['artaza.magento.sync.log'].search_count([
+            ('state', 'in', ('error', 'partial')),
+            ('resolved', '=', False),
+        ])
+        for settings in self:
+            settings.magento_log_error_count = count
+
+    def action_magento_open_sync_log(self):
+        self.ensure_one()
+        return self.env['ir.actions.act_window']._for_xml_id(
+            'artaza_magento_connect.action_magento_sync_log',
+        )
 
     def _magento_stock_cron(self):
         return self.env.ref(CRON_XMLID, raise_if_not_found=False)
@@ -114,7 +183,7 @@ class ResConfigSettings(models.TransientModel):
     def action_magento_pull_rmas(self):
         """Import returns (RMA) from Magento now and show how many came in."""
         self.ensure_one()
-        count = self.env['magento.rma']._cron_magento_pull_rmas()
+        count = self.env['artaza.magento.rma']._cron_magento_pull_rmas()
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
@@ -144,77 +213,119 @@ class ResConfigSettings(models.TransientModel):
             },
         }
 
-    def action_magento_test_connection(self):
-        """Validate the API key + connection against the middleware /ping."""
-        self.ensure_one()
-        self.env['artaza.magento.connector'].test_connection()
-        return {
-            'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
-                'type': 'success',
-                'title': self.env._("Connection OK"),
-                'message': self.env._("The middleware responded correctly."),
-                'sticky': False,
-            },
-        }
-
-    def action_magento_sync_warehouses(self):
-        """Register the Odoo warehouses in the middleware and show the status."""
-        self.ensure_one()
-        result = self.env['artaza.magento.connector'].sync_warehouses()
-        pending = result.get('pending_warehouses') or []
-        if pending:
-            kind = 'warning'
-            message = self.env._(
-                "Warehouses registered. Still to be mapped in the middleware: %s",
-                ", ".join(pending),
-            )
-        else:
-            kind = 'success'
-            message = self.env._("Your warehouses are already synced with Magento.")
+    # ── v4: direct Magento connection + mapping screens ────────
+    def _magento_notify(self, kind, title, message, sticky=False):
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
                 'type': kind,
-                'title': self.env._("Warehouse sync"),
+                'title': title,
                 'message': message,
-                'sticky': bool(pending),
+                'sticky': sticky,
             },
         }
 
-    def action_magento_sync_taxes(self):
-        """Register the Odoo sale taxes in the middleware and show the status."""
+    def _magento_persist_connection(self):
+        """Save the connection fields before a button uses them.
+
+        Without this, typing the URL/token and hitting a button straight away
+        fails with "not configured", because settings are only written on Save.
+        """
         self.ensure_one()
-        result = self.env['artaza.magento.connector'].sync_taxes()
-        pending = result.get('pending_taxes') or []
-        auto = result.get('auto_matched') or []
+        icp = self.env['ir.config_parameter'].sudo()
+        icp.set_param(PARAM_MAGENTO_URL, (self.magento_base_url or '').strip())
+        icp.set_param(PARAM_MAGENTO_TOKEN, (self.magento_token or '').strip())
+        # Mirror res.config.settings' own semantics: an unticked Boolean
+        # removes the parameter instead of storing the string 'False'
+        # (`bool('False')` is True — that is the trap this avoids).
+        icp.set_param(
+            PARAM_MAGENTO_SKIP_SSL, 'True' if self.magento_skip_ssl_verify else False,
+        )
+
+    def action_magento_test_direct_connection(self):
+        """Validate the Magento URL + integration token."""
+        self.ensure_one()
+        self._magento_persist_connection()
+        stores = self.env['artaza.magento.client'].test_connection()
+        codes = ", ".join(store.get('code') or '' for store in (stores or []))
+        return self._magento_notify(
+            'success',
+            self.env._("Magento connection OK"),
+            self.env._("Store views found: %s", codes or '-'),
+        )
+
+    def action_magento_refresh_sources(self):
+        """Bring the MSI inventory sources over so they can be picked by name."""
+        self.ensure_one()
+        self._magento_persist_connection()
+        log = self.env['artaza.magento.sync.log']
+        with log.track('config', 'in', 'ui', note="Inventory sources") as tracker:
+            created, updated = self.env['artaza.magento.source'].refresh_from_magento()
+            tracker.ok(self.env['artaza.magento.source'].search([]).mapped('code'))
+        return self._magento_notify(
+            'success',
+            self.env._("Sources updated"),
+            self.env._("%(new)s new, %(known)s already known.",
+                       new=created, known=updated),
+        )
+
+    def action_magento_refresh_tax_classes(self):
+        """Bring the product tax classes over, with the rate their rules apply."""
+        self.ensure_one()
+        self._magento_persist_connection()
+        log = self.env['artaza.magento.sync.log']
+        with log.track('config', 'in', 'ui', note="Product tax classes") as tracker:
+            created, updated = self.env['artaza.magento.tax.class'].refresh_from_magento()
+            tracker.ok(self.env['artaza.magento.tax.class'].search([]).mapped('name'))
+        return self._magento_notify(
+            'success',
+            self.env._("Tax classes updated"),
+            self.env._("%(new)s new, %(known)s already known.",
+                       new=created, known=updated),
+        )
+
+    def action_magento_automatch_taxes(self):
+        """Match every unmapped sale tax to its Magento class by rate."""
+        self.ensure_one()
+        self._magento_persist_connection()
+        taxes = self.env['account.tax'].search([
+            ('type_tax_use', 'in', ('sale', 'all')),
+        ])
+        matched = taxes.action_magento_auto_match()
+        # A mapped tax that is not price-included silently inflates every
+        # imported order — worth shouting about, not a footnote.
+        gross_issues = taxes._magento_price_include_warnings()
+        if gross_issues:
+            return self._magento_notify(
+                'danger',
+                self.env._("Check 'Tax-included price'"),
+                self.env._(
+                    "%(matched)s matched, but these taxes are NOT price-included: "
+                    "%(taxes)s. Magento sends gross prices, so imported orders "
+                    "would add the tax on top and their total would not match "
+                    "Magento's. Tick 'Included in Price' on them in Accounting.",
+                    matched=matched, taxes=", ".join(gross_issues.mapped('name')),
+                ),
+                sticky=True,
+            )
+        pending = taxes.filtered(lambda t: not t.magento_tax_class_id)
         if pending:
-            kind = 'warning'
-            message = self.env._(
-                "Taxes registered. Still to be mapped to a Magento tax class "
-                "in the middleware: %s",
-                ", ".join(pending),
+            return self._magento_notify(
+                'warning',
+                self.env._("Auto-match finished"),
+                self.env._(
+                    "%(matched)s matched. Still to choose by hand: %(pending)s",
+                    matched=matched,
+                    pending=", ".join(pending.mapped('name')),
+                ),
+                sticky=True,
             )
-        elif auto:
-            kind = 'success'
-            message = self.env._(
-                "Taxes matched to Magento by rate: %s", ", ".join(auto)
-            )
-        else:
-            kind = 'success'
-            message = self.env._("Your taxes are already mapped to Magento.")
-        return {
-            'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
-                'type': kind,
-                'title': self.env._("Tax sync"),
-                'message': message,
-                'sticky': bool(pending),
-            },
-        }
+        return self._magento_notify(
+            'success',
+            self.env._("Auto-match finished"),
+            self.env._("%s tax(es) matched. Nothing pending.", matched),
+        )
 
     def action_magento_resync_all_taxes(self):
         """Mark ALL syncable products as pending so their tax class is re-pushed."""
@@ -241,6 +352,30 @@ class ResConfigSettings(models.TransientModel):
     @api.model
     def get_values(self):
         res = super().get_values()
+        # The cursors are read and written by hand rather than through
+        # `config_parameter`: they are stored as the plain UTC string Magento
+        # filters on, and going through the generic Datetime conversion would
+        # risk reformatting the one value the whole import depends on.
+        icp = self.env['ir.config_parameter'].sudo()
+        res.update(
+            magento_orders_cursor=fields.Datetime.to_datetime(
+                icp.get_param(ORDERS_CURSOR_PARAM) or ORDERS_DEFAULT_CURSOR,
+            ),
+            magento_rmas_cursor=fields.Datetime.to_datetime(
+                icp.get_param(RMAS_CURSOR_PARAM) or RMAS_DEFAULT_CURSOR,
+            ),
+        )
+        # Mapping tabs list the real records, so the operator maps by name.
+        res.update(
+            magento_warehouse_ids=[
+                (6, 0, self.env['stock.warehouse'].search([]).ids),
+            ],
+            magento_sale_tax_ids=[
+                (6, 0, self.env['account.tax'].search([
+                    ('type_tax_use', 'in', ('sale', 'all')),
+                ]).ids),
+            ],
+        )
         stock_cron = self.env.ref(CRON_XMLID, raise_if_not_found=False)
         if stock_cron:
             res.update(
@@ -266,6 +401,19 @@ class ResConfigSettings(models.TransientModel):
 
     def set_values(self):
         super().set_values()
+        icp = self.env['ir.config_parameter'].sudo()
+        # Emptying the field means "from the beginning", not "from now": a blank
+        # cursor that silently became today would skip the store's whole history.
+        icp.set_param(
+            ORDERS_CURSOR_PARAM,
+            fields.Datetime.to_string(self.magento_orders_cursor)
+            if self.magento_orders_cursor else ORDERS_DEFAULT_CURSOR,
+        )
+        icp.set_param(
+            RMAS_CURSOR_PARAM,
+            fields.Datetime.to_string(self.magento_rmas_cursor)
+            if self.magento_rmas_cursor else RMAS_DEFAULT_CURSOR,
+        )
         stock_cron = self._magento_stock_cron()
         if stock_cron:
             stock_cron.write({
@@ -299,7 +447,7 @@ class ResConfigSettings(models.TransientModel):
                 'type': 'success',
                 'title': self.env._("Stock re-sync"),
                 'message': self.env._(
-                    "%s product(s) marked. The cron will send them in batches.", count
+                    "%s product(s) marked. The cron will send them in batches.", count,
                 ),
                 'sticky': False,
             },

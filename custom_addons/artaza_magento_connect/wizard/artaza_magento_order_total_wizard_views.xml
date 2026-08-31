@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="view_artaza_sale_total_wizard_form" model="ir.ui.view">
-        <field name="name">artaza.sale.total.wizard.form</field>
-        <field name="model">artaza.sale.total.wizard</field>
+    <record id="view_magento_order_total_wizard_form" model="ir.ui.view">
+        <field name="name">magento.order.total.wizard.form</field>
+        <field name="model">artaza.magento.order.total.wizard</field>
         <field name="arch" type="xml">
             <form string="Adjust order total">
                 <field name="order_id" invisible="1"/>

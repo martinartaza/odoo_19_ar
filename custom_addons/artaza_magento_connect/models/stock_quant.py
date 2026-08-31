@@ -7,7 +7,7 @@ class StockQuant(models.Model):
     def _magento_mark_products_dirty(self):
         """Mark the syncable products of these quants as pending."""
         products = self.product_id.filtered(
-            lambda p: p.is_storable and p.default_code and not p.magento_stock_dirty
+            lambda p: p.is_storable and p.default_code and not p.magento_stock_dirty,
         )
         if products:
             products.sudo().write({'magento_stock_dirty': True})

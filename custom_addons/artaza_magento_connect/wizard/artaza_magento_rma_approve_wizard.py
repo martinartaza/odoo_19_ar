@@ -7,22 +7,22 @@ class MagentoRmaApproveWizard(models.TransientModel):
     The product passed inspection, but whether it re-enters sellable stock is a
     human call: a wrong-color item is resellable; a factory-defective one is not.
     """
-    _name = 'magento.rma.approve.wizard'
+    _name = 'artaza.magento.rma.approve.wizard'
     _description = 'RMA approve: restock decision'
 
     rma_id = fields.Many2one(
-        'magento.rma', string="RMA", required=True, ondelete='cascade',
+        'artaza.magento.rma', string="RMA", required=True, ondelete='cascade',
     )
     restock = fields.Selection(
         [
-            ('sellable', "Vuelve a depósito (revendible)"),
-            ('scrap', "No vuelve a depósito (dañado / descartado)"),
+            ('sellable', "Back to stock (sellable again)"),
+            ('scrap', "Not back to stock (damaged / written off)"),
         ],
-        string="¿El producto vuelve a depósito?",
+        string="Does the product go back to stock?",
         required=True,
         default='sellable',
-        help="Revendible: entra a stock para vender. "
-             "Dañado/descartado: se recibe pero va a descarte (no se vende).",
+        help="Sellable: it re-enters stock and can be sold again. "
+             "Damaged/written off: it is received but goes to scrap, not to sale.",
     )
 
     def action_confirm(self):

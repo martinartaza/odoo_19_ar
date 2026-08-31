@@ -5,7 +5,7 @@ from odoo.exceptions import UserError
 class SaleTotalWizard(models.TransientModel):
     """Let the user type the desired order total; back-calculate the lines to reach it.
 
-    Odoo computes forward (unit price × qty − discount → total); there is no
+    Odoo computes forward (unit price x qty - discount -> total); there is no
     native "type the total". This wizard scales each line's tax-included unit
     price by (new_total / current_total) and absorbs the rounding residual on the
     last line, so `amount_total` lands EXACTLY on `new_total`. (A uniform discount
@@ -13,7 +13,7 @@ class SaleTotalWizard(models.TransientModel):
     A factor < 1 is a discount, > 1 a surcharge (e.g. a fee for a 90-day cheque).
     """
 
-    _name = 'artaza.sale.total.wizard'
+    _name = 'artaza.magento.order.total.wizard'
     _description = 'Adjust order total (back-calculates the line discount/surcharge)'
 
     order_id = fields.Many2one('sale.order', required=True, ondelete='cascade')
@@ -34,7 +34,7 @@ class SaleTotalWizard(models.TransientModel):
         if self.new_total <= 0:
             raise UserError(self.env._("The new total must be greater than zero."))
         lines = order.order_line.filtered(
-            lambda line: not line.display_type and line.product_uom_qty
+            lambda line: not line.display_type and line.product_uom_qty,
         )
         base = sum(line.price_unit * line.product_uom_qty for line in lines)
         if not lines or base <= 0:
