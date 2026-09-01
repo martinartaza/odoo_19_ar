@@ -8,6 +8,13 @@ _build/
 !.github
 !.mailmap
 !.weblate.json
+# Claude Code config: the guardrails have to travel with the repo. Without
+# these exceptions the blanket ".*" above keeps .claude/ and .mcp.json out of
+# git, and the whole layer would exist only on this machine.
+!.claude/
+!.mcp.json
+# ...except the per-machine overrides, which stay local.
+.claude/settings.local.json
 # compiled python files
 *.py[co]
 __pycache__/

@@ -1,74 +1,97 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Guidance for Claude Code (claude.ai/code) when working in this repository.
 
-## What this repo is
+## What this repository is
 
-This is the **Odoo 19.0** source tree (`odoo/release.py` → `version_info = (19, 0, 0, FINAL, ...)`) plus a thin custom Docker deployment layer. The Odoo framework and ~615 standard modules live untouched in `odoo/` and `addons/`. The custom/local work for this deployment goes in:
+An **Odoo 19.0** tree currently used as the **laboratory for a Trello integration**. The
+goal of this project is no longer the Magento connector.
 
-- `custom_addons/` — local Odoo modules (currently empty; mounted into the container as a volume so changes appear without rebuild).
-- `Dockerfile`, `entrypoint.sh`, `docker-compose.yml`, `config/odoo.conf`, `.env` — the deployment wrapper around upstream Odoo.
+What is being built here, one phase at a time, is a pipeline where a ticket written in
+natural language on Trello ends in code, tests, a PR and a staging deploy. The pipeline is
+the excuse: the declared priority is to **exercise Claude Code's capabilities** (skills,
+hooks, MCP, subagents, webhooks, polling, permissions, sessions) over the result being
+productive. Hence the deliberate redundancy — the same event is received by webhook *and*
+by poll, so that idempotency has to be solved.
 
-When making changes, prefer touching the deployment layer or `custom_addons/`; avoid modifying `addons/` and `odoo/` unless explicitly patching upstream behavior.
+The Magento connector becomes **the material the pipeline works on**, not the goal. The
+project's earlier documentation is archived in `CLAUDE_INTEGRATION.md`.
 
-## Running the app
+## The hard rule: never touch the published module's repo
 
-The intended runtime is Docker Compose (Odoo + a PostgreSQL 15 container, fronted by Traefik):
+`custom_addons/artaza_magento_connect` is published on the Odoo App Store from
+`git@github.com:martinartaza/odoo_magento_connector.git`, branch `19.0`.
+
+**Every git command on this machine targets `git@github.com:martinartaza/odoo_19_ar.git`
+and only that one.** Never `odoo_magento_connector`: no push, no pull, no fetch, no
+remote. That repo is the source of truth for what is published, and is maintained by hand,
+outside this laboratory.
+
+## The module here is an experimental copy
+
+The copy in `custom_addons/artaza_magento_connect` starts from the published release
+`19.0.1.0.0` and **diverges from here on**. The pipeline may modify it, break it and
+rewrite it freely: it is not the source of truth for anything on the App Store, and no
+real customer runs this code.
+
+Running Odoo, in Docker:
 
 ```bash
-docker compose up --build      # build image and start odoo (:8069) + db (:5433 on host)
+docker compose up --build      # odoo (:8069) + postgres (:5434 on the host)
 docker compose logs -f odoo
 ```
 
-`entrypoint.sh` generates `/etc/odoo.conf` at container start from `.env` variables (`DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `ADMIN_PASSWORD`), then runs `python3 odoo-bin -c /etc/odoo.conf`. The `addons_path` is hardcoded there to `/opt/odoo/addons,/opt/odoo/custom_addons`. Note `docker-compose.yml` expects an external Traefik network named `traefik`.
+`entrypoint.sh` generates `/etc/odoo.conf` at start from `.env`, with
+`addons_path = /opt/odoo/addons,/opt/odoo/custom_addons`.
 
-Running directly (without Docker), for development:
-
-```bash
-pip install -r requirements.txt        # Python 3.10–3.13, PostgreSQL >= 13
-./odoo-bin -c config/odoo.conf         # odoo-bin just calls odoo.cli.main()
-./odoo-bin -d <dbname> -i <module>     # install a module into a database
-./odoo-bin -d <dbname> -u <module>     # upgrade/update a module (apply code+data changes)
-./odoo-bin shell -d <dbname>           # interactive ORM shell
-```
-
-The CLI dispatches to subcommands in `odoo/cli/` (`server`, `shell`, `start`, `db`, `scaffold`, `populate`, `upgrade_code`, etc.). `scaffold` generates a new module skeleton.
-
-## Tests
-
-Odoo tests are not run with a bare pytest runner — they run inside a server instance against a database, selected by **tags** (`--test-tags`):
+The module's tests (195 tests; Magento is always mocked at the client boundary, so the
+suite needs no reachable store and opens no socket):
 
 ```bash
-# install module(s) and run their tests at install time
-./odoo-bin -d testdb -i <module> --test-enable
-
-# run by tag spec: [-][tag][/module][:Class][.method]
-./odoo-bin -d testdb --test-tags /<module>                 # all tests in a module
-./odoo-bin -d testdb --test-tags /<module>:TestClass.test_x  # a single test method
-./odoo-bin -d testdb --test-tags :TestClass                # by class across modules
+./odoo-bin -d <testdb> -i artaza_magento_connect --test-enable \
+           --test-tags /artaza_magento_connect --stop-after-init
 ```
 
-Test classes are decorated with `@tagged(...)` (see `odoo/tests/common.py`). By default a `TransactionCase` gets tags `{'standard', 'at_install'}`. Use `at_install` vs `post_install` to control whether a test runs before or after all modules are installed. Test infrastructure (base classes like `TransactionCase`, `HttpCase`, `Form`) lives in `odoo/tests/`.
+A change under `static/` (JS or SCSS) is not visible until the module is reinstalled: the
+deploy has to run `-u artaza_magento_connect`; restarting the server is not enough.
 
-## Linting
+Linting with `ruff check .` (config in `ruff.toml`, auto-generated — do not hand-edit).
 
-Linting is **ruff**, configured in `ruff.toml` (target `py310`, `preview = true`). The file header notes it is auto-generated by Odoo's runbot nightly checks — do not hand-edit the rule set.
+## Language
 
-```bash
-ruff check .
-ruff check addons/<module>
-```
+Everything is written in **English** — code, comments, documentation, commit messages,
+branch names and Trello cards. Only the working conversation is in Spanish.
 
-isort is handled by ruff: import sections are `future, standard-library, third-party, first-party, local-folder`, with `odoo` as first-party and `odoo.addons` as local-folder. `setup.cfg` additionally configures flake8 RST docstring checks.
+## Security floor
 
-## Architecture notes
+These five rules apply from minute one and are not relaxed. They exist against
+**accidents** before attackers: an ambiguous ticket like "clean up the test data" is
+enough to lose the working tree without anyone attacking anything.
 
-- **Framework core (`odoo/`)**: `orm/` and `models/` (the ORM and `Model` base), `fields/` (field types), `api.py` (decorators like `@api.depends`, recordset/environment API), `http.py` (web request dispatch, controllers, routing), `modules/` (module loading, dependency graph, registry), `service/` (server services, db management), `sql_db.py` (cursor/connection layer), `tools/` (config parsing in `tools/config.py`, misc utilities).
-- **Modules (`addons/` and `custom_addons/`)**: every Odoo module is a directory with an `__manifest__.py` declaring metadata, `depends`, and `data` files (XML/CSV for views, security, demo data). Python in `models/` defines `models.Model` subclasses; the ORM maps them to PostgreSQL tables. Views, menus, actions, and access rules are defined in XML/CSV data files, not code. A module's behavior is the union of itself and everything it depends on.
-- **No build step for app code**: Python and XML are loaded at server start / module install. Frontend assets (JS/SCSS under module `static/`) are bundled by Odoo's asset pipeline at runtime, not via an external bundler.
-- The `upgrade/` and `upgrade_code/` directories hold migration logic for moving databases/code between Odoo versions.
+1. No destructive database commands (`dropdb`, `DROP DATABASE`, removing Docker volumes).
+2. No writes outside `custom_addons/`. The pipeline's code lives in another repository
+   (`ticket-agent`, a sibling of this tree) and is not touched from here: an agent does
+   not rewrite its own guardrails.
+3. Never read or expose `.env`, `clave.txt` or any secret, and never put them in a commit,
+   a Trello comment or a published page.
+4. No `git push` that does not go through a PR.
+5. No writes to `.claude/**` or to this file: an agent does not edit the rules that
+   govern it.
 
-## Conventions
+Written here they are **advice**. Once configured as `deny` rules in
+`.claude/settings.json` they become **law**, which is the only thing that actually
+protects. Both go in; neither replaces the other.
 
-- Follow the [Odoo coding guidelines](https://www.odoo.com/documentation/master/contributing/development/coding_guidelines.html) — ruff/isort config above enforces import ordering matching them.
-- This tree tracks the upstream `master`/19.0 series; per `CONTRIBUTING.md`, changes to stable code are restricted to bugfixes. New functionality belongs in `custom_addons/` modules.
+The production dumps at the root (`odoo-prod-*.gz`, `from_server/`, `filestore-odoo/`) are
+in `.gitignore` and stay there: they are real data and `odoo_19_ar` is a **public** repo.
+
+## Scope of work
+
+Work advances **one phase at a time**, and the design is settled before code is written.
+The pipeline specification — phases, branch model, mechanics — lives in the control-plane
+repository, at `ticket-agent/docs/spec.md`. It does not belong in this file, which is
+loaded into every session's context and has to stay short.
+
+This repository tracks Odoo upstream 19.0. Local changes belong in `custom_addons/` and in
+the deployment layer (`Dockerfile`, `entrypoint.sh`, `docker-compose.yml`, `config/`);
+avoid touching `addons/` and `odoo/`.
