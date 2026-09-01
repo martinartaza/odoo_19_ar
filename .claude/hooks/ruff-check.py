@@ -25,9 +25,26 @@ LINT_ROOT = "custom_addons/"  # Odoo core is off-limits, so never lint it.
 MAX_LINES = 20
 
 
+def find_ruff():
+    """Ruff on PATH, or in a project venv.
+
+    The hook runs as a subprocess of Claude Code, not from an interactive shell,
+    so it inherits no activated virtualenv. Looking inside .venv/ by hand is what
+    keeps a venv install from silently disabling the gate.
+    """
+    found = shutil.which("ruff")
+    if found:
+        return found
+    for venv in (".venv", "venv", "env"):
+        candidate = os.path.join(PROJECT_DIR, venv, "bin", "ruff")
+        if os.access(candidate, os.X_OK):
+            return candidate
+    return None
+
+
 def violations(path, source=None):
     """Ruff's findings for `path`. `source`, when given, is linted in its place."""
-    cmd = ["ruff", "check", "--output-format", "json"]
+    cmd = [RUFF, "check", "--output-format", "json"]
     cmd += [path] if source is None else ["--stdin-filename", path, "-"]
     proc = subprocess.run(
         cmd, input=source, capture_output=True, text=True, timeout=60, cwd=PROJECT_DIR,
@@ -46,9 +63,16 @@ try:
 
     if not rel.endswith(".py") or not rel.startswith(LINT_ROOT):
         sys.exit(0)
-    if not shutil.which("ruff"):
-        print("ruff is not installed: quality gate skipped", file=sys.stderr)
-        sys.exit(0)  # non-blocking; the user sees it, the model is not derailed
+    RUFF = find_ruff()
+    if not RUFF:
+        # Exit 1, not 0: a gate that is down has to be visible to the user. Exit 0
+        # would skip it in silence, which is the worst way for a check to fail.
+        print(
+            "ruff not found on PATH or in a project venv: the quality gate is DOWN. "
+            "Install it with `brew install ruff`.",
+            file=sys.stderr,
+        )
+        sys.exit(1)  # non-blocking: shown to the user, work continues
 
     found = violations(rel)
     if not found:
