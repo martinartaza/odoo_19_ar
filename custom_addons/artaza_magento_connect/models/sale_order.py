@@ -204,7 +204,14 @@ class SaleOrder(models.Model):
 
         # Odoo owns the amount: force the Magento price (prevents the pricelist
         # from recomputing price_unit when the line is created).
-        for line, price in zip(so.order_line, prices):
+        #
+        # strict=True because the pairing is positional: `prices` is built in
+        # lockstep with `line_commands`, but `so.order_line` is whatever create()
+        # returned, ordered by sequence. If anything ever adds or reorders a line,
+        # a plain zip() would not fail -- it would pair a price with the wrong
+        # line, and a wrong amount would reach the invoice with no error anywhere.
+        # Raising is the lesser harm.
+        for line, price in zip(so.order_line, prices, strict=True):
             if line.price_unit != price:
                 line.price_unit = price
 
