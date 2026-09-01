@@ -18,7 +18,20 @@
       "Edit(./addons/**)",
       "Write(./addons/**)",
       "Edit(./odoo/**)",
-      "Write(./odoo/**)"
+      "Write(./odoo/**)",
+      "Read(./odoo-prod-*)",
+      "Read(./from_server/**)",
+      "Read(./filestore-odoo/**)",
+      "Bash(zcat:*)",
+      "Bash(zgrep:*)",
+      "Bash(zless:*)",
+      "Bash(gunzip:*)",
+      "Bash(pg_dump:*)",
+      "Bash(pg_dumpall:*)",
+      "Bash(pg_restore:*)",
+      "Bash(mysqldump:*)",
+      "Bash(printenv:*)",
+      "Bash(docker compose config:*)"
     ],
     "ask": [
       "Edit(./.claude/**)",
