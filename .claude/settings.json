@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(**/.env)",
+      "Read(**/.env.*)",
+      "Read(**/clave.txt)",
+      "Read(**/*.pem)",
+      "Read(**/*.key)",
+      "Bash(cat .env:*)",
+      "Bash(cat ../clave.txt:*)",
+      "Bash(dropdb:*)",
+      "Bash(docker volume rm:*)",
+      "Bash(docker volume prune:*)",
+      "Bash(docker compose down -v:*)",
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
+      "Bash(git push origin main:*)",
+      "Edit(./addons/**)",
+      "Write(./addons/**)",
+      "Edit(./odoo/**)",
+      "Write(./odoo/**)"
+    ],
+    "ask": [
+      "Edit(./.claude/**)",
+      "Write(./.claude/**)",
+      "Edit(./CLAUDE.md)",
+      "Write(./CLAUDE.md)",
+      "Edit(./.mcp.json)",
+      "Write(./.mcp.json)",
+      "Bash(git push:*)"
+    ]
+  }
+}
