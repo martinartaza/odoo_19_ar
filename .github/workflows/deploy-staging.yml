@@ -1,0 +1,54 @@
+name: Deploy staging
+
+# `push` only, never `pull_request`. A workflow that runs against a pull
+# request's own branch lets that branch rewrite the workflow -- and then the
+# merge stops being a gate, because the branch can approve its own deploy.
+on:
+  push:
+    branches: [staging]
+  workflow_dispatch:
+
+# One deploy at a time. Two overlapping runs would fight over the same
+# containers and the same database. Queued rather than cancelled: a deploy that
+# has already taken its backup and started updating the module should finish.
+concurrency:
+  group: deploy-staging
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Deploy over SSH
+        env:
+          SSH_KEY: ${{ secrets.STAGING_SSH_KEY }}
+          STAGING_HOST: ${{ secrets.STAGING_HOST }}
+          STAGING_USER: ${{ secrets.STAGING_USER }}
+        run: |
+          set -euo pipefail
+
+          # Secrets go through env, not inline interpolation: an expression
+          # expanded straight into the script can end up in an error message.
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H "$STAGING_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+
+          # The remote command below is ignored. That key is pinned by
+          #     command="/usr/local/bin/deploy-staging"
+          # in the server's authorized_keys, so it runs the deploy and nothing
+          # else, whatever is asked for. The word is a label for the logs.
+          ssh -i ~/.ssh/id_ed25519 -o BatchMode=yes \
+              -o StrictHostKeyChecking=yes \
+              "$STAGING_USER@$STAGING_HOST" deploy
+
+# There is no actions/checkout here on purpose. This job never needs the
+# repository: the server pulls its own code. Nothing of the branch being
+# deployed is fetched into the runner, so nothing in it can influence what runs.
+#
+# The host key is learned with ssh-keyscan at run time, which trusts the first
+# answer. Pinning it as a fourth secret would be stronger; it is not done yet.
