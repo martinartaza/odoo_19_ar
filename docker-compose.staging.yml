@@ -1,3 +1,8 @@
+# The compose project name, pinned. Left implicit it comes from the directory
+# name, which also prefixes every named volume -- so moving or renaming the
+# checkout would silently create fresh empty volumes and look like data loss.
+name: staging_odoo
+
 # Staging: odoo-staging.artaza.net
 #
 # A standalone stack, not an override. It is meant to run from its own directory

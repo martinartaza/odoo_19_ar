@@ -1,3 +1,8 @@
+# The compose project name, pinned. Left implicit it comes from the directory
+# name, which also prefixes every named volume -- so moving or renaming the
+# checkout would silently create fresh empty volumes and look like data loss.
+name: odoo_19_ar
+
 services:
   odoo:
     build: .
