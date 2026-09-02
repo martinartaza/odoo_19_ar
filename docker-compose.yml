@@ -7,9 +7,18 @@ services:
     env_file:
       - .env
     ports:
-      - "8069:8069"
+      # Bound to loopback on purpose: reachable from the host for development
+      # and for debugging on the server, never published to the internet.
+      # Traefik reaches the container over the `traefik` network, not through
+      # this mapping.
+      - "127.0.0.1:${ODOO_PORT:-8069}:8069"
     volumes:
       - ./custom_addons:/opt/odoo/custom_addons
+      # The filestore MUST be a named volume. Without it, attachments and
+      # product images live inside the container and are lost the moment it is
+      # recreated -- which is every deploy. Production had this fix applied by
+      # hand and uncommitted; that is how it nearly got lost.
+      - odoo-filestore:/var/lib/odoo
     # Local dev only: reach Warden's Magento (https://app.ituc.test), which is
     # served by the host's Traefik. Harmless in prod, where the DNS resolves.
     extra_hosts:
@@ -19,9 +28,14 @@ services:
       - traefik
       - internal
     labels:
+      # Defaults are production's values, so a `git pull` on the server changes
+      # nothing. Override in .env for anything else.
       - "traefik.enable=true"
-      - "traefik.http.routers.odoo.rule=Host(`odoo.sebastianartaza.com`)"
-      - "traefik.http.routers.odoo.entrypoints=web"
+      - "traefik.http.routers.odoo.rule=Host(`${ODOO_HOSTNAME:-odoo.artaza.net}`)"
+      - "traefik.http.routers.odoo.entrypoints=${TRAEFIK_ENTRYPOINT:-websecure}"
+      - "traefik.http.routers.odoo.tls.certresolver=${TRAEFIK_CERTRESOLVER:-letsencrypt}"
+      - "traefik.http.services.odoo.loadbalancer.server.port=8069"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
 
   db:
     image: postgres:15
@@ -32,7 +46,7 @@ services:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
     ports:
-      - "5434:5432"
+      - "127.0.0.1:${DB_PORT:-5434}:5432"
     volumes:
       - odoo-db-data:/var/lib/postgresql/data
     networks:
@@ -40,6 +54,7 @@ services:
 
 volumes:
   odoo-db-data:
+  odoo-filestore:
 
 networks:
   traefik:
