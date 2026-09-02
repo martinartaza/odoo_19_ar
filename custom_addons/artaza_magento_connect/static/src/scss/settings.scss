@@ -1,0 +1,25 @@
+// The block subtitles under Settings > Magento Connect, one unit larger.
+//
+// The text is the `help` attribute of a <block> in res_config_settings_views.xml. Odoo
+// compiles it into a `tip` prop (web settings_form_compiler.js:88) and renders it as
+// <h3 class="o_setting_tip text-muted"> (settings_block.xml:5), which web core sizes at
+// 13px in settings_form_view.scss:127-131 through
+//
+//     .o_base_settings_view .o_form_renderer .o_setting_container .settings
+//         > .app_settings_block h3
+//
+// -- specificity (0,5,1). This repo does not patch Odoo core, so the override has to
+// out-specify that rule rather than merely come later in the bundle. The selector below
+// is (0,7,1).
+//
+// The scope is [data-key="artaza_magento_connect"], emitted by settings_app.xml:4 from
+// <app name=...> (settings_form_compiler.js:59). It is the only handle the DOM offers:
+// compileBlock passes just `title` and `tip` and discards the block's own `name`, so the
+// module's three blocks produce three indistinguishable h3 siblings in one parent.
+// Singling out the first would take :first-of-type, which would silently hand the larger
+// size to whatever block is inserted above it later. All three move together instead --
+// two sizes of subtitle on one page would read as a bug anyway.
+.o_base_settings_view .o_form_renderer .o_setting_container .settings
+    > .app_settings_block[data-key="artaza_magento_connect"] h3.o_setting_tip {
+    font-size: 14px; // web core sets 13px
+}
