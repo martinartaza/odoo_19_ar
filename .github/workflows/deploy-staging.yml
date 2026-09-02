@@ -34,15 +34,15 @@ jobs:
           # Secrets go through env, not inline interpolation: an expression
           # expanded straight into the script can end up in an error message.
           install -d -m 700 ~/.ssh
-          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/staging_deploy_key
+          chmod 600 ~/.ssh/staging_deploy_key
           ssh-keyscan -H "$STAGING_HOST" >> ~/.ssh/known_hosts 2>/dev/null
 
           # The remote command below is ignored. That key is pinned by
           #     command="/usr/local/bin/deploy-staging"
           # in the server's authorized_keys, so it runs the deploy and nothing
           # else, whatever is asked for. The word is a label for the logs.
-          ssh -i ~/.ssh/id_ed25519 -o BatchMode=yes \
+          ssh -i ~/.ssh/staging_deploy_key -o BatchMode=yes \
               -o StrictHostKeyChecking=yes \
               "$STAGING_USER@$STAGING_HOST" deploy
 
