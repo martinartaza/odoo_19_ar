@@ -40,8 +40,6 @@
       "Write(./CLAUDE.md)",
       "Edit(./.mcp.json)",
       "Write(./.mcp.json)",
-      "Edit(./.github/**)",
-      "Write(./.github/**)",
       "Bash(git push:*)"
     ]
   },
