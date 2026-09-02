@@ -1,0 +1,72 @@
+# Staging: odoo-staging.artaza.net
+#
+# A standalone stack, not an override. It is meant to run from its own directory
+# on the server (its own clone, its own .env), alongside production on the same
+# host and the same Traefik.
+#
+#     docker compose -f docker-compose.staging.yml up -d --build
+#
+# Everything that could collide with production is renamed on purpose:
+#
+#   container names   odoo19        -> odoo19-staging
+#   Traefik router    routers.odoo  -> routers.odoo-staging
+#                     (two routers sharing a name is a silent conflict:
+#                      Traefik keeps one and drops the other)
+#   volumes           odoo-db-data  -> staging-db-data
+#   host ports        8069 / 5434   -> 8070 / 5435
+#
+# Staging gets its own database service rather than sharing production's. The
+# extra memory is small next to the guarantee that a staging run cannot reach
+# production data by mistake -- which is the entire point of having a staging.
+services:
+  odoo:
+    build: .
+    container_name: odoo19-staging
+    depends_on:
+      - db
+    env_file:
+      - .env
+    ports:
+      # Loopback only, as in production; Traefik reaches the container over its
+      # own network. Different port so both stacks can run on one host.
+      - "127.0.0.1:${ODOO_PORT:-8070}:8069"
+    volumes:
+      - ./custom_addons:/opt/odoo/custom_addons
+      # Named, for the same reason as production: without it the filestore dies
+      # with the container, and every deploy recreates the container.
+      - staging-filestore:/var/lib/odoo
+    networks:
+      - traefik
+      - internal
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.odoo-staging.rule=Host(`${ODOO_HOSTNAME:-odoo-staging.artaza.net}`)"
+      - "traefik.http.routers.odoo-staging.entrypoints=${TRAEFIK_ENTRYPOINT:-websecure}"
+      - "traefik.http.routers.odoo-staging.tls.certresolver=${TRAEFIK_CERTRESOLVER:-letsencrypt}"
+      - "traefik.http.services.odoo-staging.loadbalancer.server.port=8069"
+
+  db:
+    image: postgres:15
+    container_name: odoo19-staging-db
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    ports:
+      - "127.0.0.1:${DB_PORT:-5435}:5432"
+    volumes:
+      - staging-db-data:/var/lib/postgresql/data
+    networks:
+      - internal
+
+volumes:
+  staging-db-data:
+  staging-filestore:
+
+networks:
+  traefik:
+    external: true
+  internal:
+    driver: bridge
