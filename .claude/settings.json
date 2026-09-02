@@ -1,5 +1,13 @@
 {
   "permissions": {
+    "allow": [
+      "mcp__trello__get_card",
+      "mcp__trello__list_cards",
+      "mcp__trello__list_board_lists",
+      "mcp__trello__set_card_description",
+      "mcp__trello__move_card",
+      "mcp__trello__add_comment"
+    ],
     "deny": [
       "Read(**/.env)",
       "Read(**/.env.*)",
