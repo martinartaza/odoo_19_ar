@@ -11,7 +11,12 @@ services:
       # and for debugging on the server, never published to the internet.
       # Traefik reaches the container over the `traefik` network, not through
       # this mapping.
-      - "127.0.0.1:${ODOO_PORT:-8069}:8069"
+      # *_HOST_PORT is the port published on the host, and is deliberately not
+      # DB_PORT: entrypoint.sh already uses DB_HOST/DB_PORT for the connection
+      # *inside* the container (db:5432). Reusing one name for both meanings
+      # wrote the host's port into odoo.conf and left staging unable to reach
+      # its own database.
+      - "127.0.0.1:${ODOO_HOST_PORT:-8069}:8069"
     volumes:
       - ./custom_addons:/opt/odoo/custom_addons
       # The filestore MUST be a named volume. Without it, attachments and
@@ -45,7 +50,7 @@ services:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
     ports:
-      - "127.0.0.1:${DB_PORT:-5434}:5432"
+      - "127.0.0.1:${DB_HOST_PORT:-5434}:5432"
     volumes:
       - odoo-db-data:/var/lib/postgresql/data
     networks:

@@ -29,7 +29,12 @@ services:
     ports:
       # Loopback only, as in production; Traefik reaches the container over its
       # own network. Different port so both stacks can run on one host.
-      - "127.0.0.1:${ODOO_PORT:-8070}:8069"
+      # *_HOST_PORT is the port published on the host, and is deliberately not
+      # DB_PORT: entrypoint.sh already uses DB_HOST/DB_PORT for the connection
+      # *inside* the container (db:5432). Reusing one name for both meanings
+      # wrote the host's port into odoo.conf and left staging unable to reach
+      # its own database.
+      - "127.0.0.1:${ODOO_HOST_PORT:-8070}:8069"
     volumes:
       - ./custom_addons:/opt/odoo/custom_addons
       # Named, for the same reason as production: without it the filestore dies
@@ -55,7 +60,7 @@ services:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
     ports:
-      - "127.0.0.1:${DB_PORT:-5435}:5432"
+      - "127.0.0.1:${DB_HOST_PORT:-5435}:5432"
     volumes:
       - staging-db-data:/var/lib/postgresql/data
     networks:
