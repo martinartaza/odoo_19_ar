@@ -78,9 +78,15 @@ of the syntax:
 MODEL_LABEL = re.compile(r"^\s*model\s*:\s*(\d+)\b", re.I)
 ```
 
-**No extra comments in XML.** Odoo's views read as themselves, and a comment beside a
-field ages worse there than anywhere else: the attribute changes, the comment does not,
-and the next reader believes the comment.
+**No comments in XML, CSS or SCSS.** Odoo's views read as themselves, and a comment beside
+a field or a selector ages worse there than anywhere else: the thing changes, the comment
+does not, and the next reader believes the comment.
+
+**A comment must not be longer than what it explains.** Eight lines of prose above three
+lines of CSS is not thoroughness, it is reasoning in the wrong place. Why a selector had
+to out-specify core, why an approach was chosen over another, what was rejected — that is
+what the commit message and the pull request body are for. They carry it without ageing
+into a lie every time the file is edited.
 
 None of this applies to commit messages or to a pull request's body, which exist precisely
 to say why.
