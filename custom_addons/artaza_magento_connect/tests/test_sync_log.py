@@ -6,6 +6,8 @@ recorded even though the transaction that produced it rolls back, and a failed
 """
 from unittest.mock import MagicMock, patch
 
+from lxml import etree
+
 from odoo import fields
 from odoo.tests.common import tagged
 
@@ -248,3 +250,21 @@ class TestSyncLog(MagentoCase):
         rec = self.last_log('order_pull')
         self.assertEqual(rec.line_ids.res_model, 'res.partner')
         self.assertEqual(rec.line_ids.res_id, self.partner.id)
+
+    # ── the form view ──────────────────────────────────────────
+    def test_the_header_error_is_marked_red_on_the_form(self):
+        """The run's own error sits outside any group, so it gets no label and
+        renders as a bare line — red is the only thing that says it is the
+        failure and not more metadata.
+
+        This asserts the class reaches the stored arch, which is all a suite
+        with no browser can see: it does not prove anything is painted, and a
+        misspelt Bootstrap class would pass here and render black.
+        """
+        form = self.env.ref('artaza_magento_connect.view_magento_sync_log_form')
+        arch = etree.fromstring(form.arch)
+        header, = arch.xpath("//sheet/field[@name='error_message']")
+        self.assertIn('text-danger', header.get('class', ''))
+        # the per-item errors in the Failures tab keep the list's own styling
+        line, = arch.xpath("//field[@name='line_ids']//field[@name='error_message']")
+        self.assertNotIn('text-danger', line.get('class', ''))
