@@ -1,0 +1,11 @@
+// Block titles one pixel larger than core's 15px, for this app only.
+//
+// Core sets the size at .o_base_settings_view .o_form_renderer .o_setting_container
+// .settings > .app_settings_block h2, specificity (0,5,1). The ancestor chain is
+// repeated here so that adding [data-key] reaches (0,6,1) and wins on specificity
+// alone: a shorter selector scoped to the app would lose silently, and !important
+// would be a heavier tool than this needs. Everything else about the title —
+// margin, padding, background — is left to core.
+.o_base_settings_view .o_form_renderer .o_setting_container .settings > .app_settings_block[data-key="artaza_magento_connect"] h2 {
+    font-size: 16px;
+}
