@@ -62,6 +62,29 @@ Linting with `ruff check .` (config in `ruff.toml`, auto-generated — do not ha
 Everything is written in **English** — code, comments, documentation, commit messages,
 branch names and Trello cards. Only the working conversation is in Spanish.
 
+## Comments
+
+A comment goes **above a function, not inside it**. A well-named function with its reason
+stated above needs no narration of its steps, and a comment in the middle of a body is
+almost always covering for a function that does too much or a name chosen badly — fix the
+name or split the function instead.
+
+One exception, because they are genuinely hard to read: a **regular expression or a
+lambda**. There the comment gives **an example of input and output**, not an explanation
+of the syntax:
+
+```python
+# "model: 3 opus" -> 3   ·   "modelo 3" -> no match
+MODEL_LABEL = re.compile(r"^\s*model\s*:\s*(\d+)\b", re.I)
+```
+
+**No extra comments in XML.** Odoo's views read as themselves, and a comment beside a
+field ages worse there than anywhere else: the attribute changes, the comment does not,
+and the next reader believes the comment.
+
+None of this applies to commit messages or to a pull request's body, which exist precisely
+to say why.
+
 ## Security floor
 
 These five rules apply from minute one and are not relaxed. They exist against
