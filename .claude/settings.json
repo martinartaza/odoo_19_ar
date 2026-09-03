@@ -1,6 +1,8 @@
 {
   "permissions": {
     "allow": [
+      "Edit(./custom_addons/artaza_magento_connect/**)",
+      "Write(./custom_addons/artaza_magento_connect/**)",
       "mcp__trello__get_card",
       "mcp__trello__list_cards",
       "mcp__trello__list_board_lists",
