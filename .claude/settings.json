@@ -87,7 +87,7 @@
     ],
     "PreToolUse": [
       {
-        "matcher": "Bash|mcp__trello__.*",
+        "matcher": "Bash|Edit|Write|NotebookEdit|mcp__trello__.*",
         "hooks": [
           {
             "type": "command",

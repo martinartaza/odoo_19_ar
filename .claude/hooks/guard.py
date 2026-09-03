@@ -18,6 +18,7 @@ Any internal failure exits 0. A guard that crashes must not become a lock: the
 deny rules in settings.json are the layer that holds regardless of this file.
 """
 import json
+import os
 import re
 import sys
 
@@ -196,10 +197,45 @@ def block(what, reason, evidence):
     sys.exit(2)
 
 
+WRITE_TOOLS = {"Edit", "Write", "NotebookEdit"}
+PIPELINE_MAY_WRITE = "custom_addons/"
+
+
+def outside_the_module(path, project_dir):
+    """True when a pipeline run is writing somewhere it has no business writing.
+
+    Rule 2 of the floor says the pipeline writes inside custom_addons/ and
+    nowhere else, and until now that was advice. The permission rules could not
+    express it: .claude/** is `ask`, which denies an unattended run only for as
+    long as nothing supplies the missing decision -- and the implement stage is
+    launched with --permission-mode acceptEdits, which supplies exactly that
+    kind of decision. Whether it also overrides an explicit `ask` was never
+    established, so this does not depend on the answer.
+
+    A hook can tell the two contexts apart, which is the thing a static rule
+    cannot: TICKET_CARD_ID is set only by the runner. From a Trello ticket the
+    answer is no. From this conversation the `ask` rule still applies and a
+    human still decides.
+    """
+    try:
+        rel = os.path.relpath(os.path.abspath(path), project_dir)
+    except ValueError:
+        return True
+    return not rel.startswith(PIPELINE_MAY_WRITE)
+
+
 try:
     event = json.load(sys.stdin)
     tool = event.get("tool_name") or ""
     args = event.get("tool_input") or {}
+
+    if tool in WRITE_TOOLS and os.environ.get("TICKET_CARD_ID"):
+        target = args.get("file_path") or args.get("notebook_path") or ""
+        project = os.environ.get("CLAUDE_PROJECT_DIR") or os.getcwd()
+        if target and outside_the_module(target, project):
+            block(f"writing {os.path.relpath(os.path.abspath(target), project)}",
+                  "a pipeline run writes inside custom_addons/ and nowhere else",
+                  "TICKET_CARD_ID is set, so this is an unattended ticket run")
 
     if tool == "Bash":
         found = scan_command(args.get("command") or "")
@@ -212,7 +248,17 @@ try:
             if found:
                 block(f"publishing through {tool}", *found)
 
-except Exception as exc:  # noqa: BLE001 - a crashing guard must not become a lock
+except Exception as exc:  # noqa: BLE001
+    # Which way to fail depends on who is watching. Interactively a crashing
+    # guard must not become a lock -- a person is right there and the other
+    # layers still hold. In a ticket run nobody sees the message, so an error
+    # would silently remove the protection; a missing `import os` did exactly
+    # that, and every write outside the module sailed through with the failure
+    # printed to a stream no one reads.
+    if os.environ.get("TICKET_CARD_ID"):
+        print(f"BLOCKED: the guard could not decide ({exc}). A ticket run does not "
+              f"proceed past a guardrail that failed.", file=sys.stderr)
+        sys.exit(2)
     print(f"guard hook error (ignored): {exc}", file=sys.stderr)
 
 sys.exit(0)
