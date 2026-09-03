@@ -3,6 +3,7 @@
     "allow": [
       "Edit(./custom_addons/artaza_magento_connect/**)",
       "Write(./custom_addons/artaza_magento_connect/**)",
+      "Bash(./.claude/skills/run-module-tests/run-tests.sh:*)",
       "mcp__trello__get_card",
       "mcp__trello__list_cards",
       "mcp__trello__list_board_lists",
