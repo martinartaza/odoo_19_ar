@@ -69,6 +69,7 @@ Some features need a companion Magento module, both free and OSL-3.0 licensed:
         'web.assets_backend': [
             'artaza_magento_connect/static/src/**/*.js',
             'artaza_magento_connect/static/src/**/*.xml',
+            'artaza_magento_connect/static/src/**/*.scss',
         ],
     },
     'external_dependencies': {
